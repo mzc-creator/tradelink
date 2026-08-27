@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeLink · 原型预览</title>
+<style>
+:root {
+  --bg:#f1f5f9; --card:#fff; --text:#0f172a; --muted:#64748b;
+  --accent:#0891b2; --agent:#7c3aed; --border:#e2e8f0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:48px 20px}
+.wrap{max-width:640px;margin:0 auto}
+.logo{width:40px;height:40px;border-radius:50%;background:#111;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+h1{font-size:26px;letter-spacing:-.03em;margin-bottom:8px}
+.lead{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:28px}
+.cards{display:grid;gap:12px}
+a.card{display:block;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 22px;text-decoration:none;color:inherit;transition:border-color .15s,box-shadow .15s}
+a.card:hover{border-color:#c4b5fd;box-shadow:0 8px 24px rgba(15,23,42,.06)}
+.kicker{font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--agent);margin-bottom:6px}
+.card h2{font-size:18px;margin-bottom:6px}
+.card p{font-size:13px;color:var(--muted);line-height:1.55}
+.hint{margin-top:28px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo">T</div>
+    <h1>TradeLink 原型</h1>
+    <p class="lead">潜客挖掘 Agent 与客户管理 CRM。点击下方入口即可在浏览器中打开，无需安装。</p>
+    <div class="cards">
+      <a class="card" href="trade-agent/proactive-agent-v1.html">
+        <div class="kicker">AGENT</div>
+        <h2>潜客挖掘</h2>
+        <p>今日推荐、历史推荐、企业详情与联系人触达。</p>
+      </a>
+      <a class="card" href="trade-agent/crm-v2.html">
+        <div class="kicker">CRM</div>
+        <h2>客户管理</h2>
+        <p>企业列表、客户档案、联系人与客户详情。</p>
+      </a>
+    </div>
+    <p class="hint">建议使用 Chrome / Edge 打开。</p>
+  </div>
+</body>
+</html>
