@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeLink · 潜客开发</title>
+<style>
+:root {
+  --bg:#f1f5f9; --card:#fff; --text:#0f172a; --muted:#64748b;
+  --accent:#0891b2; --border:#e2e8f0;
+  --agent:#7c3aed; --agent-dark:#6d28d9; --agent-bg:rgba(124,58,237,.08);
+  --gold:#c9a227; --gold-bg:rgba(201,162,39,.1);
+  --green:#16a34a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden}
+.app{display:flex;height:100vh}
+.app-rail{width:76px;background:#f4f4f2;border-right:1px solid #e8e8e4;display:flex;flex-direction:column;align-items:center;padding:10px 6px 12px;flex-shrink:0;height:100vh;position:sticky;top:0;z-index:20}
+.app-rail-logo{width:34px;height:34px;border-radius:50%;background:#111;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:6px;letter-spacing:.02em}
+.app-rail-new{display:flex;flex-direction:column;align-items:center;gap:3px;width:100%;padding:6px 0 10px;border:none;background:none;cursor:pointer;color:#111;font-size:11px;font-family:inherit;font-weight:500}
+.app-rail-new .plus{width:26px;height:26px;border-radius:7px;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1}
+.app-rail-nav{flex:1;width:100%;overflow-y:auto;display:flex;flex-direction:column;gap:1px}
+.app-rail-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 2px;border-radius:10px;text-decoration:none;color:#555;font-size:10px;line-height:1.2;text-align:center;font-weight:500}
+.app-rail-item svg{width:20px;height:20px}
+.app-rail-item.active{color:#111;background:#ecece8;font-weight:600}
+.app-rail-item:hover{background:#ecece8;color:#111}
+.app-rail-more{font-size:16px;letter-spacing:1px;padding:6px 2px}
+.app-rail-foot{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:8px}
+.app-rail-pts{font-size:10px;color:#666;font-weight:600}
+.app-rail-up{width:100%;border:none;background:#111;color:#fff;border-radius:8px;font-size:10px;padding:6px 4px;cursor:pointer;font-family:inherit;line-height:1.25}
+.app-rail-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#c9a227,#a16207)}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.page-head{background:var(--card);padding:16px 24px 0;flex-shrink:0;border-bottom:1px solid var(--border)}
+.crumb{font-size:12px;color:var(--muted);margin-bottom:8px}
+.crumb a{color:var(--agent);text-decoration:none;font-weight:600}
+.crumb a:hover{text-decoration:underline}
+.page-head h1{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.page-sub{font-size:13px;color:var(--muted);margin:6px 0 16px;line-height:1.55}
+
+.search-bar{display:grid;grid-template-columns:1.4fr .8fr 1fr 1fr auto;gap:10px;padding-bottom:16px;align-items:end}
+.search-item{min-width:0;display:flex;flex-direction:column;gap:6px}
+.search-item label{font-size:12px;font-weight:600;color:var(--text)}
+.search-item input,.search-item select{height:36px;padding:0 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:var(--bg);outline:none;color:var(--text)}
+.search-item input:focus,.search-item select:focus{border-color:rgba(124,58,237,.4);background:#fff}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:9px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;white-space:nowrap;height:36px}
+.btn-primary{background:linear-gradient(135deg,var(--agent),var(--agent-dark));color:#fff}
+.btn-ghost{background:#fff;color:var(--text);border:1px solid var(--border)}
+.btn-convert{background:rgba(16,185,129,.12);color:#059669}
+.btn-done{background:#f1f5f9;color:var(--muted);cursor:default}
+
+.content{flex:1;overflow-y:auto;padding:16px 24px 24px}
+.hint{font-size:12px;color:#92400e;background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;padding:10px 12px;margin-bottom:14px;line-height:1.55}
+.result-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:13px}
+.result-meta strong{font-weight:700}
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.04em;padding:10px 12px;background:#f8fafc;border-bottom:1px solid var(--border)}
+td{padding:12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.co-name{font-weight:700;line-height:1.35}
+.co-hs{font-size:11px;color:var(--muted);margin-top:2px}
+.tag{font-size:10px;padding:2px 8px;border-radius:999px;background:var(--bg);color:var(--muted);border:1px solid var(--border);font-weight:600}
+.tag.country{background:#ccfbf1;color:#0f766e;border-color:#5eead4}
+.empty{padding:48px 24px;text-align:center;color:var(--muted);font-size:13px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.3s;z-index:200}
+.toast.show{opacity:1}
+@media(max-width:1100px){.search-bar{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="app-rail">
+    <div class="app-rail-logo">AI</div>
+    <button class="app-rail-new" type="button" onclick="toast('新建')"><span class="plus">+</span>新建</button>
+    <nav class="app-rail-nav">
+      <a class="app-rail-item active" href="proactive-agent-v1.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        增长引擎
+      </a>
+      <a class="app-rail-item" href="#" onclick="toast('AI 社媒即将上线');return false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        AI 社媒
+      </a>
+      <a class="app-rail-item" href="#" onclick="toast('AI 广告即将上线');return false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 10h.01M12 10h4"/></svg>
+        AI 广告
+      </a>
+      <a class="app-rail-item" href="#" onclick="toast('AI 互动即将上线');return false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        AI 互动
+      </a>
+      <a class="app-rail-item" href="crm-v2.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        AI CRM
+      </a>
+      <a class="app-rail-item" href="#" onclick="toast('AI 创意即将上线');return false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 00-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5A7 7 0 0012 2z"/></svg>
+        AI 创意
+      </a>
+      <a class="app-rail-item" href="#" onclick="toast('AI 获客页即将上线');return false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>
+        AI 获客页
+      </a>
+      <a class="app-rail-item app-rail-more" href="#" onclick="return false">···</a>
+    </nav>
+    <div class="app-rail-foot">
+      <div class="app-rail-pts">37094</div>
+      <button class="app-rail-up" type="button" onclick="toast('升级订阅')">升级订阅</button>
+      <div class="app-rail-avatar" title="账号"></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="page-head">
+      <div class="crumb"><a href="proactive-agent-v1.html">潜客挖掘</a> · 潜客开发</div>
+      <h1>潜客开发</h1>
+      <p class="page-sub">按海关条件检索更多买家，补充每日推荐定额之外的线索。数据来自腾道海关离线库。</p>
+      <div class="search-bar">
+        <div class="search-item">
+          <label>产品关键词</label>
+          <input id="kw" value="LED 灯具" placeholder="如 LED、面板灯">
+        </div>
+        <div class="search-item">
+          <label>HS 编码</label>
+          <input id="hs" value="9405" placeholder="如 9405">
+        </div>
+        <div class="search-item">
+          <label>进口国</label>
+          <select id="country">
+            <option value="">全部</option>
+            <option value="美国" selected>美国</option>
+            <option value="德国">德国</option>
+            <option value="英国">英国</option>
+            <option value="加拿大">加拿大</option>
+            <option value="澳大利亚">澳大利亚</option>
+            <option value="墨西哥">墨西哥</option>
+            <option value="西班牙">西班牙</option>
+            <option value="芬兰">芬兰</option>
+          </select>
+        </div>
+        <div class="search-item">
+          <label>时间范围</label>
+          <select id="range">
+            <option value="12">近 12 个月</option>
+            <option value="6">近 6 个月</option>
+            <option value="3">近 3 个月</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" type="button" onclick="runSearch()">检索</button>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="hint">今日推荐已按画像定额推送。若需要更多数据，可在此按 HS / 进口国继续检索，并将结果一键转入客户管理。</div>
+      <div class="result-meta">
+        <div>检索结果 <strong id="count">0</strong> 家企业 · 按近 12 月采购额排序</div>
+        <button class="btn btn-ghost" type="button" onclick="location.href='proactive-agent-v1.html'">返回潜客挖掘</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>公司名称</th>
+              <th>进口国</th>
+              <th>类型</th>
+              <th>近12月采购额</th>
+              <th>批次</th>
+              <th>最近进口</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const POOL = [
+  { id:'d1', name:'Pacific LED Co.', country:'美国', type:'进口商', volume:'$210万', lots:'19批', last:'2026-07-28', hs:'9405.40', kw:'LED 灯具 面板灯' },
+  { id:'d2', name:'Beacon Imports LLC', country:'美国', type:'进口商', volume:'$168万', lots:'14批', last:'2026-06-21', hs:'9405.40', kw:'LED downlight' },
+  { id:'d3', name:'Midwest Fixture Group', country:'美国', type:'分销商', volume:'$142万', lots:'11批', last:'2026-08-02', hs:'9405.42', kw:'LED 商业照明' },
+  { id:'d4', name:'BrightHome GmbH', country:'德国', type:'进口商', volume:'€96万', lots:'12批', last:'2026-07-15', hs:'9405.40', kw:'LED 灯具' },
+  { id:'d5', name:'Lumina Iberia SL', country:'西班牙', type:'分销商', volume:'€74万', lots:'9批', last:'2026-05-30', hs:'9405.50', kw:'LED 户外灯' },
+  { id:'d6', name:'Atlas Fixtures Ltd', country:'加拿大', type:'进口商', volume:'C$88万', lots:'10批', last:'2026-07-04', hs:'9405.40', kw:'LED 面板灯' },
+  { id:'d7', name:'Aurora Lighting Pty', country:'澳大利亚', type:'进口商', volume:'A$61万', lots:'8批', last:'2026-06-18', hs:'9405.42', kw:'LED 灯具' },
+  { id:'d8', name:'Casa Luz SA', country:'墨西哥', type:'进口商', volume:'$54万', lots:'7批', last:'2026-04-22', hs:'9405.40', kw:'LED panel' },
+  { id:'d9', name:'PolarBeam Oy', country:'芬兰', type:'进口商', volume:'€41万', lots:'6批', last:'2026-03-11', hs:'9405.50', kw:'Smart lighting LED' }
+];
+const converted = new Set();
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove('show'), 2200);
+}
+function runSearch() {
+  const kw = (document.getElementById('kw').value || '').trim().toLowerCase();
+  const hs = (document.getElementById('hs').value || '').trim();
+  const country = document.getElementById('country').value;
+  const rows = POOL.filter(r => {
+    if (country && r.country !== country) return false;
+    if (hs && !r.hs.startsWith(hs)) return false;
+    if (kw && !(r.name + ' ' + r.kw + ' ' + r.hs).toLowerCase().includes(kw.replace(/\s+/g, ' '))) {
+      const tokens = kw.split(/\s+/).filter(Boolean);
+      if (!tokens.some(t => (r.name + r.kw + r.hs).toLowerCase().includes(t))) return false;
+    }
+    return true;
+  });
+  document.getElementById('count').textContent = rows.length;
+  const tb = document.getElementById('tbody');
+  if (!rows.length) {
+    tb.innerHTML = '<tr><td colspan="7"><div class="empty">未找到匹配企业，可放宽进口国或 HS 后再试</div></td></tr>';
+    return;
+  }
+  tb.innerHTML = rows.map(r => {
+    const done = converted.has(r.id);
+    return `<tr>
+      <td><div class="co-name">${r.name}</div><div class="co-hs">HS ${r.hs}</div></td>
+      <td><span class="tag country">${r.country}</span></td>
+      <td><span class="tag">${r.type}</span></td>
+      <td>${r.volume}</td>
+      <td>${r.lots}</td>
+      <td>${r.last}</td>
+      <td>${done
+        ? `<button class="btn btn-done" type="button" disabled>已转客户</button>`
+        : `<button class="btn btn-convert" type="button" onclick="convertLead('${r.id}')">转客户</button>`}</td>
+    </tr>`;
+  }).join('');
+}
+function convertLead(id) {
+  converted.add(id);
+  toast('已转入客户管理 · 阶段「待联系」');
+  runSearch();
+}
+runSearch();
+</script>
+</body>
+</html>

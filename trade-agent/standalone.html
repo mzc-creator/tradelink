@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TradeLink AI · 外贸智能获客</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --bg-card: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --accent: #0891b2;
+      --accent-light: #22d3ee;
+      --accent-bg: rgba(8, 145, 178, 0.08);
+      --border: #e2e8f0;
+      --sidebar-bg: #0f172a;
+      --sidebar-text: rgba(255,255,255,0.92);
+      --sidebar-muted: rgba(255,255,255,0.5);
+      --success: #10b981;
+      --whatsapp: #25d366;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .app { display: flex; min-height: 100vh; }
+
+    .sidebar { width: 200px; background: var(--sidebar-bg); color: var(--sidebar-text); padding: 20px 0; display: flex; flex-direction: column; }
+    .logo { display: flex; align-items: center; gap: 10px; padding: 0 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent-light), var(--accent)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: white; }
+    .logo-text { font-weight: 600; font-size: 14px; }
+    .nav { flex: 1; padding: 20px 8px 0; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--sidebar-muted); text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 500; margin-bottom: 2px; transition: all 0.15s; }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .nav-item:hover { color: var(--sidebar-text); background: rgba(255,255,255,0.06); }
+    .nav-item.active { color: white; background: var(--accent-bg); color: var(--accent-light); }
+    .sidebar-footer { padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .db-status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--sidebar-muted); }
+    .status-dot { width: 5px; height: 5px; background: var(--accent-light); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    .main { flex: 1; padding: 32px 40px 40px; overflow-y: auto; }
+    .screen { display: none; }
+    .screen.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .screen-header { margin-bottom: 28px; }
+    .screen-header h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.02em; }
+    .subtitle { color: var(--text-muted); font-size: 14px; }
+
+    /* AI Search Box */
+    .ai-search-wrap { margin-bottom: 32px; }
+    .ai-search-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .ai-search-label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 12px; }
+    .ai-search-label::before { content: ''; width: 4px; height: 14px; background: linear-gradient(var(--accent), var(--accent-light)); border-radius: 2px; }
+    .ai-search-input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 15px;
+      background: var(--bg);
+      transition: border-color 0.2s;
+    }
+    .ai-search-input:focus { outline: none; border-color: var(--accent); }
+    .ai-search-input::placeholder { color: var(--text-muted); }
+    .ai-search-examples { margin-top: 12px; font-size: 12px; color: var(--text-muted); }
+    .ai-search-examples span { display: inline-block; margin-right: 12px; }
+    .ai-search-btn {
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--accent), #0e7490);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .ai-search-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(8,145,178,0.3); }
+    .ai-search-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+    .ai-intent { margin-top: 20px; padding: 16px; background: var(--accent-bg); border-radius: 12px; border-left: 4px solid var(--accent); display: none; }
+    .ai-intent.visible { display: block; }
+    .ai-intent-title { font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+    .ai-intent-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+    .stats-row { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+    .stat-card {
+      background: var(--bg-card);
+      padding: 20px 24px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      min-width: 140px;
+    }
+    .stat-value { display: block; font-size: 26px; font-weight: 700; margin-bottom: 2px; }
+    .stat-label { font-size: 13px; color: var(--text-muted); }
+
+    .result-section { margin-top: 24px; }
+    .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .result-header h3 { font-size: 16px; font-weight: 600; }
+    .result-count { font-size: 13px; color: var(--text-muted); }
+
+    /* CRM toolbar + pipeline */
+    .crm-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 16px 0 18px; }
+    .crm-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .crm-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .crm-select, .crm-input {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      background: var(--bg-card);
+      color: var(--text);
+    }
+    .crm-input { width: 260px; }
+    .crm-mini-btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .crm-mini-btn:hover { background: var(--bg); }
+    .crm-mini-btn.primary { border-color: rgba(8,145,178,0.35); background: var(--accent-bg); color: var(--accent); }
+    .crm-mini-btn.primary:hover { background: rgba(8,145,178,0.16); }
+
+    .pipeline { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+    .pipe-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px; min-height: 58px; }
+    .pipe-name { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+    .pipe-num { font-size: 18px; font-weight: 700; }
+
+    .stage-select {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-card);
+      font-size: 12px;
+      color: var(--text);
+    }
+    .source-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .source-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.7; }
+
+    .table-wrap { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th, .data-table td { padding: 14px 18px; text-align: left; }
+    .data-table th { font-weight: 600; color: var(--text-muted); background: var(--bg); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .data-table tr { border-bottom: 1px solid var(--border); }
+    .data-table tr:last-child { border-bottom: none; }
+    .data-table tr:hover { background: var(--bg); }
+    .company-cell { display: flex; flex-direction: column; gap: 2px; }
+    .company-name { font-weight: 600; color: var(--text); }
+    .company-meta { font-size: 12px; color: var(--text-muted); }
+    .contact-cell { display: flex; flex-direction: column; gap: 2px; }
+    .contact-name { font-weight: 500; }
+    .contact-role { font-size: 12px; color: var(--text-muted); }
+    .link-btn { color: var(--accent); text-decoration: none; font-weight: 500; cursor: pointer; font-size: 13px; }
+    .link-btn:hover { text-decoration: underline; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+    .badge-new { background: rgba(8, 145, 178, 0.12); color: var(--accent); }
+    .badge-follow { background: rgba(245, 158, 11, 0.15); color: #d97706; }
+    .badge-won { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .badge-lost { background: rgba(100, 116, 139, 0.15); color: #475569; }
+    .match-score { font-weight: 600; color: var(--accent); }
+    .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-icon { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s; }
+    .btn-email { background: var(--accent-bg); color: var(--accent); }
+    .btn-email:hover { background: rgba(8, 145, 178, 0.2); }
+    .btn-whatsapp { background: rgba(37, 211, 102, 0.15); color: #128c7e; }
+    .btn-whatsapp:hover { background: rgba(37, 211, 102, 0.25); }
+    .btn-detail { background: var(--bg); color: var(--text-muted); }
+    .btn-detail:hover { background: var(--border); color: var(--text); }
+
+    .modal { display: none; position: fixed; inset: 0; z-index: 100; align-items: center; justify-content: center; padding: 24px; background: rgba(0,0,0,0.2); }
+    .modal.active { display: flex; }
+    .modal-backdrop { position: absolute; inset: 0; cursor: pointer; }
+    .modal-content {
+      position: relative;
+      background: var(--bg-card);
+      border-radius: 16px;
+      max-width: 640px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    .modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border: none; background: var(--bg); border-radius: 8px; font-size: 18px; cursor: pointer; color: var(--text-muted); }
+    .modal-close:hover { background: var(--border); color: var(--text); }
+    .modal-header { margin-bottom: 24px; }
+    .modal-header h2 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .modal-actions { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+    .modal-actions .btn-icon { padding: 10px 16px; font-size: 13px; }
+    .modal-actions .btn-save { margin-left: auto; }
+
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+    .detail-section h4 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 12px; }
+    .detail-section dl { margin: 0; }
+    .detail-section dt { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; margin-top: 10px; }
+    .detail-section dt:first-of-type { margin-top: 0; }
+    .detail-section dd { font-size: 13px; margin: 0; margin-bottom: 4px; }
+    .detail-section dd a { color: var(--accent); text-decoration: none; }
+    .detail-section dd a:hover { text-decoration: underline; }
+
+    .detail-input, .detail-textarea {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .detail-textarea { min-height: 72px; resize: vertical; }
+    .detail-inline { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .hint-row { font-size: 12px; color: var(--text-muted); margin-top: 10px; }
+
+    .follow-section { padding-top: 24px; border-top: 1px solid var(--border); }
+    .follow-section h4 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 16px; }
+    .timeline { list-style: none; margin-bottom: 20px; }
+    .timeline li { padding: 12px 0; padding-left: 20px; border-left: 2px solid var(--border); margin-left: 6px; position: relative; }
+    .timeline li::before { content: ''; position: absolute; left: -5px; top: 16px; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+    .timeline li.type-email::before { background: var(--accent); }
+    .timeline li.type-whatsapp::before { background: var(--whatsapp); }
+    .timeline-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .timeline-channel { font-size: 11px; font-weight: 500; color: var(--text-muted); }
+    .timeline-date { font-size: 11px; color: var(--text-muted); }
+    .timeline-note { font-size: 13px; line-height: 1.5; }
+    .add-follow { margin-top: 16px; }
+    .add-follow textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 13px; min-height: 72px; margin-bottom: 10px; resize: vertical; }
+    .add-follow-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .add-follow-row select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; }
+    .date-input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; }
+    .btn-save { padding: 8px 16px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .btn-save:hover { background: #0e7490; }
+
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); font-size: 14px; }
+    .empty-state p { margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo"><span class="logo-icon">T</span><span class="logo-text">TradeLink AI</span></div>
+      <nav class="nav">
+        <a href="#" class="nav-item active" data-screen="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
+          <span>工作台</span>
+        </a>
+        <a href="#" class="nav-item" data-screen="discover">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <span>发现客户</span>
+        </a>
+        <a href="#" class="nav-item" data-screen="customers">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          <span>线索管理</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer"><div class="db-status"><span class="status-dot"></span><span>海关 · 企业 · 联系人</span></div></div>
+    </aside>
+
+    <main class="main">
+      <section id="screen-dashboard" class="screen active">
+        <header class="screen-header"><h1>工作台</h1><p class="subtitle">AI 智能解析需求，精准匹配潜在客户</p></header>
+        <div class="stats-row">
+          <div class="stat-card"><span class="stat-value">2,847</span><span class="stat-label">潜在客户</span></div>
+          <div class="stat-card"><span class="stat-value">156</span><span class="stat-label">跟进中</span></div>
+          <div class="stat-card"><span class="stat-value">23%</span><span class="stat-label">转化率</span></div>
+        </div>
+        <div class="ai-search-wrap">
+          <div class="ai-search-box">
+            <div class="ai-search-label">AI 智能搜索</div>
+            <input type="text" class="ai-search-input" id="ai-search-main" placeholder="用自然语言描述你的需求，例如：找欧洲做机械零部件的进口商，年进口额 500 万美金以上...">
+            <div class="ai-search-examples"><span>示例：机械零部件 · 欧洲 · 年进口 500 万+</span></div>
+            <button class="ai-search-btn" id="btn-ai-search-main">AI 智能匹配</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-discover" class="screen">
+        <header class="screen-header"><h1>发现客户</h1><p class="subtitle">描述需求，AI 自动解析并返回匹配企业</p></header>
+        <div class="ai-search-wrap">
+          <div class="ai-search-box">
+            <div class="ai-search-label">描述你的客户需求</div>
+            <input type="text" class="ai-search-input" id="ai-search-discover" placeholder="例如：美国或德国的电子产品批发商，有稳定进口记录，采购决策人联系方式...">
+            <div class="ai-search-examples"><span>产品品类</span><span>目标地区</span><span>进口规模</span><span>联系人职位</span></div>
+            <button class="ai-search-btn" id="btn-ai-search-discover">AI 智能匹配</button>
+            <div class="ai-intent" id="ai-intent-discover">
+              <div class="ai-intent-title">AI 已理解您的需求</div>
+              <div class="ai-intent-text" id="ai-intent-text"></div>
+            </div>
+          </div>
+        </div>
+        <div class="result-section" id="discover-result" style="display:none">
+          <div class="result-header"><h3>匹配企业列表</h3><span class="result-count">共 <strong id="match-count">0</strong> 家</span></div>
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>企业</th><th>联系人</th><th>地区</th><th>来源</th><th>阶段</th><th>匹配度</th><th>沟通</th></tr></thead><tbody id="discover-tbody"></tbody></table></div>
+          <button class="ai-search-btn" style="margin-top:16px" data-action="go-customers">前往线索管理</button>
+        </div>
+      </section>
+
+      <section id="screen-customers" class="screen">
+        <header class="screen-header">
+          <h1>线索 / 客户管理</h1>
+          <p class="subtitle">多渠道线索统一收口 · 阶段推进 · 信息维护与全量跟进动态</p>
+        </header>
+        <div class="pipeline" id="pipeline"></div>
+        <div class="crm-toolbar">
+          <div class="crm-left">
+            <select class="crm-select" id="filter-source">
+              <option value="">全部来源</option>
+              <option value="discover">发现客户</option>
+              <option value="facebook">Facebook 表单</option>
+              <option value="tiktok">TikTok 表单</option>
+              <option value="website">独立站留资</option>
+              <option value="manual">手动创建</option>
+              <option value="import">导入</option>
+            </select>
+            <select class="crm-select" id="filter-stage">
+              <option value="">全部阶段</option>
+            </select>
+            <input type="text" class="crm-input" id="customer-search" placeholder="搜索企业 / 联系人 / 行业 / 地区...">
+          </div>
+          <div class="crm-right">
+            <button class="crm-mini-btn" id="btn-import-leads">导入/模拟接入</button>
+            <button class="crm-mini-btn primary" id="btn-new-lead">新建线索</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>企业</th><th>联系人</th><th>地区</th><th>来源</th><th>阶段</th><th>匹配度</th><th>沟通</th></tr></thead>
+            <tbody id="customer-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div id="customer-detail" class="modal">
+        <div class="modal-backdrop" data-close="modal"></div>
+        <div class="modal-content">
+          <button class="modal-close" data-close="modal">×</button>
+          <header class="modal-header">
+            <h2 id="detail-company">—</h2>
+            <span class="badge" id="detail-status">—</span>
+          </header>
+          <div class="modal-actions">
+            <a href="#" id="btn-email" class="btn-icon btn-email" target="_blank">📧 发邮件</a>
+            <a href="#" id="btn-whatsapp" class="btn-icon btn-whatsapp" target="_blank">WhatsApp</a>
+            <button class="btn-save" id="btn-save-profile">保存信息</button>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>企业信息</h4>
+              <dl>
+                <dt>公司名称</dt><dd><input class="detail-input" id="detail-company-full" /></dd>
+                <dt>行业</dt><dd><input class="detail-input" id="detail-industry" /></dd>
+                <dt>主营产品</dt><dd><input class="detail-input" id="detail-products" /></dd>
+                <dt>海关编码</dt><dd><input class="detail-input" id="detail-code" /></dd>
+                <dt>年进口额</dt><dd><input class="detail-input" id="detail-volume" /></dd>
+                <dt>地址</dt><dd><input class="detail-input" id="detail-address" /></dd>
+                <dt>官网</dt><dd><input class="detail-input" id="detail-website" placeholder="https://..." /></dd>
+              </dl>
+            </div>
+            <div class="detail-section">
+              <h4>联系人</h4>
+              <dl>
+                <dt>姓名</dt><dd><input class="detail-input" id="detail-contact" /></dd>
+                <dt>职位</dt><dd><input class="detail-input" id="detail-title" /></dd>
+                <dt>邮箱</dt><dd><input class="detail-input" id="detail-email" /></dd>
+                <dt>电话</dt><dd><input class="detail-input" id="detail-phone" /></dd>
+                <dt>WhatsApp</dt><dd><input class="detail-input" id="detail-whatsapp" placeholder="含国家区号，如 491234..." /></dd>
+                <dt>来源 / 阶段</dt>
+                <dd class="detail-inline">
+                  <input class="detail-input" id="detail-source" disabled />
+                  <select class="detail-input" id="detail-stage"></select>
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="follow-section">
+            <h4>跟进动态（邮件、WhatsApp 沟通自动集成）</h4>
+            <ul class="timeline" id="follow-timeline"></ul>
+            <div class="add-follow">
+              <textarea placeholder="添加沟通记录（发送邮件或 WhatsApp 后，在此记录沟通内容以便追踪）..." id="follow-note"></textarea>
+              <div class="add-follow-row">
+                <select id="follow-type"><option value="note">手动记录</option><option value="email">邮件沟通</option><option value="whatsapp">WhatsApp 沟通</option><option value="stage">阶段变更</option></select>
+                <input type="date" id="follow-date" class="date-input">
+                <button class="btn-save" id="btn-add-follow">保存</button>
+              </div>
+              <div class="hint-row">提示：从「新线索」到「已成交」的每次推进都可在此记录，确保团队掌握完整动态。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create Lead Modal -->
+      <div id="lead-create" class="modal">
+        <div class="modal-backdrop" data-close="lead"></div>
+        <div class="modal-content">
+          <button class="modal-close" data-close="lead">×</button>
+          <header class="modal-header">
+            <h2>新建线索</h2>
+            <p class="subtitle" style="margin-top:6px">支持手动创建、后续阶段推进与信息维护</p>
+          </header>
+          <div class="detail-grid" style="margin-bottom:18px">
+            <div class="detail-section">
+              <h4>企业</h4>
+              <dl>
+                <dt>公司名称</dt><dd><input class="detail-input" id="new-company" placeholder="公司名称" /></dd>
+                <dt>地区</dt><dd><input class="detail-input" id="new-region" placeholder="国家/地区" /></dd>
+                <dt>行业</dt><dd><input class="detail-input" id="new-industry" placeholder="行业" /></dd>
+                <dt>来源</dt>
+                <dd>
+                  <select class="detail-input" id="new-source">
+                    <option value="manual">手动创建</option>
+                    <option value="website">独立站留资</option>
+                    <option value="facebook">Facebook 表单</option>
+                    <option value="tiktok">TikTok 表单</option>
+                    <option value="import">导入</option>
+                  </select>
+                </dd>
+              </dl>
+            </div>
+            <div class="detail-section">
+              <h4>联系人</h4>
+              <dl>
+                <dt>姓名</dt><dd><input class="detail-input" id="new-contact" placeholder="联系人" /></dd>
+                <dt>职位</dt><dd><input class="detail-input" id="new-title" placeholder="职位" /></dd>
+                <dt>邮箱</dt><dd><input class="detail-input" id="new-email" placeholder="name@company.com" /></dd>
+                <dt>电话/WhatsApp</dt><dd><input class="detail-input" id="new-phone" placeholder="含国家区号" /></dd>
+                <dt>初始阶段</dt><dd><select class="detail-input" id="new-stage"></select></dd>
+              </dl>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px">
+            <button class="crm-mini-btn" data-close="lead">取消</button>
+            <button class="crm-mini-btn primary" id="btn-create-lead">创建线索</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+(function() {
+  var STAGES = ['新线索', '待验证', '有效线索', '互动沟通', '报价谈判', '已成交', '已流失'];
+  var SOURCE_LABEL = {
+    discover: '发现客户',
+    facebook: 'Facebook 表单',
+    tiktok: 'TikTok 表单',
+    website: '独立站留资',
+    manual: '手动创建',
+    import: '导入',
+  };
+
+  var LEADS_KEY = 'tradelink_leads_v2';
+  var FOLLOWS_KEY = 'tradelink_followups_v2';
+  var activeLeadId = null;
+
+  function today() { return new Date().toISOString().slice(0, 10); }
+  function uid() { return Math.floor(Math.random() * 9000000) + 1000000; }
+
+  function seedLeads() {
+    return [
+      { id: 1, source: 'discover', stage: '新线索', company: 'TechParts GmbH', industry: '机械设备', products: '传动件、轴承、电机', region: '德国', match: 96, code: '8473', volume: '$210万', address: 'Berlin, Germany', website: 'https://techparts.de', contact: 'Michael Weber', title: '采购总监', email: 'm.weber@techparts.de', phone: '+49 30 1234567', whatsapp: '49301234567' },
+      { id: 2, source: 'discover', stage: '互动沟通', company: 'Nordic Industries AB', industry: '工业制造', products: '液压元件、气动件', region: '瑞典', match: 94, code: '8483', volume: '$180万', address: 'Stockholm, Sweden', website: 'https://nordicind.se', contact: 'Anna Lindqvist', title: '供应链经理', email: 'anna@nordicind.se', phone: '+46 8 7654321', whatsapp: '4687654321' },
+      { id: 3, source: 'discover', stage: '新线索', company: 'Pacific Trading Co.', industry: '电子元器件', products: '电子元件、半导体', region: '美国', match: 91, code: '8419', volume: '$320万', address: 'Los Angeles, CA', website: 'https://pacifictrading.com', contact: 'James Chen', title: '总经理', email: 'j.chen@pacifictrading.com', phone: '+1 310 5550123', whatsapp: '13105550123' },
+      { id: 4, source: 'discover', stage: '已成交', company: 'EuroMachine SRL', industry: '机械加工', products: '精密零部件、模具', region: '意大利', match: 89, code: '8481', volume: '$95万', address: 'Milan, Italy', website: 'https://euromachine.it', contact: 'Marco Rossi', title: '采购主管', email: 'rossi@euromachine.it', phone: '+39 02 9876543', whatsapp: '39029876543' },
+      { id: 5, source: 'discover', stage: '互动沟通', company: 'Asia Components Ltd', industry: '电子制造', products: 'PCB、连接器', region: '日本', match: 87, code: '8471', volume: '$150万', address: 'Tokyo, Japan', website: 'https://asiacomponents.jp', contact: 'Yuki Tanaka', title: '采购经理', email: 'tanaka@asiacomponents.jp', phone: '+81 3 12345678', whatsapp: '81312345678' },
+      { id: 101, source: 'website', stage: '待验证', company: 'Ocean Wholesale LLC', industry: '消费电子', products: '蓝牙耳机、充电器', region: '美国', match: 82, code: '8518', volume: '$80万', address: 'Austin, TX', website: 'https://oceanwholesale.com', contact: 'Emily Stone', title: '采购', email: 'emily@oceanwholesale.com', phone: '+1 512 555 0199', whatsapp: '15125550199' },
+      { id: 102, source: 'facebook', stage: '新线索', company: 'GreenBuild BV', industry: '建筑材料', products: '铝型材、紧固件', region: '荷兰', match: 79, code: '7610', volume: '$60万', address: 'Rotterdam, NL', website: 'https://greenbuild.nl', contact: 'Tom van Dijk', title: 'Owner', email: 'tom@greenbuild.nl', phone: '+31 10 123456', whatsapp: '3110123456' },
+      { id: 103, source: 'tiktok', stage: '新线索', company: 'Raven Tools Ltd', industry: '五金工具', products: '电动工具、配件', region: '英国', match: 77, code: '8467', volume: '$55万', address: 'Manchester, UK', website: 'https://raventools.co.uk', contact: 'Olivia Brown', title: 'Purchasing', email: 'olivia@raventools.co.uk', phone: '+44 161 555 0102', whatsapp: '441615550102' },
+    ];
+  }
+
+  function seedFollows() {
+    return {
+      2: [
+        { type: 'email', date: '2024-02-10', note: '发送产品目录，对方对型号 A-200 感兴趣，待回复' },
+        { type: 'whatsapp', date: '2024-02-09', note: 'WhatsApp 确认收到询价单' },
+        { type: 'note', date: '2024-02-08', note: '首次邮件联系，已回复表示有意向' },
+      ],
+      5: [{ type: 'note', date: '2024-02-09', note: '电话沟通，预计下周发询价单' }],
+      101: [{ type: 'system', date: '2024-02-10', note: '独立站表单留资：请求报价（RFQ）' }],
+      102: [{ type: 'system', date: '2024-02-10', note: 'Facebook Lead Ads 留资：索取目录' }],
+      103: [{ type: 'system', date: '2024-02-10', note: 'TikTok 表单留资：询问MOQ与交期' }],
+    };
+  }
+
+  function loadJSON(key, fallback) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      var v = JSON.parse(raw);
+      return v || fallback;
+    } catch (e) { return fallback; }
+  }
+  function saveJSON(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  var leads = loadJSON(LEADS_KEY, null);
+  if (!Array.isArray(leads) || !leads.length) { leads = seedLeads(); saveJSON(LEADS_KEY, leads); }
+  var follows = loadJSON(FOLLOWS_KEY, null);
+  if (!follows || typeof follows !== 'object') { follows = seedFollows(); saveJSON(FOLLOWS_KEY, follows); }
+
+  function stageBadgeClass(stage) {
+    if (stage === '已成交') return 'badge-won';
+    if (stage === '已流失') return 'badge-lost';
+    if (stage === '互动沟通' || stage === '报价谈判') return 'badge-follow';
+    return 'badge-new';
+  }
+
+  function ensureStageOptions(selectEl, includeAll) {
+    if (!selectEl) return;
+    var options = '';
+    if (includeAll) options += '<option value=\"\">全部阶段</option>';
+    options += STAGES.map(function(s) { return '<option value=\"' + s + '\">' + s + '</option>'; }).join('');
+    selectEl.innerHTML = options;
+  }
+
+  function renderPipeline() {
+    var el = document.getElementById('pipeline');
+    if (!el) return;
+    var counts = {};
+    STAGES.forEach(function(s) { counts[s] = 0; });
+    leads.forEach(function(l) { if (counts[l.stage] !== undefined) counts[l.stage] += 1; });
+    el.innerHTML = STAGES.map(function(s) {
+      return '<div class=\"pipe-card\"><div class=\"pipe-name\">' + s + '</div><div class=\"pipe-num\">' + counts[s] + '</div></div>';
+    }).join('');
+  }
+
+  function addFollow(id, entry) {
+    if (!follows[id]) follows[id] = [];
+    follows[id].unshift(entry);
+    saveJSON(FOLLOWS_KEY, follows);
+  }
+
+  function updateLead(id, patch) {
+    var idx = leads.findIndex(function(x) { return x.id === id; });
+    if (idx < 0) return;
+    leads[idx] = Object.assign({}, leads[idx], patch);
+    saveJSON(LEADS_KEY, leads);
+  }
+
+  function getLead(id) { return leads.find(function(x) { return x.id === id; }); }
+
+  function sourcePill(source) {
+    var label = SOURCE_LABEL[source] || '未知来源';
+    return '<span class=\"source-pill\">' + label + '</span>';
+  }
+
+  function renderTable(tbody, items) {
+    var html = items.map(function(c) {
+      var stageSelect = '<select class=\"stage-select js-stage\" data-id=\"' + c.id + '\">' +
+        STAGES.map(function(s) { return '<option value=\"' + s + '\"' + (s === c.stage ? ' selected' : '') + '>' + s + '</option>'; }).join('') +
+        '</select>';
+
+      var emailHref = 'mailto:' + (c.email || '') + '?subject=' + encodeURIComponent('合作咨询 - ' + (c.company || ''));
+      var waNum = String(c.whatsapp || c.phone || '').replace(/\\D/g, '');
+      var waHref = 'https://wa.me/' + waNum;
+
+      var actions = '<div class=\"action-btns\">' +
+        '<a href=\"' + emailHref + '\" class=\"btn-icon btn-email js-email\" data-id=\"' + c.id + '\" target=\"_blank\" title=\"发邮件\">邮件</a>' +
+        '<a href=\"' + waHref + '\" class=\"btn-icon btn-whatsapp js-wa\" data-id=\"' + c.id + '\" target=\"_blank\" title=\"WhatsApp\">WhatsApp</a>' +
+        '<a class=\"btn-icon btn-detail link-btn js-detail\" data-id=\"' + c.id + '\">详情</a>' +
+        '</div>';
+
+      return '' +
+        '<tr>' +
+          '<td><div class=\"company-cell\"><span class=\"company-name\">' + c.company + '</span><span class=\"company-meta\">' + (c.industry || '') + ' · ' + (c.volume || '-') + '</span></div></td>' +
+          '<td><div class=\"contact-cell\"><span class=\"contact-name\">' + (c.contact || '-') + '</span><span class=\"contact-role\">' + (c.title || '-') + '</span></div></td>' +
+          '<td>' + (c.region || '-') + '</td>' +
+          '<td>' + sourcePill(c.source) + '</td>' +
+          '<td>' + stageSelect + '</td>' +
+          '<td><span class=\"match-score\">' + (c.match || 0) + '%</span></td>' +
+          '<td>' + actions + '</td>' +
+        '</tr>';
+    }).join('');
+    tbody.innerHTML = html;
+
+    tbody.querySelectorAll('.js-detail').forEach(function(a) {
+      a.addEventListener('click', function(e) { e.preventDefault(); openDetail(parseInt(a.dataset.id, 10)); });
+    });
+    tbody.querySelectorAll('.js-stage').forEach(function(sel) {
+      sel.addEventListener('change', function() {
+        var id = parseInt(sel.dataset.id, 10);
+        var lead = getLead(id);
+        if (!lead) return;
+        var prev = lead.stage;
+        var next = sel.value;
+        if (prev === next) return;
+        updateLead(id, { stage: next });
+        addFollow(id, { type: 'stage', date: today(), note: '阶段更新：' + prev + ' → ' + next });
+        renderPipeline();
+      });
+    });
+    tbody.querySelectorAll('.js-email').forEach(function(a) {
+      a.addEventListener('click', function() {
+        var id = parseInt(a.dataset.id, 10);
+        var lead = getLead(id);
+        if (!lead) return;
+        addFollow(id, { type: 'email', date: today(), note: '发起邮件：' + (lead.email || '-') });
+        if (['新线索', '待验证', '有效线索'].indexOf(lead.stage) >= 0) updateLead(id, { stage: '互动沟通' });
+        renderPipeline();
+      });
+    });
+    tbody.querySelectorAll('.js-wa').forEach(function(a) {
+      a.addEventListener('click', function() {
+        var id = parseInt(a.dataset.id, 10);
+        var lead = getLead(id);
+        if (!lead) return;
+        addFollow(id, { type: 'whatsapp', date: today(), note: '发起 WhatsApp：' + (lead.phone || lead.whatsapp || '-') });
+        if (['新线索', '待验证', '有效线索'].indexOf(lead.stage) >= 0) updateLead(id, { stage: '互动沟通' });
+        renderPipeline();
+      });
+    });
+  }
+
+  function parseIntent(text) {
+    var intent = [];
+    if (/机械|零部件|传动|轴承|液压|气动|电子|半导体|PCB/i.test(text)) intent.push('产品：机械/电子零部件');
+    if (/欧洲|德国|美国|北美|意大利|瑞典|日本|东南亚/i.test(text)) intent.push('地区：' + (text.match(/欧洲|德国|美国|北美|意大利|瑞典|日本|东南亚/g) || ['多地区'])[0]);
+    if (/\d+[\s]*万|百万|千万|500|1000/i.test(text)) intent.push('规模：年进口额筛选');
+    if (/采购|决策人|总监|经理|联系人/i.test(text)) intent.push('联系人：采购决策层');
+    return intent.length ? intent.join('；') : '产品与地区智能匹配';
+  }
+
+  function runAISearch(sourceId, resultTbodyId, showIntent) {
+    var input = document.getElementById(sourceId);
+    var text = (input && input.value) ? input.value.trim() : '';
+    if (!text) { alert('请用自然语言描述你的需求'); return; }
+
+    var btn = document.querySelector('#' + sourceId.replace('ai-search-', 'btn-ai-search-'));
+    if (btn) { btn.disabled = true; btn.textContent = 'AI 解析中...'; }
+
+    if (showIntent) {
+      var intentEl = document.getElementById('ai-intent-discover');
+      var intentText = document.getElementById('ai-intent-text');
+      if (intentEl && intentText) {
+        intentText.textContent = parseIntent(text);
+        intentEl.classList.add('visible');
+      }
+    }
+
+    setTimeout(function() {
+      // 模拟 AI 匹配：生成若干“发现客户”线索，并直接进入客户管理池
+      var created = [];
+      for (var i = 0; i < 4; i++) {
+        var base = leads[Math.floor(Math.random() * leads.length)];
+        var id = uid();
+        var lead = Object.assign({}, base, {
+          id: id,
+          source: 'discover',
+          stage: '新线索',
+          match: Math.floor(Math.random() * 10) + 86,
+          company: (base.company.split(' ')[0] || 'NewCo') + ' ' + id,
+        });
+        leads.unshift(lead);
+        created.push(lead);
+        addFollow(id, { type: 'system', date: today(), note: 'AI 发现客户：根据需求自动匹配入库' });
+      }
+      saveJSON(LEADS_KEY, leads);
+      renderPipeline();
+
+      var count = Math.floor(Math.random() * 150) + 30;
+      var resultSection = document.getElementById('discover-result');
+      var matchCount = document.getElementById('match-count');
+      var tbody = document.getElementById(resultTbodyId || 'discover-tbody');
+      if (resultSection) resultSection.style.display = 'block';
+      if (matchCount) matchCount.textContent = count;
+      if (tbody) renderTable(tbody, created);
+      if (btn) { btn.disabled = false; btn.textContent = 'AI 智能匹配'; }
+    }, 900);
+  }
+
+  function openDetail(id) {
+    var c = getLead(id);
+    if (!c) return;
+    activeLeadId = id;
+    document.getElementById('detail-company').textContent = c.company;
+    var statusEl = document.getElementById('detail-status');
+    statusEl.textContent = c.stage;
+    statusEl.className = 'badge ' + stageBadgeClass(c.stage);
+
+    document.getElementById('detail-company-full').value = c.company || '';
+    document.getElementById('detail-industry').value = c.industry || '';
+    document.getElementById('detail-products').value = c.products || '';
+    document.getElementById('detail-code').value = c.code || '';
+    document.getElementById('detail-volume').value = c.volume || '';
+    document.getElementById('detail-address').value = c.address || '';
+    document.getElementById('detail-website').value = c.website || '';
+
+    document.getElementById('detail-contact').value = c.contact || '';
+    document.getElementById('detail-title').value = c.title || '';
+    document.getElementById('detail-email').value = c.email || '';
+    document.getElementById('detail-phone').value = c.phone || '';
+    document.getElementById('detail-whatsapp').value = c.whatsapp || '';
+
+    document.getElementById('detail-source').value = SOURCE_LABEL[c.source] || '未知来源';
+    ensureStageOptions(document.getElementById('detail-stage'), false);
+    document.getElementById('detail-stage').value = c.stage;
+
+    var emailHref = 'mailto:' + (c.email || '') + '?subject=' + encodeURIComponent('合作咨询 - ' + (c.company || ''));
+    var waNum = String(c.whatsapp || c.phone || '').replace(/\\D/g, '');
+    var waHref = 'https://wa.me/' + waNum;
+    document.getElementById('btn-email').href = emailHref;
+    document.getElementById('btn-whatsapp').href = waHref;
+
+    renderTimeline(id);
+    document.getElementById('follow-note').value = '';
+    document.getElementById('follow-date').value = today();
+    document.getElementById('customer-detail').classList.add('active');
+  }
+
+  function renderTimeline(id) {
+    var list = document.getElementById('follow-timeline');
+    var channelMap = { system: '系统', note: '手动记录', email: '邮件', whatsapp: 'WhatsApp', stage: '阶段' };
+    var items = follows[id] || [];
+    list.innerHTML = items.length ? items.map(function(f) {
+      return '<li class=\"type-' + (f.type || 'note') + '\">' +
+        '<div class=\"timeline-meta\"><span class=\"timeline-channel\">' + (channelMap[f.type] || '记录') + '</span><span class=\"timeline-date\">' + (f.date || '') + '</span></div>' +
+        '<div class=\"timeline-note\">' + (f.note || '') + '</div></li>';
+    }).join('') : '<li><div class=\"timeline-note\" style=\"color:var(--text-muted)\">暂无跟进记录</div></li>';
+  }
+
+  document.querySelectorAll('.nav-item').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      var screen = this.dataset.screen;
+      document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+      this.classList.add('active');
+      document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+      document.getElementById('screen-' + screen).classList.add('active');
+    });
+  });
+
+  document.getElementById('btn-ai-search-main') && document.getElementById('btn-ai-search-main').addEventListener('click', function() {
+    var val = document.getElementById('ai-search-main').value.trim();
+    if (!val) { alert('请用自然语言描述你的需求'); return; }
+    document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+    document.querySelector('[data-screen="discover"]').classList.add('active');
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('screen-discover').classList.add('active');
+    document.getElementById('ai-search-discover').value = val;
+    runAISearch('ai-search-discover', 'discover-tbody', true);
+  });
+
+  document.getElementById('btn-ai-search-discover') && document.getElementById('btn-ai-search-discover').addEventListener('click', function() {
+    runAISearch('ai-search-discover', 'discover-tbody', true);
+  });
+
+  document.querySelector('[data-action="go-customers"]') && document.querySelector('[data-action="go-customers"]').addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+    document.querySelector('[data-screen="customers"]').classList.add('active');
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('screen-customers').classList.add('active');
+    renderCRM();
+  });
+
+  document.querySelectorAll('[data-close="modal"]').forEach(function(el) {
+    el.addEventListener('click', function() { document.getElementById('customer-detail').classList.remove('active'); });
+  });
+  document.querySelectorAll('[data-close="lead"]').forEach(function(el) {
+    el.addEventListener('click', function() { document.getElementById('lead-create').classList.remove('active'); });
+  });
+
+  document.getElementById('btn-add-follow') && document.getElementById('btn-add-follow').addEventListener('click', function() {
+    var note = document.getElementById('follow-note').value.trim();
+    var date = document.getElementById('follow-date').value;
+    var type = document.getElementById('follow-type').value;
+    if (!note) return;
+    if (!activeLeadId) return;
+    addFollow(activeLeadId, { type: type, date: date || today(), note: note });
+    renderTimeline(activeLeadId);
+  });
+
+  function renderCRM() {
+    var q = (document.getElementById('customer-search').value || '').toLowerCase();
+    var fs = document.getElementById('filter-source').value;
+    var fg = document.getElementById('filter-stage').value;
+    var filtered = leads.filter(function(c) {
+      if (fs && c.source !== fs) return false;
+      if (fg && c.stage !== fg) return false;
+      var blob = (c.company + ' ' + (c.contact || '') + ' ' + (c.region || '') + ' ' + (c.industry || '')).toLowerCase();
+      return !q || blob.indexOf(q) >= 0;
+    });
+    renderPipeline();
+    renderTable(document.getElementById('customer-tbody'), filtered);
+  }
+
+  // filters
+  ensureStageOptions(document.getElementById('filter-stage'), true);
+  document.getElementById('filter-source').addEventListener('change', renderCRM);
+  document.getElementById('filter-stage').addEventListener('change', renderCRM);
+  document.getElementById('customer-search').addEventListener('input', renderCRM);
+
+  // detail stage change
+  document.getElementById('detail-stage').addEventListener('change', function() {
+    if (!activeLeadId) return;
+    var lead = getLead(activeLeadId);
+    if (!lead) return;
+    var prev = lead.stage;
+    var next = this.value;
+    if (prev === next) return;
+    updateLead(activeLeadId, { stage: next });
+    addFollow(activeLeadId, { type: 'stage', date: today(), note: '阶段更新：' + prev + ' → ' + next });
+    openDetail(activeLeadId);
+    renderCRM();
+  });
+
+  // save profile
+  document.getElementById('btn-save-profile').addEventListener('click', function() {
+    if (!activeLeadId) return;
+    var patch = {
+      company: document.getElementById('detail-company-full').value.trim(),
+      industry: document.getElementById('detail-industry').value.trim(),
+      products: document.getElementById('detail-products').value.trim(),
+      code: document.getElementById('detail-code').value.trim(),
+      volume: document.getElementById('detail-volume').value.trim(),
+      address: document.getElementById('detail-address').value.trim(),
+      website: document.getElementById('detail-website').value.trim(),
+      contact: document.getElementById('detail-contact').value.trim(),
+      title: document.getElementById('detail-title').value.trim(),
+      email: document.getElementById('detail-email').value.trim(),
+      phone: document.getElementById('detail-phone').value.trim(),
+      whatsapp: document.getElementById('detail-whatsapp').value.trim(),
+    };
+    updateLead(activeLeadId, patch);
+    addFollow(activeLeadId, { type: 'system', date: today(), note: '更新了线索/客户信息' });
+    openDetail(activeLeadId);
+    renderCRM();
+  });
+
+  // log email/wa from modal
+  document.getElementById('btn-email').addEventListener('click', function() {
+    if (!activeLeadId) return;
+    var lead = getLead(activeLeadId);
+    if (!lead) return;
+    addFollow(activeLeadId, { type: 'email', date: today(), note: '发起邮件：' + (lead.email || '-') });
+    if (['新线索', '待验证', '有效线索'].indexOf(lead.stage) >= 0) updateLead(activeLeadId, { stage: '互动沟通' });
+    renderCRM();
+  });
+  document.getElementById('btn-whatsapp').addEventListener('click', function() {
+    if (!activeLeadId) return;
+    var lead = getLead(activeLeadId);
+    if (!lead) return;
+    addFollow(activeLeadId, { type: 'whatsapp', date: today(), note: '发起 WhatsApp：' + (lead.phone || lead.whatsapp || '-') });
+    if (['新线索', '待验证', '有效线索'].indexOf(lead.stage) >= 0) updateLead(activeLeadId, { stage: '互动沟通' });
+    renderCRM();
+  });
+
+  // create lead
+  ensureStageOptions(document.getElementById('new-stage'), false);
+  document.getElementById('btn-new-lead').addEventListener('click', function() {
+    document.getElementById('new-company').value = '';
+    document.getElementById('new-region').value = '';
+    document.getElementById('new-industry').value = '';
+    document.getElementById('new-contact').value = '';
+    document.getElementById('new-title').value = '';
+    document.getElementById('new-email').value = '';
+    document.getElementById('new-phone').value = '';
+    document.getElementById('new-source').value = 'manual';
+    document.getElementById('new-stage').value = '新线索';
+    document.getElementById('lead-create').classList.add('active');
+  });
+  document.getElementById('btn-create-lead').addEventListener('click', function() {
+    var company = document.getElementById('new-company').value.trim();
+    if (!company) { alert('请输入公司名称'); return; }
+    var id = uid();
+    var lead = {
+      id: id,
+      source: document.getElementById('new-source').value,
+      stage: document.getElementById('new-stage').value,
+      company: company,
+      region: document.getElementById('new-region').value.trim(),
+      industry: document.getElementById('new-industry').value.trim(),
+      products: '',
+      match: 75,
+      code: '',
+      volume: '',
+      address: '',
+      website: '',
+      contact: document.getElementById('new-contact').value.trim(),
+      title: document.getElementById('new-title').value.trim(),
+      email: document.getElementById('new-email').value.trim(),
+      phone: document.getElementById('new-phone').value.trim(),
+      whatsapp: document.getElementById('new-phone').value.trim(),
+    };
+    leads.unshift(lead);
+    saveJSON(LEADS_KEY, leads);
+    addFollow(id, { type: 'system', date: today(), note: '创建线索：' + (SOURCE_LABEL[lead.source] || lead.source) });
+    document.getElementById('lead-create').classList.remove('active');
+    renderCRM();
+  });
+
+  // import/simulate channels
+  document.getElementById('btn-import-leads').addEventListener('click', function() {
+    var samples = [
+      { source: 'facebook', stage: '新线索', company: 'Nova Importers Ltd', region: '加拿大', industry: '汽配', products: '刹车片、滤芯', contact: 'Liam Scott', title: 'Buyer', email: 'liam@novaimport.ca', phone: '+1 416 555 0133', whatsapp: '14165550133', match: 78 },
+      { source: 'tiktok', stage: '待验证', company: 'BrightHome Retail', region: '法国', industry: '家居', products: '小家电', contact: 'Claire Martin', title: 'Sourcing', email: 'claire@brighthome.fr', phone: '+33 1 55 55 01 88', whatsapp: '33155550188', match: 74 },
+      { source: 'website', stage: '待验证', company: 'Vertex Components', region: '西班牙', industry: '电子制造', products: '连接器', contact: 'Diego Ruiz', title: '采购', email: 'diego@vertex.es', phone: '+34 91 555 0191', whatsapp: '34915550191', match: 76 },
+      { source: 'import', stage: '新线索', company: 'Atlas Trading Group', region: '阿联酋', industry: '综合贸易', products: '五金工具', contact: 'Sara Al Noor', title: '采购经理', email: 'sara@atlas.ae', phone: '+971 4 555 0180', whatsapp: '97145550180', match: 73 },
+    ];
+    samples.forEach(function(s) {
+      var id = uid();
+      leads.unshift(Object.assign({
+        id: id, code: '', volume: '', address: '', website: '', match: s.match || 72
+      }, s));
+      addFollow(id, { type: 'system', date: today(), note: (SOURCE_LABEL[s.source] || s.source) + ' 留资入库' });
+    });
+    saveJSON(LEADS_KEY, leads);
+    renderCRM();
+    alert('已模拟接入 4 条线索（FB/TikTok/独立站/导入）');
+  });
+
+  // init
+  renderPipeline();
+  renderCRM();
+})();
+  </script>
+</body>
+</html>

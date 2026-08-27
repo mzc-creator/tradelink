@@ -1,0 +1,2849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeLink · 潜客挖掘Agent</title>
+<style>
+:root {
+  --bg:#f1f5f9; --card:#fff; --text:#0f172a; --muted:#64748b;
+  --accent:#0891b2; --accent-bg:rgba(8,145,178,.08);
+  --border:#e2e8f0; --sidebar:#0f172a;
+  --agent:#7c3aed; --agent-dark:#6d28d9; --agent-bg:rgba(124,58,237,.08);
+  --warn:#d97706; --warn-bg:#fffbeb; --warn-border:#fcd34d;
+  --gold:#c9a227; --gold-light:rgba(201,162,39,.08);
+  --green:#16a34a; --green-bg:rgba(22,163,74,.08);
+  --orange:#ea580c; --orange-bg:rgba(234,88,12,.08);
+  --assistant-w:400px; --detail-w:640px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden}
+body.assistant-open .workspace{margin-right:var(--assistant-w)}
+.app{display:flex;height:100vh}
+.workspace{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--bg)}
+.ws-tabs{display:flex;align-items:flex-end;gap:2px;padding:8px 12px 0;background:#ecece8;flex-shrink:0;overflow-x:auto;border-bottom:1px solid #e0e0dc}
+.ws-tab{display:inline-flex;align-items:center;gap:8px;max-width:200px;padding:8px 12px;border:none;border-radius:8px 8px 0 0;background:transparent;color:#64748b;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;white-space:nowrap}
+.ws-tab:hover{background:rgba(255,255,255,.55);color:var(--text)}
+.ws-tab.active{background:var(--bg);color:var(--text);font-weight:650}
+.ws-tab-title{overflow:hidden;text-overflow:ellipsis}
+.ws-tab-close{width:18px;height:18px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;line-height:1;color:var(--muted);flex-shrink:0}
+.ws-tab-close:hover{background:rgba(15,23,42,.08);color:var(--text)}
+.ws-pages{flex:1;min-height:0;position:relative}
+.ws-page{display:none;height:100%;min-height:0;flex-direction:column;overflow:hidden}
+.ws-page.show{display:flex}
+#page-lead.ws-page{overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none}
+#page-lead.ws-page::-webkit-scrollbar{width:0;height:0;display:none}
+.hist-page{flex:1;min-height:0;overflow-y:auto;padding:20px 24px 32px}
+.hist-head{margin-bottom:16px}
+.hist-head h2{font-size:18px;font-weight:700;margin-bottom:6px}
+.hist-head p{font-size:13px;color:var(--muted)}
+.hist-table{width:100%;border-collapse:separate;border-spacing:0 6px}
+.hist-table th{font-size:11px;color:var(--muted);font-weight:600;text-align:left;padding:0 12px 6px}
+.hist-table td{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px;font-size:13px;vertical-align:middle}
+.hist-table td:first-child{border-left:1px solid var(--border);border-radius:10px 0 0 10px}
+.hist-table td:last-child{border-right:1px solid var(--border);border-radius:0 10px 10px 0}
+.hist-name{background:none;border:none;padding:0;font:inherit;font-weight:650;color:var(--agent);cursor:pointer;text-align:left}
+.hist-name:hover{text-decoration:underline}
+.hist-date,.hist-reason{color:var(--muted);font-size:12px}
+.hist-ops{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.lead-page{flex:1;min-height:100%;display:flex;flex-direction:column;background:#f4f6f9}
+.app-rail{width:76px;background:#f4f4f2;border-right:1px solid #e8e8e4;display:flex;flex-direction:column;align-items:center;padding:10px 6px 12px;flex-shrink:0;height:100vh;position:sticky;top:0;z-index:20}
+.app-rail-logo{width:34px;height:34px;border-radius:50%;background:#111;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:6px;letter-spacing:.02em}
+.app-rail-new{display:flex;flex-direction:column;align-items:center;gap:3px;width:100%;padding:6px 0 10px;border:none;background:none;cursor:pointer;color:#111;font-size:11px;font-family:inherit;font-weight:500}
+.app-rail-new .plus{width:26px;height:26px;border-radius:7px;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1}
+.app-rail-nav{flex:1;width:100%;overflow-y:auto;display:flex;flex-direction:column;gap:1px}
+.app-rail-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 2px;border-radius:10px;text-decoration:none;color:#555;font-size:10px;line-height:1.2;text-align:center;font-weight:500}
+.app-rail-item svg{width:20px;height:20px}
+.app-rail-item.active{color:#111;background:#ecece8;font-weight:600}
+.app-rail-item:hover{background:#ecece8;color:#111}
+.app-rail-more{font-size:16px;letter-spacing:1px;padding:6px 2px}
+.app-rail-foot{width:100%;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:8px}
+.app-rail-pts{font-size:10px;color:#666;font-weight:600}
+.app-rail-up{width:100%;border:none;background:#111;color:#fff;border-radius:8px;font-size:10px;padding:6px 4px;cursor:pointer;font-family:inherit;line-height:1.25}
+.app-rail-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#c9a227,#a16207)}
+
+.main-wrap{flex:1;display:flex;flex-direction:column;min-width:0;min-height:100%;height:auto}
+.topbar{background:var(--bg);padding:16px 24px 0;flex-shrink:0}
+.hero-banner{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:14px}
+.hero-row{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.hero-copy{flex:1;min-width:0}
+.hero-title-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.hero-title{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--text);margin:0}
+.hero-profile-wrap{min-width:0}
+.hero-profile{font-size:13px;color:var(--muted);line-height:1.65;margin-top:8px}
+.hero-profile strong{color:var(--text);font-weight:650}
+.hero-profile-empty{color:#a16207;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.55;margin-top:8px}
+.hero-profile-empty a{color:var(--agent);font-weight:600;text-decoration:none}
+.hero-profile-empty a:hover{text-decoration:underline}
+.hero-value{margin:0;font-size:12px;color:var(--muted);line-height:1.65;max-width:720px}
+.hero-tags{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center}
+.hero-tag{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:650;color:var(--agent);background:var(--agent-bg);border:1px solid rgba(124,58,237,.14);white-space:nowrap}
+.profile-cta{flex-shrink:0;align-self:center}
+.feed-toolbar-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.btn-ai-toolbar{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:10px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;background:linear-gradient(135deg,var(--agent),var(--agent-dark));color:#fff;box-shadow:0 3px 12px rgba(124,58,237,.28);transition:.15s;white-space:nowrap;flex-shrink:0}
+.btn-ai-toolbar:hover{box-shadow:0 5px 18px rgba(124,58,237,.38);transform:translateY(-1px)}
+.btn-ai-toolbar svg{width:16px;height:16px}
+.stat-pills{display:none}
+.pill{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg);border:1px solid var(--border);border-radius:999px;font-size:12px;cursor:default;user-select:none}
+.pill strong{font-size:16px;font-weight:700;color:var(--text)}
+.pill.highlight{border-color:rgba(124,58,237,.25);background:var(--agent-bg)}
+.pill.highlight strong{color:var(--agent)}
+.pill.clickable{cursor:pointer;transition:.15s}
+.pill.clickable:hover{border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.06)}
+.pill.clickable strong{color:#059669}
+.stat-hint{font-size:11px;color:var(--muted);margin-left:4px}
+.feed-footer{margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.weak-link{font-size:12px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
+.weak-link:hover{color:var(--agent);text-decoration:underline}
+.weak-link.disabled{color:var(--border);cursor:default;pointer-events:none}
+.ignored-panel{margin-top:12px;display:none}
+.ignored-panel.show{display:block}
+.ignored-panel-head{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px}
+.rec-card.ignored-card{opacity:.72;background:var(--bg)}
+.rec-card.ignored-card .rec-actions{border:none;padding-top:0}
+.btn-restore{background:var(--agent-bg);color:var(--agent);border:1px solid rgba(124,58,237,.2)}
+
+.profile-chip{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:linear-gradient(90deg,rgba(124,58,237,.04),rgba(8,145,178,.04));border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--muted);margin-top:12px}
+.profile-chip span{color:var(--text);font-weight:500}
+.profile-link{color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap;font-size:12px}
+.profile-link:hover{text-decoration:underline}
+
+.profile-empty{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:12px;margin-top:12px}
+.profile-empty-icon{width:40px;height:40px;background:#fef3c7;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.profile-empty-body{flex:1}
+.profile-empty-title{font-size:14px;font-weight:700;color:#92400e;margin-bottom:4px}
+.profile-empty-desc{font-size:12px;color:#a16207;line-height:1.55;margin-bottom:12px}
+.profile-empty-actions{display:flex;gap:8px;flex-wrap:wrap}
+.demo-toggle{font-size:11px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
+.demo-toggle:hover{color:var(--agent);text-decoration:underline}
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:0}
+@media(max-width:900px){.metric-row{grid-template-columns:1fr}}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;text-align:center}
+.metric-card.clickable{cursor:pointer;transition:.15s}
+.metric-card.clickable:hover{border-color:rgba(124,58,237,.25);background:var(--agent-bg)}
+.metric-card dt{font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500}
+.metric-card dd{font-size:32px;font-weight:700;color:var(--agent);letter-spacing:-.02em;line-height:1}
+
+#page-feed.ws-page{overflow-y:auto;overflow-x:hidden}
+.content{overflow:visible;padding:0 24px 24px}
+.feed-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;flex-shrink:0;padding:12px 24px 10px;background:var(--bg);position:sticky;top:0;z-index:5}
+.feed-toolbar h2{font-size:15px;font-weight:600}
+.feed-meta{font-size:12px;color:var(--muted);font-weight:400;margin-left:8px}
+.feed-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:1100px){.feed-grid{grid-template-columns:1fr}}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:9px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--agent),var(--agent-dark));color:#fff}
+.btn-primary:hover{box-shadow:0 3px 12px rgba(124,58,237,.28)}
+.btn-warn{background:#f59e0b;color:#fff}
+.btn-warn:hover{background:#d97706}
+.btn-hist{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.btn-hist:hover{border-color:rgba(124,58,237,.35);color:var(--agent);background:var(--agent-bg)}
+.hist-btn-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:2px;border-radius:999px;background:var(--agent-bg);color:var(--agent);font-size:11px;font-weight:700}
+.btn-ai{background:var(--agent-bg);color:var(--agent);border:1px solid rgba(124,58,237,.2)}
+.btn-ai:hover{background:rgba(124,58,237,.14)}
+.btn-convert{background:rgba(16,185,129,.12);color:#059669}
+.btn-ignore{background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+.btn-icon{width:36px;height:36px;padding:0;justify-content:center;border-radius:10px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.rec-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;transition:.15s;height:100%;display:flex;flex-direction:column;cursor:pointer}
+.rec-card:hover{border-color:rgba(124,58,237,.22);box-shadow:0 4px 16px rgba(0,0,0,.04)}
+.rec-card.selected{border-color:var(--agent);box-shadow:0 0 0 2px rgba(124,58,237,.15)}
+.rec-card.checked{border-color:rgba(124,58,237,.45);background:linear-gradient(180deg,rgba(124,58,237,.05),var(--card))}
+.rec-card.converted{opacity:.55}
+.rec-check{display:flex;align-items:flex-start;padding:2px 0 0;flex-shrink:0}
+.rec-check input{width:16px;height:16px;accent-color:var(--agent);cursor:pointer}
+.rec-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.batch-select{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;user-select:none;white-space:nowrap}
+.batch-select input{width:15px;height:15px;accent-color:var(--agent);cursor:pointer}
+#batch-count{font-size:12px;color:var(--muted);white-space:nowrap}
+.rec-ignore-why{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.45}
+.ignore-reasons{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.ignore-reason{padding:7px 12px;border:1px solid var(--border);border-radius:999px;background:var(--card);cursor:pointer;font-size:12px;font-family:inherit;color:var(--text)}
+.ignore-reason:hover{border-color:rgba(124,58,237,.35)}
+.ignore-reason.active{border-color:var(--agent);background:var(--agent-bg);color:var(--agent);font-weight:600}
+.ignore-note{width:100%;min-height:72px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;color:var(--text);background:var(--card)}
+.ignore-note:focus{outline:none;border-color:var(--agent);box-shadow:0 0 0 2px rgba(124,58,237,.12)}
+.rec-top-main{flex:1;min-width:0}
+.rec-company{font-size:14px;font-weight:700;line-height:1.35;margin-bottom:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.rec-company-name{min-width:0}
+.rec-tags{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.rec-stars{display:flex;gap:1px;flex-shrink:0;line-height:1;padding-top:2px;letter-spacing:.02em;font-size:15px;color:#e6b422}
+.score-ring{width:44px;height:44px;border-radius:50%;background:conic-gradient(var(--agent) calc(var(--p)*1%),var(--border) 0);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.score-inner{width:34px;height:34px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--agent)}
+.rec-why{font-size:11px;color:var(--muted);margin:0 0 8px;line-height:1.5}
+.rec-why strong{color:var(--text);display:block;margin-bottom:4px;font-size:12px}
+.rec-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;font-size:11px}
+.rec-metric{background:var(--bg);padding:8px 6px;border-radius:8px;text-align:center;border:1px solid var(--border)}
+.rec-metric dt{color:var(--muted);font-size:10px;margin-bottom:3px}
+.rec-metric dd{font-weight:600;font-size:12px;line-height:1.3}
+.rec-metric dd.up{color:#059669}
+.rec-metric dd.down{color:#dc2626}
+.rec-reach{font-size:12px;color:var(--text);margin:0 0 10px;display:flex;align-items:center;gap:6px;line-height:1.4;min-width:0}
+.rec-reach.weak{color:var(--muted)}
+.rec-reach svg{width:14px;height:14px;flex-shrink:0;color:var(--muted)}
+.rec-reach span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{font-size:10px;padding:3px 8px;border-radius:999px;background:var(--bg);color:var(--muted);border:1px solid var(--border);line-height:1.3}
+.tag.country{background:#ccfbf1;color:#0f766e;border-color:#5eead4;font-weight:700}
+.tag.type{background:#dbeafe;color:#1d4ed8;border-color:#93c5fd;font-weight:700}
+.rec-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto;padding-top:10px;border-top:1px solid var(--border)}
+.rec-actions .btn{flex:1;justify-content:center}
+
+.empty-state{grid-column:1/-1;text-align:center;padding:48px 24px;color:var(--muted);font-size:13px;background:var(--card);border:1px dashed var(--border);border-radius:12px}
+.empty-state-icon{font-size:40px;margin-bottom:12px;opacity:.5}
+.empty-state h3{font-size:15px;color:var(--text);margin-bottom:8px;font-weight:600}
+.empty-state p{line-height:1.6;max-width:400px;margin:0 auto 16px}
+.empty-state a{color:var(--agent);font-weight:600;text-decoration:none}
+.empty-state a:hover{text-decoration:underline}
+
+.mine-state{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px 24px 36px;text-align:center}
+.mine-visual{width:88px;height:88px;margin:0 auto 18px;position:relative}
+.mine-ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(124,58,237,.18);border-top-color:var(--agent);animation:mine-spin 1.1s linear infinite}
+.mine-ring.d2{inset:10px;animation-duration:1.6s;animation-direction:reverse;border-top-color:#a78bfa}
+.mine-core{position:absolute;inset:26px;border-radius:50%;background:linear-gradient(135deg,var(--agent),#a78bfa);box-shadow:0 0 20px rgba(124,58,237,.35);animation:mine-pulse 1.4s ease-in-out infinite}
+.mine-state h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px}
+.mine-state p{font-size:13px;color:var(--muted);line-height:1.65;max-width:420px;margin:0 auto 16px}
+.mine-dots{display:inline-flex;gap:6px;margin-bottom:18px}
+.mine-dots i{width:7px;height:7px;border-radius:50%;background:var(--agent);opacity:.25;animation:mine-dot 1.2s ease-in-out infinite}
+.mine-dots i:nth-child(2){animation-delay:.2s}
+.mine-dots i:nth-child(3){animation-delay:.4s}
+.mine-bar{width:min(280px,80%);height:6px;margin:0 auto 10px;background:#ede9fe;border-radius:999px;overflow:hidden}
+.mine-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--agent),#a78bfa);border-radius:999px;transition:width .35s ease}
+.mine-step{font-size:12px;color:var(--agent);font-weight:600;min-height:18px;margin-bottom:8px}
+@keyframes mine-spin{to{transform:rotate(360deg)}}
+@keyframes mine-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.88);opacity:.75}}
+@keyframes mine-dot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+.mine-notice{position:fixed;top:18px;right:20px;z-index:210;width:min(340px,calc(100vw - 40px));background:#fff;border:1px solid rgba(124,58,237,.22);border-radius:14px;box-shadow:0 16px 40px rgba(15,23,42,.16);padding:14px 16px 14px 14px;display:flex;gap:12px;align-items:flex-start;opacity:0;pointer-events:none;transform:translateY(-8px);transition:.28s}
+.mine-notice.show{opacity:1;pointer-events:auto;transform:none}
+.mine-notice-ico{width:36px;height:36px;border-radius:10px;background:var(--agent-bg);color:var(--agent);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
+.mine-notice-body{min-width:0;flex:1}
+.mine-notice-body strong{display:block;font-size:13px;font-weight:700;margin-bottom:4px}
+.mine-notice-body span{font-size:12px;color:var(--muted);line-height:1.5}
+
+.feature-hidden{display:none!important}
+.assistant-panel{position:fixed;top:0;right:0;width:var(--assistant-w);height:100vh;background:var(--card);border-left:1px solid var(--border);box-shadow:-8px 0 32px rgba(0,0,0,.08);display:flex;flex-direction:column;z-index:100;transform:translateX(100%);transition:transform .28s ease;overflow:hidden}
+body.assistant-open .assistant-panel{transform:translateX(0)}
+.asst-header{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(124,58,237,.06),transparent)}
+.asst-header-actions{display:flex;align-items:center;gap:4px;position:relative}
+.asst-history-wrap{position:relative}
+.asst-history-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;font-size:12px;font-weight:600;color:var(--muted);border-radius:8px;position:relative}
+.asst-history-btn.active{color:var(--agent);background:var(--agent-bg)}
+.asst-history-btn:hover{color:var(--agent);background:var(--agent-bg)}
+.asst-history-btn svg{width:15px;height:15px;flex-shrink:0}
+.asst-history-badge{min-width:16px;height:16px;padding:0 5px;border-radius:999px;background:var(--agent);color:#fff;font-size:10px;font-weight:700;line-height:16px;text-align:center;display:none}
+.asst-history-badge.show{display:inline-block}
+.asst-history-popover{position:absolute;top:calc(100% + 8px);right:0;width:min(320px,calc(var(--assistant-w) - 24px));max-height:min(400px,52vh);background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 12px 36px rgba(15,23,42,.14);z-index:25;display:none;flex-direction:column;overflow:hidden}
+.asst-history-popover.show{display:flex}
+.asst-history-popover-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px 8px;border-bottom:1px solid var(--border);flex-shrink:0}
+.asst-history-popover-head strong{font-size:12px;font-weight:700;color:var(--text)}
+.asst-history-popover-head span{font-size:11px;color:var(--muted);font-weight:500}
+.asst-history-popover-body{flex:1;overflow-y:auto;padding:8px 10px 10px}
+.asst-main{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;overflow:hidden}
+.asst-history-item{padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:.15s;background:var(--bg)}
+.asst-history-item:last-child{margin-bottom:0}
+.asst-history-item:hover{border-color:rgba(124,58,237,.3);background:var(--agent-bg)}
+.asst-history-item-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.asst-history-type{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;flex-shrink:0;line-height:1.3}
+.asst-history-type.recommend{background:rgba(124,58,237,.1);color:var(--agent);border:1px solid rgba(124,58,237,.18)}
+.asst-history-type.company{background:rgba(8,145,178,.08);color:#0e7490;border:1px solid rgba(8,145,178,.16)}
+.asst-history-type.trade{background:rgba(234,88,12,.08);color:#ea580c;border:1px solid rgba(234,88,12,.16)}
+.asst-history-time{font-size:10px;color:var(--muted);flex-shrink:0}
+.asst-history-query{font-size:12px;font-weight:600;line-height:1.45;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.asst-history-empty{text-align:center;padding:28px 14px;color:var(--muted);font-size:12px;line-height:1.65}
+.asst-header h3{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.asst-dot{width:8px;height:8px;background:#10b981;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.asst-sub{font-size:11px;color:var(--muted);margin-top:2px;font-weight:400}
+.asst-main .asst-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:95%;animation:msgIn .2s ease}
+.msg.ai.has-results{max-width:100%;width:100%}
+.msg.ai.has-results .msg-bubble{padding:10px 10px 8px}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg.ai{align-self:flex-start}
+.msg.user{align-self:flex-end;max-width:88%}
+.msg-bubble{padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.55;word-break:break-word}
+.msg.ai .msg-bubble{background:var(--bg);border:1px solid var(--border);border-bottom-left-radius:4px}
+.msg.user .msg-bubble{background:var(--agent);color:#fff;border-bottom-right-radius:4px}
+.msg-time{font-size:10px;color:var(--muted);margin-top:4px;padding:0 4px}
+.msg.user .msg-time{text-align:right}
+.msg.history-highlight .msg-bubble{animation:historyFlash 1.2s ease}
+@keyframes historyFlash{0%,100%{box-shadow:none}20%,60%{box-shadow:0 0 0 2px rgba(124,58,237,.28);background:rgba(124,58,237,.04)}}
+.quick-chips{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.chip{padding:8px 12px;border-radius:10px;font-size:11px;line-height:1.45;background:var(--card);border:1px solid var(--border);color:var(--text);cursor:pointer;text-align:left}
+.chip:hover{background:var(--agent-bg);border-color:rgba(124,58,237,.25);color:var(--agent)}
+.asst-reply-label{font-size:12px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.intent-mini{background:var(--accent-bg);border:1px solid rgba(8,145,178,.15);border-radius:8px;padding:8px 10px;font-size:11px;display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.intent-mini>div{display:flex;flex-direction:column;gap:1px;min-width:0}
+.intent-mini dt{color:var(--muted);font-size:10px;display:block}
+.intent-mini dd{display:block;font-weight:600;margin:0;font-size:11px;line-height:1.35;word-break:break-word}
+.asst-result{margin-top:10px}
+.asst-result-head{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.asst-result-list{display:flex;flex-direction:column;gap:8px}
+.asst-ent-hit{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;overflow:hidden;transition:.15s;display:flex;flex-direction:column;gap:8px}
+.asst-ent-hit.clickable{cursor:pointer}
+.asst-ent-hit.clickable:hover{border-color:rgba(124,58,237,.35);background:var(--agent-bg);box-shadow:0 2px 8px rgba(124,58,237,.08)}
+.asst-ent-hit.converted{cursor:default}
+.asst-ent-hit.ignored{opacity:.82}
+.asst-ent-hit.ignored.clickable{cursor:pointer}
+.asst-ent-hit.ignored.clickable:hover{opacity:1}
+.asst-hit-actions{display:grid;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.asst-hit-actions.dual{grid-template-columns:1fr 1fr}
+.asst-hit-actions.single{grid-template-columns:1fr}
+.asst-hit-actions .btn{padding:6px 8px;font-size:10px;justify-content:center;white-space:nowrap}
+.asst-hit-status{font-size:11px;color:var(--muted);padding:6px 10px;background:var(--bg);border-radius:6px;text-align:center;margin-top:8px;border:1px dashed var(--border)}
+.asst-hit-status.ignored{color:#64748b}
+.asst-ent-row{display:flex;gap:10px;align-items:flex-start}
+.asst-company-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#dbeafe,#bfdbfe);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.asst-company-main{flex:1;min-width:0}
+.asst-company-name-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:4px}
+.asst-company-name{font-size:13px;font-weight:700;color:#92400e;line-height:1.35}
+.asst-crm-tag{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;line-height:1.3}
+.asst-crm-tag.archived{background:#ecfdf5;color:#059669;border:1px solid rgba(16,185,129,.2)}
+.asst-crm-tag.background{background:#fff7ed;color:#ea580c;border:1px solid rgba(234,88,12,.2)}
+.asst-company-country{font-size:10px;padding:2px 7px;border-radius:4px;background:var(--bg);border:1px solid var(--border);color:var(--muted)}
+.asst-company-comm{font-size:11px;color:var(--muted);display:flex;gap:6px;margin-top:2px}
+.asst-company-fields{display:grid;gap:5px;font-size:11px;line-height:1.45}
+.asst-company-fields>div{display:flex;gap:8px}
+.asst-company-fields dt{color:var(--muted);flex-shrink:0;min-width:52px}
+.asst-company-fields dd{color:var(--text);margin:0;word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.asst-rec-top{align-items:center}
+.asst-rec-top .asst-company-main{flex:1}
+.asst-hit-score{width:36px;height:36px;border-radius:50%;background:conic-gradient(var(--agent) calc(var(--p)*1%),var(--border) 0);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:auto}
+.asst-hit-score span{width:28px;height:28px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--agent)}
+.asst-rec-meta{font-size:10px;color:var(--muted);line-height:1.4}
+.asst-rec-reason{font-size:11px;line-height:1.45;color:#334155;padding:6px 8px;background:var(--bg);border-radius:6px;border-left:2px solid var(--agent)}
+.asst-rec-reason strong{font-weight:600;color:var(--text);margin-right:4px}
+.asst-trade-list{display:flex;flex-direction:column;gap:8px}
+.asst-trade-row{display:flex;gap:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:.15s}
+.asst-trade-row:hover{border-color:rgba(124,58,237,.35);background:var(--agent-bg);box-shadow:0 2px 8px rgba(124,58,237,.08)}
+.asst-trade-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#dbeafe,#bfdbfe);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.asst-trade-main{flex:1;min-width:0}
+.asst-trade-id{font-size:11px;font-weight:600;color:#92400e;margin-bottom:6px;word-break:break-all}
+.asst-trade-field{display:flex;gap:8px;font-size:11px;line-height:1.45;margin-bottom:3px}
+.asst-trade-field:last-child{margin-bottom:0}
+.asst-trade-field dt{color:var(--muted);flex-shrink:0;min-width:52px}
+.asst-trade-field dd{color:var(--text);margin:0;word-break:break-word}
+.asst-trade-field dd mark.kw-hit{background:rgba(59,130,246,.15);color:#2563eb;padding:0 2px;border-radius:2px;font-style:normal}
+.trade-detail-body{padding:14px 16px}
+.trade-detail-section{margin-bottom:18px}
+.trade-detail-section:last-child{margin-bottom:0}
+.trade-detail-title{font-size:13px;font-weight:700;margin-bottom:10px;padding-left:10px;border-left:3px solid #92400e;color:var(--text)}
+.trade-detail-grid{display:grid;gap:8px}
+.trade-detail-row{display:flex;gap:12px;font-size:12px;line-height:1.45}
+.trade-detail-row dt{color:var(--muted);flex-shrink:0;min-width:72px}
+.trade-detail-row dd{color:var(--text);margin:0;word-break:break-word}
+.trade-detail-row dd.link{color:#92400e;font-weight:600;cursor:pointer}
+.trade-detail-row dd.link:hover{text-decoration:underline}
+.mini-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:6px;font-size:12px;cursor:pointer;transition:.15s}
+.mini-card:last-child{margin-bottom:0}
+.mini-card:hover{border-color:rgba(124,58,237,.35);background:var(--agent-bg);box-shadow:0 2px 8px rgba(124,58,237,.08)}
+.mini-card strong{display:block;margin-bottom:2px;color:var(--text)}
+.mini-card small{color:var(--muted);font-size:10px;display:block}
+.mini-card-hint{font-size:10px;color:var(--agent);margin-top:6px;font-weight:500}
+.mini-actions{display:flex;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.mini-actions .btn{padding:4px 8px;font-size:10px}
+.asst-detail{position:absolute;left:0;right:0;top:0;bottom:0;background:var(--card);z-index:20;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease;box-shadow:-4px 0 20px rgba(0,0,0,.06)}
+.asst-detail.show{transform:translateX(0)}
+.asst-detail-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--card)}
+.asst-detail-back{display:inline-flex;align-items:center;gap:4px;padding:6px 10px 6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0;transition:.15s}
+.asst-detail-back:hover{color:var(--agent);border-color:rgba(124,58,237,.25);background:var(--agent-bg)}
+.asst-detail-back svg{width:14px;height:14px;flex-shrink:0}
+.asst-detail-title{font-size:14px;font-weight:700;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.asst-detail-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-height:0}
+.asst-detail-body:has(.ov-head){background:#f4f6f9;padding:12px;gap:10px}
+.asst-detail-actions{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+.asst-detail-actions .btn{flex:1;justify-content:center}
+.detail-score{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:var(--agent-bg);color:var(--agent);border-radius:999px;font-size:12px;font-weight:700;margin-bottom:12px}
+.detail-section{margin-bottom:16px}
+.detail-section h4{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px}
+.detail-row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.detail-row:last-child{border-bottom:none}
+.detail-row dt{color:var(--muted);flex-shrink:0}
+.detail-row dd{font-weight:500;text-align:right;color:var(--text)}
+.detail-reason{background:var(--agent-bg);border-left:3px solid var(--agent);padding:10px 12px;border-radius:0 8px 8px 0;font-size:12px;line-height:1.55;margin-bottom:14px}
+.detail-actions{display:flex;gap:8px;padding:14px;border-top:1px solid var(--border);flex-shrink:0}
+.detail-actions .btn{flex:1;justify-content:center}
+.asst-footer{padding:12px 14px;border-top:1px solid var(--border);background:var(--card)}
+.asst-input-wrap{display:flex;gap:8px;align-items:flex-end}
+.asst-input{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;resize:none;min-height:42px;max-height:100px;background:var(--bg)}
+.asst-input:focus{outline:none;border-color:var(--agent)}
+.asst-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.2);z-index:99;opacity:0;pointer-events:none;transition:opacity .28s}
+body.assistant-open .asst-backdrop{opacity:1;pointer-events:auto}
+
+.explain-panel{display:none}
+
+.lead-page .lead-body{flex:1 0 auto;overflow:visible;display:flex;flex-direction:column;padding:16px 24px 20px;gap:12px;background:#f4f6f9;width:100%;max-width:960px;margin:0 auto}
+.ov-head{display:flex;align-items:flex-start;gap:12px}
+.ov-av{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#cbd5e1,#94a3b8);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0}
+.ov-main{flex:1;min-width:0}
+.ov-name-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ov-name{font-size:18px;font-weight:700;line-height:1.25}
+.ov-country{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--text);font-weight:600}
+.ov-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ov-tag{font-size:12px;padding:3px 10px;border-radius:999px;font-weight:700;line-height:1.3;border:1px solid transparent}
+.ov-tag-type{color:#1d4ed8;background:#dbeafe;border-color:#93c5fd}
+.ov-tag-country{color:#0f766e;background:#ccfbf1;border-color:#5eead4}
+.ov-box{background:#eef1f5;border-radius:12px;padding:14px 16px}
+.ov-meta{display:flex;gap:8px 28px;flex-wrap:wrap;font-size:13px;color:#334155;margin-bottom:12px}
+.ov-meta i{font-style:normal;color:var(--muted)}
+.ov-profile{font-size:13px;line-height:1.7;color:#334155}
+.ov-profile + .ov-profile{margin-top:6px}
+.ov-profile i{font-style:normal;color:var(--muted);font-weight:600}
+.ov-reach{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.ov-reach-card{background:#fff;border-radius:10px;padding:10px 12px;min-width:0}
+.ov-reach-top{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text);margin-bottom:6px}
+.ov-reach-top .ic{color:var(--muted);flex-shrink:0;width:16px;text-align:center}
+.ov-reach-top span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ov-ok{font-size:11px;color:var(--green);font-weight:600}
+.ov-miss{font-size:11px;color:var(--muted)}
+.ov-ai{background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.ov-ai-h{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px}
+.ov-ai ul{margin:0;padding-left:18px;color:#334155;font-size:13px;line-height:1.7}
+.ov-ai li{margin-bottom:4px}
+.ov-ai li:last-child{margin-bottom:0}
+.asst-detail-body .ov-reach{grid-template-columns:1fr}
+.asst-detail-body .ov-meta{gap:6px 16px}
+.lead-tabs{display:flex;gap:14px;padding:0 4px;border-bottom:1px solid var(--border);background:transparent;flex-shrink:0;flex-wrap:wrap}
+.lead-tab{padding:10px 2px 8px;border:none;background:none;font-size:13px;color:var(--muted);cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;white-space:nowrap}
+.lead-tab.active{color:var(--agent);border-bottom-color:var(--agent);font-weight:700}
+.lead-tab-body{padding:4px 0 0;flex-shrink:0}
+.pcard-grid{display:flex;flex-direction:column;gap:10px}
+.pcard{background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px 16px;box-shadow:0 1px 3px rgba(15,23,42,.04)}
+.pcard-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.pcard-av{width:36px;height:36px;border-radius:50%;background:#e0e7ff;color:#4338ca;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.pcard-h-main{flex:1;min-width:0}
+.pcard-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:auto}
+.pcard-ico{width:28px;height:28px;border:none;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex-shrink:0}
+.pcard-ico svg{width:15px;height:15px}
+.pcard-ico.mail{background:#f1f5f9;color:#64748b}
+.pcard-ico.mail:hover{background:#e2e8f0;color:#334155}
+.pcard-ico.wa{background:#dcfce7;color:#16a34a}
+.pcard-ico.wa:hover{background:#bbf7d0;color:#15803d}
+.pcard-name{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pcard-role{font-size:11px;color:var(--muted);margin-top:2px}
+.pcard-ok{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--green-bg);color:var(--green);font-weight:600;flex-shrink:0}
+.pcard-ok.off{background:var(--bg);color:var(--muted)}
+.pcard-reach{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) auto;gap:10px 16px;background:#f8fafc;border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.pcard-kv dt{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.04em;margin-bottom:3px}
+.pcard-kv dd{font-size:12px;color:#0f172a;line-height:1.45;word-break:break-all}
+.pcard-notes{display:flex;flex-direction:column;gap:6px}
+.pcard-note{font-size:12px;line-height:1.55;color:#334155;background:#f8fafc;border-left:3px solid #94a3b8;padding:8px 10px;border-radius:0 8px 8px 0}
+.pcard-note b{display:block;font-size:10px;color:var(--muted);letter-spacing:.04em;margin-bottom:2px;font-weight:700}
+.pcard-note.suggest{background:#f0fdf4;border-left-color:#16a34a}
+.pcard-copy{border:1px solid var(--border);background:#fff;color:var(--muted);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:13px;flex-shrink:0;line-height:1}
+.pcard-copy:hover{color:var(--agent);border-color:rgba(124,58,237,.3)}
+.lead-section{padding:0}
+.lead-section-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px}
+.lead-foot-bar{border-top:1px solid var(--border);background:#fff;flex-shrink:0;position:sticky;bottom:0;z-index:2}
+.lead-foot{padding:12px 24px;display:flex;gap:8px;max-width:960px;width:100%;margin:0 auto}
+.lead-foot .btn{flex:1;justify-content:center}
+.lead-table{width:100%;border-collapse:collapse;font-size:12px}
+.lead-table th{text-align:left;padding:8px 12px;background:var(--bg);color:var(--muted);font-weight:600;font-size:11px;border-bottom:1px solid var(--border)}
+.lead-table td{padding:9px 12px;border-bottom:1px solid var(--border)}
+.lead-table tr:last-child td{border-bottom:none}
+.lead-trade-tabs{display:flex;gap:12px;border-bottom:1px solid var(--border);margin-bottom:10px;font-size:12px}
+.lead-trade-main{padding-bottom:6px;color:var(--muted);cursor:pointer;font-weight:500}
+.lead-trade-main.active{color:var(--agent);border-bottom:2px solid var(--agent);font-weight:600}
+.lead-trade-subtabs{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+.lead-trade-sub{padding:4px 10px;border-radius:6px;font-size:11px;border:none;background:var(--bg);color:var(--muted);cursor:pointer;font-family:inherit}
+.lead-trade-sub.active{background:var(--agent-bg);color:var(--agent);font-weight:600}
+.lead-contacts-table{width:100%;border-collapse:collapse;font-size:11px}
+.lead-contacts-table th{text-align:left;padding:7px 10px;background:var(--bg);color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);white-space:nowrap}
+.lead-contacts-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.lead-contacts-table tr:last-child td{border-bottom:none}
+.email-line{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:3px}
+.email-line:last-child{margin-bottom:0}
+.email-addr{font-size:11px;word-break:break-all}
+.email-type{font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600;white-space:nowrap}
+.email-type.corp{color:#0369a1;background:rgba(3,105,161,.06)}
+.email-type.personal{color:var(--agent);background:var(--agent-bg)}
+.social-cell{display:flex;gap:4px}
+.social-icon{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;text-decoration:none}
+.social-icon.li{background:#0a66c2}.social-icon.fb{background:#1877f2}.social-icon.tw{background:#1da1f2}
+.social-icon.off{background:var(--bg);color:var(--border);border:1px solid var(--border);opacity:.45}
+.lead-trade-section{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.lead-trade-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.lead-trade-section-title{font-size:12px;font-weight:700;margin-bottom:10px;color:var(--text)}
+.lead-trade-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;font-size:12px}
+.lead-trade-stats dt{color:var(--muted);font-size:10px;margin-bottom:2px}
+.lead-trade-stats dd{font-weight:600;color:var(--text)}
+.lead-overview-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.lead-overview-card{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px 14px;min-width:0}
+.lead-overview-card dt{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:6px}
+.lead-overview-card dd{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1.3;word-break:break-word}
+@media(max-width:560px){.lead-overview-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.lead-trend-chart{display:flex;align-items:flex-end;gap:4px;height:88px;padding:10px 8px 6px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.lead-trend-bar{flex:1;background:linear-gradient(180deg,var(--agent),rgba(124,58,237,.35));border-radius:3px 3px 0 0;min-height:4px;transition:height .2s}
+.lead-trend-labels{display:flex;gap:4px;margin-top:4px;font-size:9px;color:var(--muted)}
+.lead-trend-labels span{flex:1;text-align:center}
+.lead-trade-analysis{margin-bottom:0}
+.lead-trade-analysis-head{font-size:12px;font-weight:600;margin-bottom:8px}
+.lead-trade-analysis-body{display:grid;grid-template-columns:100px 1fr;gap:10px;align-items:center;margin-bottom:10px}
+.lead-trade-pie{width:96px;height:96px;border-radius:50%;margin:0 auto;position:relative}
+.lead-trade-pie-center{position:absolute;inset:24%;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted);text-align:center}
+.lead-rank{display:flex;flex-direction:column;gap:5px}
+.lead-rank-item{display:grid;grid-template-columns:16px 1fr minmax(50px,80px) 32px;gap:5px;align-items:center;font-size:10px}
+.lead-rank-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;border:1px solid var(--border)}
+.lead-rank-bar i{display:block;height:100%;border-radius:2px}
+.lead-rank-val{text-align:right;font-weight:600;font-size:10px}
+.lead-trade-all{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:11px;font-weight:600}
+.lead-table td.num{text-align:right;font-variant-numeric:tabular-nums}
+.lead-empty{padding:20px;text-align:center;color:var(--muted);font-size:12px}
+.lead-empty-card{background:#fff;border:1px dashed var(--border);border-radius:12px;padding:32px 22px;text-align:center}
+.lead-empty-title{font-size:14px;font-weight:650;color:var(--text);margin-bottom:8px}
+.lead-empty-card p{font-size:12px;color:var(--muted);line-height:1.7;max-width:340px;margin:0 auto}
+.tbl-action{color:#ea580c;font-size:11px;cursor:pointer;background:none;border:none;font-family:inherit;padding:0;font-weight:600}
+.tbl-action:hover{text-decoration:underline}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:160;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .22s}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal{background:var(--card);border-radius:14px;width:100%;max-width:480px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.18);transform:translateY(12px);transition:transform .22s}
+.modal-overlay.show .modal{transform:translateY(0)}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.modal-head h3{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.modal-head h3::before{content:'✦';color:var(--agent);font-size:14px}
+.modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px;line-height:1}
+.modal-close:hover{color:var(--text)}
+.modal-body{padding:16px 20px;overflow-y:auto;flex:1}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.convert-preview{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:12px}
+.convert-preview dt{color:var(--muted);font-size:11px;margin-bottom:2px}
+.convert-preview dd{font-weight:600;margin-bottom:10px;word-break:break-word}
+.convert-preview dd:last-child{margin-bottom:0}
+.convert-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}
+.convert-preview-grid .full{grid-column:1/-1}
+.convert-contacts{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border)}
+.convert-contacts dt{margin-bottom:6px}
+.convert-contact-item{font-size:11px;color:#334155;line-height:1.55;padding:4px 0}
+.convert-form{display:flex;flex-direction:column;gap:12px}
+.convert-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.convert-form label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--muted)}
+.convert-form label.full{grid-column:1/-1}
+.convert-form input,.convert-form textarea{padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;background:var(--card);color:var(--text);width:100%}
+.convert-form input:focus,.convert-form textarea:focus{outline:none;border-color:var(--agent);box-shadow:0 0 0 2px rgba(124,58,237,.12)}
+.convert-form textarea{min-height:72px;resize:vertical;line-height:1.5}
+#convert-modal .modal{max-width:620px}
+#buy-modal .modal{max-width:440px}
+#ignore-modal .modal{max-width:440px}
+.convert-section-head{display:flex;justify-content:space-between;align-items:center;margin-top:14px;margin-bottom:8px}
+.convert-section-title{font-size:12px;font-weight:600;color:var(--text)}
+.convert-contacts-wrap{overflow-x:auto;margin-top:4px}
+.convert-contacts-edit{width:100%;border-collapse:collapse;font-size:12px}
+.convert-contacts-edit th,.convert-contacts-edit td{padding:6px 4px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle}
+.convert-contacts-edit th{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
+.convert-contacts-edit input{padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;width:100%;min-width:0;font-family:inherit;background:var(--card);color:var(--text)}
+.convert-contacts-edit input:focus{outline:none;border-color:var(--agent);box-shadow:0 0 0 2px rgba(124,58,237,.12)}
+.convert-contacts-edit .cf-c-del{background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;font-family:inherit;padding:2px 4px;white-space:nowrap}
+.convert-contacts-edit .cf-c-del:hover{color:#dc2626}
+.link-btn{background:none;border:none;color:var(--agent);font-size:11px;cursor:pointer;font-family:inherit;padding:0;font-weight:600}
+.link-btn:hover{text-decoration:underline}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
+.modal-foot .btn{min-width:96px;justify-content:center}
+.buy-packs{display:flex;flex-direction:column;gap:8px}
+.buy-pack{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;cursor:pointer;background:var(--card);text-align:left;width:100%;font-family:inherit}
+.buy-pack:hover{border-color:rgba(124,58,237,.35)}
+.buy-pack.active{border-color:var(--agent);background:var(--agent-bg)}
+.buy-pack-name{font-size:14px;font-weight:700;color:var(--text)}
+.buy-pack-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.buy-pack-price{font-size:14px;font-weight:700;color:var(--agent);white-space:nowrap}
+.email-status-icon{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;flex-shrink:0;cursor:default}
+.email-status-icon.verified{color:var(--green);background:var(--green-bg)}
+.email-status-icon.risky{color:var(--orange);background:var(--orange-bg)}
+.email-status-icon.invalid{color:#dc2626;background:rgba(220,38,38,.08)}
+.email-status-icon.catchall{color:var(--muted);background:var(--bg);border:1px solid var(--border)}
+.email-status-icon svg{width:11px;height:11px}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);background:#0f172a;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.3s;z-index:200;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:800px){
+  body.assistant-open .main-wrap{margin-right:0}
+  .assistant-panel{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="app-rail">
+    <div class="app-rail-logo">AI</div>
+    <button class="app-rail-new" type="button" onclick="toast('新建')"><span class="plus">+</span>新建</button>
+    <nav class="app-rail-nav">
+      <a class="app-rail-item active" href="proactive-agent-v1.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        增长引擎
+      </a>
+      <a class="app-rail-item" href="#" onclick="toast('AI 社媒即将上线');return false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        AI 社媒
+      </a>
+      <a class="app-rail-item" href="#" onclick="toast('AI 广告即将上线');return false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 10h.01M12 10h4"/></svg>
+        AI 广告
+      </a>
+      <a class="app-rail-item" href="#" onclick="toast('AI 互动即将上线');return false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        AI 互动
+      </a>
+      <a class="app-rail-item" href="crm-v2.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        AI CRM
+      </a>
+      <a class="app-rail-item" href="#" onclick="toast('AI 创意即将上线');return false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 00-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5A7 7 0 0012 2z"/></svg>
+        AI 创意
+      </a>
+      <a class="app-rail-item" href="#" onclick="toast('AI 获客页即将上线');return false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>
+        AI 获客页
+      </a>
+      <a class="app-rail-item app-rail-more" href="#" onclick="return false">···</a>
+    </nav>
+    <div class="app-rail-foot">
+      <div class="app-rail-pts">37094</div>
+      <button class="app-rail-up" type="button" onclick="toast('升级订阅')">升级订阅</button>
+      <div class="app-rail-avatar" title="账号"></div>
+    </div>
+  </aside>
+
+  <div class="workspace">
+    <nav class="ws-tabs" id="ws-tabs"></nav>
+    <div class="ws-pages">
+      <div class="ws-page show" id="page-feed">
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="hero-banner" id="hero-profile-row">
+        <div class="hero-row">
+          <div class="hero-copy">
+            <div class="hero-title-row">
+              <div class="hero-title">每天自动发现你的潜在买家</div>
+              <div class="hero-tags" id="hero-tags">
+                <span class="hero-tag">100亿+贸易数据</span>
+                <span class="hero-tag">218个国家/地区</span>
+              </div>
+            </div>
+            <p class="hero-value" id="hero-value">海量海关与企业联系人数据持续更新，AI 按企业画像精准匹配买家，发现潜客更快捷、更高效。</p>
+            <div id="hero-profile" class="hero-profile-wrap"></div>
+          </div>
+          <button class="btn btn-primary profile-cta" id="profile-cta" onclick="toast('跳转至「企业画像」模块')">完善企业画像</button>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-card"><dt>今日推荐客户</dt><dd id="stat-today">32</dd></div>
+        <div class="metric-card clickable" id="metric-total" onclick="openHistoryTab()" title="查看历史推荐"><dt>历史推荐</dt><dd id="stat-total">89</dd></div>
+        <div class="metric-card clickable" id="metric-converted" onclick="goToCRM()" title="前往 AI CRM"><dt>已存入CRM</dt><dd id="stat-converted">0</dd></div>
+      </div>
+    </header>
+
+    <div class="feed-toolbar" id="feed-toolbar">
+        <div class="feed-toolbar-left">
+          <h2>今日推荐 <span class="feed-meta" id="daily-meta">08:00 更新</span></h2>
+          <button class="btn-ai-toolbar feature-hidden" onclick="openAssistant()" title="对话搜索 · 按需唤起">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a2 2 0 010 4h-1v1a2 2 0 01-2 2h-4a2 2 0 01-2-2v-1H9a2 2 0 010-4h1a7 7 0 017-7h1V5.73A2 2 0 0112 2z"/></svg>
+            aimi助手
+          </button>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center" id="feed-actions">
+          <span id="feed-batch-actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <label class="batch-select"><input type="checkbox" id="check-all" onclick="toggleSelectAll(event)">全选</label>
+            <span id="batch-count">未选择</span>
+            <button class="btn btn-ghost" id="btn-batch-ignore" disabled onclick="batchIgnore()">批量忽略</button>
+            <button class="btn btn-primary" id="btn-batch-convert" disabled onclick="batchConvert()">批量存入CRM</button>
+          </span>
+        </div>
+    </div>
+
+    <div class="content">
+      <div class="feed-grid" id="daily-feed"></div>
+      <div class="feed-footer" id="feed-footer">
+        <button class="weak-link" id="link-ignored" onclick="toggleIgnored()">查看今日已忽略 (0)</button>
+        <button class="weak-link" onclick="goToCRM()">去客户管理看已转客户 →</button>
+        <button class="demo-toggle" onclick="toggleProfile()" id="demo-toggle">预览：切换无画像状态</button>
+        <button class="demo-toggle" onclick="toggleWaitPreview()" id="wait-toggle">预览：08:00 前等待推送</button>
+        <button class="weak-link" type="button" id="btn-tour" onclick="startAgentTour(true)">新手引导</button>
+      </div>
+      <div class="ignored-panel" id="ignored-panel">
+        <div class="ignored-panel-head">今日已忽略 · 可恢复至待处理</div>
+        <div class="feed-grid" id="ignored-feed"></div>
+      </div>
+    </div>
+  </div>
+      </div>
+
+      <div class="ws-page" id="page-lead">
+        <div class="lead-page">
+          <div class="lead-body" id="lead-body"></div>
+          <div class="lead-foot-bar">
+            <div class="lead-foot" id="lead-foot"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ws-page" id="page-history">
+        <div class="hist-page">
+          <div id="hist-discovered-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="asst-backdrop feature-hidden" onclick="closeAssistant()"></div>
+<aside class="assistant-panel feature-hidden" id="assistant-panel">
+  <div class="asst-header">
+    <div>
+      <h3><span class="asst-dot"></span> aimi助手</h3>
+      <div class="asst-sub">对话搜索 · 按需唤起</div>
+    </div>
+    <div class="asst-header-actions">
+      <div class="asst-history-wrap" id="asst-history-wrap">
+        <button class="btn btn-ghost asst-history-btn" id="asst-history-btn" onclick="toggleAsstHistory()" title="搜索历史" aria-expanded="false" aria-controls="asst-history-popover">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          历史
+          <span class="asst-history-badge" id="asst-history-badge"></span>
+        </button>
+        <div class="asst-history-popover" id="asst-history-popover" role="dialog" aria-label="搜索历史">
+          <div class="asst-history-popover-head">
+            <strong>最近搜索</strong>
+            <span id="asst-history-count-label"></span>
+          </div>
+          <div class="asst-history-popover-body" id="asst-history-list"></div>
+        </div>
+      </div>
+      <button class="btn btn-icon btn-ghost" onclick="closeAssistant()" title="关闭">✕</button>
+    </div>
+  </div>
+  <div class="asst-main">
+  <div class="asst-body" id="asst-chat">
+    <div class="msg ai">
+      <div class="msg-bubble">
+        你好，我是 aimi助手。描述你的需求，我会解析意图并匹配海关与企业数据。
+        <div class="quick-chips">
+          <span class="chip" onclick="quickSearch(0)">帮我找最近3个月采购二手车的肯尼亚企业</span>
+          <span class="chip" onclick="quickSearch(1)">查一下"Google"公司的信息和联系人</span>
+          <span class="chip" onclick="quickSearch(2)">查找2025.10.1-2025.12.31出口到巴基斯坦的二手车贸易记录</span>
+        </div>
+      </div>
+      <div class="msg-time">Agent</div>
+    </div>
+  </div>
+  <div class="asst-detail" id="asst-detail">
+    <div class="asst-detail-head">
+      <button type="button" class="asst-detail-back" onclick="closeLeadDetail()" aria-label="返回搜索结果">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        返回结果
+      </button>
+      <span class="asst-detail-title" id="asst-detail-title">详情</span>
+    </div>
+    <div class="asst-detail-body" id="asst-detail-body"></div>
+    <div class="asst-detail-actions" id="asst-detail-actions"></div>
+  </div>
+  </div>
+  <div class="asst-footer" id="asst-footer">
+    <div class="asst-input-wrap">
+      <textarea class="asst-input" id="asst-input" placeholder="描述你的需求，Enter 发送..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"></textarea>
+      <button class="btn btn-primary btn-icon" onclick="sendMessage()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+<div class="mine-notice" id="mine-notice">
+  <div class="mine-notice-ico">✓</div>
+  <div class="mine-notice-body"><strong id="mine-notice-title">挖掘完成</strong><span id="mine-notice-body">已为你匹配到新的潜在买家。</span></div>
+</div>
+
+<div class="modal-overlay" id="convert-modal" onclick="if(event.target===this)closeConvertModal()">
+  <div class="modal" role="dialog" aria-labelledby="convert-modal-title">
+    <div class="modal-head">
+      <h3 id="convert-modal-title">智能建档</h3>
+      <button class="modal-close" onclick="closeConvertModal()" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-sub" id="convert-modal-sub">核对并编辑企业信息，确认后写入客户管理 · 阶段：待联系</p>
+      <div class="convert-preview" id="convert-preview"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeConvertModal()">取消</button>
+      <button class="btn btn-primary" id="convert-confirm-btn" onclick="confirmConvert()">确认</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="buy-modal" onclick="if(event.target===this)closeBuyMore()">
+  <div class="modal" role="dialog" aria-labelledby="buy-modal-title">
+    <div class="modal-head">
+      <h3 id="buy-modal-title">获取更多数据</h3>
+      <button class="modal-close" onclick="closeBuyMore()" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-sub">今日推荐已处理完。加购线索包后，将按企业画像继续匹配可跟进买家。</p>
+      <div class="buy-packs" id="buy-packs">
+        <button type="button" class="buy-pack active" data-pack="20" data-price="200" onclick="selectBuyPack(this)">
+          <div>
+            <div class="buy-pack-name">加购 20 条</div>
+            <div class="buy-pack-desc">适合补当天跟进量</div>
+          </div>
+          <div class="buy-pack-price">200 元</div>
+        </button>
+        <button type="button" class="buy-pack" data-pack="50" data-price="450" onclick="selectBuyPack(this)">
+          <div>
+            <div class="buy-pack-name">加购 50 条</div>
+            <div class="buy-pack-desc">覆盖本周开发节奏</div>
+          </div>
+          <div class="buy-pack-price">450 元</div>
+        </button>
+        <button type="button" class="buy-pack" data-pack="100" data-price="800" onclick="selectBuyPack(this)">
+          <div>
+            <div class="buy-pack-name">加购 100 条</div>
+            <div class="buy-pack-desc">批量拓展目标市场</div>
+          </div>
+          <div class="buy-pack-price">800 元</div>
+        </button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" onclick="closeBuyMore()">取消</button>
+      <button class="btn btn-primary" type="button" id="buy-confirm-btn" onclick="confirmBuyMore()">确认支付 200 元</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ignore-modal" onclick="if(event.target===this)closeIgnoreModal()">
+  <div class="modal" role="dialog" aria-labelledby="ignore-modal-title">
+    <div class="modal-head">
+      <h3 id="ignore-modal-title">忽略原因</h3>
+      <button class="modal-close" onclick="closeIgnoreModal()" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-sub" id="ignore-modal-sub">已选 1 家企业。反馈将用于优化后续匹配。</p>
+      <div class="ignore-reasons" id="ignore-reasons"></div>
+      <textarea class="ignore-note" id="ignore-note" placeholder="补充说明（选填）"></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" onclick="closeIgnoreModal()">取消</button>
+      <button class="btn btn-primary" type="button" onclick="confirmIgnore()">确认忽略</button>
+    </div>
+  </div>
+</div>
+
+<script src="onboarding.js"></script>
+<script>
+const AIMI_ENABLED = false;
+
+const IGNORE_REASONS = ['品类不匹配','目标市场不匹配','采购规模太小','已是现有客户','无法触达','暂时不跟进','其他'];
+
+const SCORE_DIMS = [
+  { key:'profile', label:'Profile', max:30 },
+  { key:'demand', label:'Demand', max:40 },
+  { key:'timing', label:'Timing', max:20 },
+  { key:'reachability', label:'Reachability', max:10 }
+];
+
+const RECS = [
+  { id:'r1', name:'ABC Trading', country:'美国', type:'Importer', score:76, stars:3,
+    hsSummary:'近12月进口 HS 9405.40 共 23 批，$320万；采购额 YoY +40%',
+    aiSummary:'美国目标市场 LED 进口商，采购额同比增长 40%，采购经理可直接联系。',
+    reason:'近12月进口 HS 9405 共 23 批，$320万；YoY +40%，供应商集中，换供窗口期。',
+    scoreBreakdown:{ profile:26, demand:27, timing:null, reachability:8 },
+    aiReasons:[
+      '对方是美国 LED 进口商，品类与您的主营产品高度匹配。',
+      '近 12 个月采购额约 $320 万，同比增长 40%，需求在放大。',
+      '一年进口 23 批，采购节奏稳定，适合持续跟进。',
+      '供应商较集中，目前存在换供窗口，现在触达时机较好。',
+      '已找到可验证的采购经理邮箱和电话，可以直接联系。'
+    ],
+    explain:['US ∈ 目标市场 (+10)','HS 9405 高匹配 (+9)','年采购 $320万 · P80 (+7)','采购额 YoY +40% (+8)','23批/年 · P75+ (+7)','换供窗口 + 新 HS (+12)','采购经理 Verified Email + 电话 (+5)','LinkedIn + 官网 (+3)'],
+    tags:['进口商'], hs:['9405.40'], contact:'Tom · 采购经理',
+    industry:'Lighting / LED', products:'LED 灯具、智能照明', volume:'$320万/年',
+    website:'http://abctrading.com', email:'contact@abctrading.com', phone:'+1 323 555 0100', founded:'2015',
+    employees:'50-200', dataSource:'腾道海关',
+    address:'1200 Commerce Blvd, Los Angeles, California',
+    description:'美国西岸 LED 照明进口商与分销商，总部洛杉矶，主营商业及家居照明，近 12 个月持续进口 HS 9405，年采购额约 $320 万。',
+    social:{linkedin:true,facebook:true,twitter:false},
+    leadContacts:[
+      {name:'Tom Jackson',phone:'+1 555-0123',role:'Category Manager',linkedin:true,facebook:false,twitter:false,
+        preference:'关注交期与现货，优先确认库存、船期和最小起订量。',
+        suggest:'邮件先给可供货清单和交期，再谈价格；避免长篇产品介绍。',
+        aiTip:'主题含 Stock available / Lead time 2 weeks，打开率更高。',
+        emails:[{address:'tom@abctrading.com',type:'corporate',status:'verified'}]},
+      {name:'Lisa Wang',phone:'—',role:'CEO',linkedin:true,facebook:false,twitter:false,
+        preference:'关注供应商稳定性、质量体系与长期合作条款。',
+        suggest:'先建立信任再谈价格，可引用同类客户案例或验厂能力。',
+        aiTip:'以 Partnership / Quality audit 切入，避免首封直接询盘压价。',
+        emails:[
+          {address:'lisa@abctrading.com',type:'corporate',status:'verified'},
+          {address:'lisa.wang@gmail.com',type:'personal',status:'risky'}
+        ]}
+    ],
+    customs:[{date:'2026-07-12',hs:'9405.40',desc:'LED panel lights',amount:'$128,400',origin:'China'},{date:'2026-06-03',hs:'9405.40',desc:'Commercial downlights',amount:'$86,200',origin:'China'}],
+    trade:{volume:'$320万/年',freq:'23批/年',trend:'↓ 18%',
+      records:[
+        {date:'2026-07-12',desc:'LED panel lights',supplier:'Shenzhen Opto Co.',region:'中国',amount:'128,400',qty:'2,400',weight:'1,200',hs:'9405.40'},
+        {date:'2026-06-03',desc:'Commercial downlights',supplier:'Guangzhou LED Ltd.',region:'中国',amount:'86,200',qty:'1,800',weight:'900',hs:'9405.40'},
+        {date:'2026-05-18',desc:'LED strip lights',supplier:'Shenzhen Opto Co.',region:'中国',amount:'95,400',qty:'2,100',weight:'950',hs:'9405.40'},
+        {date:'2026-04-02',desc:'Smart downlights',supplier:'Dongguan Light Co.',region:'中国',amount:'72,000',qty:'1,500',weight:'780',hs:'9405.42'},
+        {date:'2026-03-10',desc:'Outdoor luminaires',supplier:'Vietnam LED JSC',region:'越南',amount:'45,000',qty:'800',weight:'600',hs:'9405.50'},
+        {date:'2026-02-05',desc:'LED modules',supplier:'Guangzhou LED Ltd.',region:'中国',amount:'58,600',qty:'1,200',weight:'640',hs:'9405.40'}
+      ],
+      chartPoints:[20,35,45,60,110,80,55,40,30,25,35,50],
+      supplierRecords:[
+        {date:'2026-05-15',desc:'LED panel export',buyer:'RetailCo Mexico',region:'墨西哥',amount:'62,000',qty:'1,100',weight:'550',hs:'9405.40'},
+        {date:'2026-04-08',desc:'Commercial downlights export',buyer:'BrightHome GmbH',region:'德国',amount:'48,500',qty:'800',weight:'420',hs:'9405.40'},
+        {date:'2026-03-22',desc:'LED strip export',buyer:'Nordic Light AB',region:'瑞典',amount:'35,200',qty:'600',weight:'310',hs:'9405.40'},
+        {date:'2026-02-10',desc:'Outdoor luminaires export',buyer:'EuroLux Distribution',region:'英国',amount:'28,800',qty:'480',weight:'260',hs:'9405.50'}
+      ]},
+    metrics:[['采购金额','$320万'],['采购量','4,200件'],['采购频次','23批/年']] },
+  { id:'r2', name:'LumiTrade USA Inc.', country:'美国', type:'分销商', score:72, stars:2,
+    hsSummary:'近12月进口 HS 9405 共 18 批，$450万；同比持平',
+    aiSummary:'美国中西部 LED 批发商，采购规模稳定，采购负责人邮箱已验证。',
+    reason:'美国中西部 LED 批发商，持续从亚洲进口；有 Verified 邮箱。',
+    scoreBreakdown:{ profile:25, demand:30, timing:null, reachability:7 },
+    aiReasons:[
+      '美国中西部 LED 批发商，目标市场与您的画像匹配。',
+      '年进口约 $450 万，采购规模稳定，适合做长期渠道。',
+      '持续从亚洲进货，对交期和供货能力更敏感。',
+      'VP Purchasing 邮箱已验证，可以直接发开发信。'
+    ],
+    explain:['US ∈ 目标市场 (+10)','HS 9405 品类匹配 (+8)','年进口 $450万 · P85 (+7)','18批/年 · P75+ (+7)','采购额 YoY 稳定 (+4)','新 HS 出现 (+4)','VP Purchasing Verified (+4)','LinkedIn 可触达 (+2)','官网 (+1)'],
+    tags:['分销商'], hs:['9405'], contact:'Michael Ross · VP Purchasing',
+    industry:'Lighting wholesale', products:'LED 灯具、商业照明', volume:'$450万/年',
+    website:'lumitrade.com', email:'m.ross@lumitrade.com', phone:'+1 312 555 0200', founded:'2012',
+    employees:'200-500', dataSource:'腾道海关',
+    address:'Chicago, IL, USA', description:'美国中西部 LED 批发商，持续从亚洲进口商业照明，采购规模稳定。',
+    social:{linkedin:true,facebook:false,twitter:false},
+    leadContacts:[{name:'Michael Ross',phone:'+1 312...',role:'VP Purchasing',linkedin:true,facebook:false,
+      preference:'关注稳定供货与批量折扣，偏好季度框架订单。',
+      suggest:'突出产能与交期保障，附近 12 月同类进口品类作为匹配证据。',
+      aiTip:'邮件开头引用其近期 HS 9405 进口批次，可信度更高。',
+      emails:[{address:'m.ross@lumitrade.com',type:'corporate',status:'verified'}]}],
+    customs:[{date:'2026-05-20',hs:'9405',desc:'LED fixtures',amount:'$156,000',origin:'China'}],
+    trade:{volume:'$450万/年',freq:'18批/年',trend:'稳定',
+      records:[{date:'2026-05-20',desc:'LED fixtures',supplier:'Shenzhen Opto Co.',region:'中国',amount:'156,000',qty:'1,200',weight:'800',hs:'9405.40'},
+        {date:'2026-03-15',desc:'Commercial downlights',supplier:'Guangzhou LED Ltd.',region:'中国',amount:'98,400',qty:'900',weight:'620',hs:'9405.40'}],
+      chartPoints:[12,18,22,28,35,30,25,20,18,22,26,30],
+      supplierRecords:[
+        {date:'2026-04-12',desc:'LED wholesale export',buyer:'Midwest Retail Co.',region:'美国',amount:'88,000',qty:'950',weight:'520',hs:'9405.40'},
+        {date:'2026-02-28',desc:'Panel lights export',buyer:'Canada Light Inc.',region:'加拿大',amount:'54,300',qty:'620',weight:'340',hs:'9405.40'}
+      ]},
+    metrics:[['采购金额','$450万'],['采购量','2,100件'],['采购频次','18批/年']] },
+  { id:'r3', name:'Nordic Light AB', country:'瑞典', type:'进口商', score:68, stars:2,
+    aiSummary:'北欧智能照明渠道商，进口趋势上升，建议优先邮件开发。',
+    reason:'北欧智能照明渠道商，年进口 $120万+，进口活跃。',
+    scoreBreakdown:{ profile:20, demand:28, timing:null, reachability:5 },
+    aiReasons:[
+      '北欧智能照明渠道商，品类与您的产品匹配。',
+      '年进口 $120 万以上，近期进口趋势在上升。',
+      '触达渠道相对有限，建议先用邮件开发再推进样品。'
+    ],
+    explain:['北欧 · 同大区匹配 (+6)','智能照明 HS 匹配 (+7)','进口额 P60 (+4)','进口趋势活跃 (+7)','14批/年 (+7)','新目的国 (+3)','Procurement + Email (+4)','LinkedIn (+2)'],
+    tags:['进口商'], hs:['9405.50'], contact:'Erik Lindström · Procurement',
+    industry:'Smart Lighting', products:'Smart Lighting', volume:'$120万/年',
+    website:'nordiclight.se', email:'e.lindstrom@nordiclight.se', phone:'+46 8 123456', founded:'2010',
+    employees:'20-50', dataSource:'腾道海关',
+    address:'Stockholm, Sweden', description:'北欧智能照明渠道商，进口趋势上升，品类与画像匹配。',
+    social:{linkedin:true,facebook:false,twitter:false},
+    leadContacts:[{name:'Erik Lindström',email:'e.lindstrom@nordiclight.se',phone:'+46...',role:'Procurement',linkedin:true,facebook:false,
+      preference:'关注智能照明认证与能效标准，采购决策偏谨慎。',
+      suggest:'邮件先附 CE / ERP 认证与样品周期，少谈价格先谈合规。'}],
+    customs:[{date:'2026-04-10',hs:'9405.50',desc:'Smart lighting',amount:'$68,000',origin:'China'}],
+    metrics:[['采购金额','$120万'],['采购量','860件'],['采购频次','14批/年']] },
+  { id:'r4', name:'EuroLux Distribution', country:'英国', type:'分销商', score:65, stars:2,
+    aiSummary:'英国照明分销商，近半年进口频次稳定，适合以样品和目录切入。',
+    reason:'英国照明渠道商，近 6 月 HS 9405 进口频次稳定。',
+    scoreBreakdown:{ profile:22, demand:24, timing:null, reachability:6 },
+    aiReasons:[
+      '英国照明分销商，近半年进口频次稳定。',
+      '主营 LED 与商业照明，和您的产品线匹配。',
+      '适合作为渠道型客户长期跟进，建议先寄样品和目录。'
+    ],
+    explain:['英国 · 同大区匹配 (+6)','HS 9405 完全匹配 (+9)','进口额 P55 (+4)','进口频次稳定 (+7)','新 HS (+4)','Head of Procurement Email (+4)','LinkedIn + 官网 (+3)'],
+    tags:['分销商'], hs:['9405.42'], contact:'James Wright · Head of Procurement',
+    industry:'渠道分销', products:'LED、商业照明', volume:'£95万/年',
+    website:'eurolux.co.uk', email:'j.wright@eurolux.co.uk', phone:'+44 161 123456', founded:'2005',
+    employees:'100-300', dataSource:'腾道海关',
+    address:'Manchester, UK', description:'英国照明渠道分销商，近 6 月 HS 9405 进口频次稳定。',
+    social:{linkedin:true,facebook:true,twitter:false},
+    leadContacts:[{name:'James Wright',email:'j.wright@eurolux.co.uk',phone:'—',role:'Head of Procurement',linkedin:true,facebook:false,
+      preference:'渠道分销，关注目录齐全度、样品支持与经销政策。',
+      suggest:'先寄主力 SKU 样品与渠道条款，再约目录合作。'}],
+    customs:[{date:'2026-05-10',hs:'9405.42',desc:'LED channels',amount:'£42,000',origin:'China'}],
+    metrics:[['采购金额','£95万'],['采购量','1,200件'],['采购频次','16批/年']] }
+];
+
+const HIST_LEADS = [
+  { id:'h1', name:'Pacific LED Co.', country:'美国', type:'进口商', score:64, recommendedAt:'2026-08-12',
+    aiSummary:'美国西岸 LED 渠道商，品类与画像部分重叠。',
+    reason:'美国 LED 渠道商，采购额中等。',
+    industry:'Lighting', products:'LED 灯具', volume:'$80万/年',
+    website:'pacificled.com', email:'buyer@pacificled.com', phone:'+1 415 555 0198', founded:'2012',
+    address:'San Francisco, USA', description:'美国西岸 LED 渠道商。',
+    leadContacts:[{name:'Amy Chen',email:'amy@pacificled.com',role:'Buyer',phone:'+1 415 555 0198'}],
+    metrics:[['采购金额','$80万'],['采购量','600件'],['采购频次','9批/年']],
+    customs:[{date:'2026-06-02',hs:'9405.40',desc:'LED lamps',amount:'$28,000',origin:'China'}] },
+  { id:'h2', name:'BrightHome GmbH', country:'德国', type:'分销商', score:61, recommendedAt:'2026-08-08',
+    aiSummary:'德国家居照明分销商，年采购规模偏小。',
+    reason:'德国分销商，采购额偏低。',
+    industry:'Home lighting', products:'家居照明', volume:'€35万/年',
+    website:'brighthome.de', email:'einkauf@brighthome.de', phone:'+49 89 123456', founded:'2018',
+    address:'Munich, Germany', description:'德国家居照明分销商。',
+    leadContacts:[{name:'Lukas Weber',email:'l.weber@brighthome.de',role:'Einkauf'}],
+    metrics:[['采购金额','€35万'],['采购量','220件'],['采购频次','6批/年']],
+    customs:[{date:'2026-05-18',hs:'9405.10',desc:'Home lamps',amount:'€12,400',origin:'China'}] },
+  { id:'h3', name:'LuxHub UK Ltd', country:'英国', type:'进口商', score:70, recommendedAt:'2026-07-29',
+    aiSummary:'英国照明进口商，当时选择暂缓跟进。',
+    reason:'英国进口商，季度采购窗口未到。',
+    industry:'Lighting import', products:'商业照明', volume:'£110万/年',
+    website:'luxhub.co.uk', email:'procurement@luxhub.co.uk', phone:'+44 20 7946 0958', founded:'2009',
+    address:'London, UK', description:'英国商业照明进口商。',
+    leadContacts:[{name:'Sarah Cole',email:'s.cole@luxhub.co.uk',role:'Procurement Manager'}],
+    metrics:[['采购金额','£110万'],['采购量','980件'],['采购频次','12批/年']],
+    customs:[{date:'2026-03-22',hs:'9405.42',desc:'Commercial LED',amount:'£51,000',origin:'China'}] },
+  { id:'h4', name:'Nordlicht Import AS', country:'挪威', type:'进口商', score:73, recommendedAt:'2026-08-18',
+    aiSummary:'挪威照明进口商，近半年进口频次上升。',
+    reason:'挪威进口商，采购节奏加快。',
+    industry:'Lighting', products:'商业照明', volume:'$140万/年',
+    website:'nordlicht.no', email:'buy@nordlicht.no', phone:'+47 21 555 019', founded:'2011',
+    address:'Oslo, Norway', description:'挪威商业照明进口商。',
+    leadContacts:[{name:'Erik Hagen',email:'erik@nordlicht.no',role:'Buyer'}],
+    metrics:[['采购金额','$140万'],['采购量','1,050件'],['采购频次','14批/年']],
+    customs:[{date:'2026-07-02',hs:'9405.40',desc:'LED panels',amount:'$41,000',origin:'China'}] },
+  { id:'h5', name:'Maple Beam Inc.', country:'加拿大', type:'分销商', score:69, recommendedAt:'2026-08-15',
+    aiSummary:'加拿大照明分销商，渠道覆盖东部零售。',
+    reason:'加拿大分销商，适合样品切入。',
+    industry:'Lighting distribution', products:'LED 灯具', volume:'CA$90万/年',
+    website:'maplebeam.ca', email:'purchasing@maplebeam.ca', phone:'+1 416 555 0288', founded:'2014',
+    address:'Toronto, Canada', description:'加拿大东部照明分销商。',
+    leadContacts:[{name:'Claire Dubois',email:'claire@maplebeam.ca',role:'Purchasing'}],
+    metrics:[['采购金额','CA$90万'],['采购量','720件'],['采购频次','11批/年']],
+    customs:[{date:'2026-06-20',hs:'9405.40',desc:'LED downlights',amount:'CA$22,000',origin:'China'}] },
+  { id:'h6', name:'Aura Lights Pty', country:'澳大利亚', type:'进口商', score:66, recommendedAt:'2026-08-05',
+    aiSummary:'澳洲照明进口商，关注认证与交期。',
+    reason:'澳洲进口商，SAA 认证要求明确。',
+    industry:'Lighting', products:'室内照明', volume:'A$75万/年',
+    website:'auralights.com.au', email:'import@auralights.com.au', phone:'+61 2 5550 4411', founded:'2016',
+    address:'Sydney, Australia', description:'澳洲室内照明进口商。',
+    leadContacts:[{name:'Noah Grant',email:'noah@auralights.com.au',role:'Import Manager'}],
+    metrics:[['采购金额','A$75万'],['采购量','540件'],['采购频次','8批/年']],
+    customs:[{date:'2026-05-30',hs:'9405.10',desc:'Indoor LED',amount:'A$18,600',origin:'China'}] }
+];
+
+const TRADE_SEARCH_RECORDS = [
+  { id:'tr1', recordId:'65ddd31476f1c3c813899abc', buyer:'AMITY IMPORTS INC', supplier:'COTTAGE IMPEX PRIVATE LIMITED',
+    productDesc:'10X10X12 BLACK PUMPKIN W LED SKULL W BAT ETC SHIPPER LOAD AND COUNT', tradeDate:'2020-01-01',
+    customsNo:'CHSL452673138HCM', blNo:'AMZDCN23EDTIJLWY', dataType:'进口', hsCode:'950590', qty:'22', qtyUnit:'PCS',
+    weight:'—', amount:'616', originCountry:'India', destCountry:'UNITED STATES',
+    portLoad:'NHAVA SHEVA SEA (INNSA1)', portDischarge:'Los Angeles', transport:'Sea' },
+  { id:'tr2', recordId:'65ddd31476f1c3c813899abd', buyer:'PAK MOTORS LTD', supplier:'TOKYO AUTO EXPORT CO.',
+    productDesc:'FREIGHT COLLECT PASSENGER CAR RADIAL TIRES COMMERCIAL INVOICE', tradeDate:'2025-11-08',
+    customsNo:'PKSL882910238KHI', blNo:'PKDCN25AUTO001', dataType:'进口', hsCode:'8703', qty:'48', qtyUnit:'PCS',
+    weight:'12,400', amount:'186,000', originCountry:'Japan', destCountry:'PAKISTAN',
+    portLoad:'Yokohama', portDischarge:'Karachi', transport:'Sea', highlight:['CAR'] },
+  { id:'tr3', recordId:'65ddd31476f1c3c813899abe', buyer:'EURO MOTORS GMBH', supplier:'DUBAI AUTO TRADING LLC',
+    productDesc:'USED PASSENGER VEHICLES HS 8703 SHIPPER LOAD AND COUNT', tradeDate:'2025-10-22',
+    customsNo:'EUSL772610019HAM', blNo:'EUDCN25VEH002', dataType:'进口', hsCode:'8703', qty:'36', qtyUnit:'PCS',
+    weight:'9,800', amount:'142,000', originCountry:'UAE', destCountry:'GERMANY',
+    portLoad:'Jebel Ali', portDischarge:'Hamburg', transport:'Sea' }
+];
+
+const EXTRA_DETAILS = {
+  google: { id:'google', name:'Google', country:'美国', type:'科技企业', score:92, stars:4,
+    crmStatus:'archived', crmStatusLabel:'已建档', crmCustomerId:'demo-google',
+    reason:'全球知名科技公司，公开信息丰富，含多部门采购联系人。',
+    aiReasons:['企业规模大，采购体系成熟，适合作为长期供应商备选。','公开渠道可触达采购相关团队，便于先建立联系。'],
+    explain:['企业规模庞大，采购体系成熟','公开渠道可触达采购相关部门'],
+    contact:'采购部门 · 公开渠道', industry:'软件开发/开发软件与服务', products:'云服务、硬件、办公设备', volume:'—',
+    website:'http://google.com', email:'contact@google.com', phone:'+1 650 555 0100', founded:'1998',
+    address:'1600 Amphitheatre Pkwy, Mountain View, CA',
+    description:'Google is a technology company that offers a wide range of internet services and products.',
+    social:{linkedin:true,facebook:false,twitter:false},
+    leadContacts:[
+      {name:'Procurement Team',phone:'+1 650...',role:'采购部门',linkedin:true,facebook:false,
+        emails:[{address:'procurement@google.com',type:'corporate',status:'verified'}]},
+      {name:'Vendor Relations',phone:'—',role:'供应商关系',linkedin:true,facebook:false,
+        emails:[{address:'vendors@google.com',type:'corporate',status:'verified'}]}
+    ],
+    customs:[], tags:['科技','B2B'] },
+  'google-corp': { id:'google-corp', name:'Google CORPORATION', country:'美国', type:'科技企业', score:88, stars:4,
+    crmStatus:'background', crmStatusLabel:'已背调',
+    reason:'同名企业实体，公开信息可检索。',
+    industry:'软件开发/开发软件与服务', products:'—', volume:'—',
+    website:'http://google.com.vn', email:'info@google.com.vn', phone:'—', founded:'—',
+    address:'Ho Chi Minh City, Vietnam',
+    description:'Driven by innovation and engineered for excellence, a leading global automotive manufacturer.',
+    social:{linkedin:false,facebook:false,twitter:false},
+    leadContacts:[{name:'General Contact',email:'info@google.com.vn',phone:'—',role:'—',linkedin:false,facebook:false,
+      emails:[{address:'info@google.com.vn',type:'corporate',status:'risky'}]}],
+    customs:[], tags:[] },
+  pakmotors: { id:'pakmotors', name:'Pak Motors Ltd.', country:'巴基斯坦', type:'进口商', score:88, stars:4,
+    reason:'2025.Q4 从多国进口二手车共 18 批，巴基斯坦区域主要进口商之一。',
+    aiReasons:['近一季度进口 18 批，采购频次活跃。','巴基斯坦区域主要的二手车进口商之一。','进口品类与 HS 8703 高度匹配。'],
+    explain:['季度进口 18 批，频次活跃','巴基斯坦区域头部二手车进口商','HS 8703 品类高度匹配'],
+    contact:'Import Dept.', industry:'汽车贸易', products:'二手车 HS 8703', volume:'$320万/季',
+    website:'—', email:'—', phone:'—', founded:'—',
+    address:'Karachi, Pakistan',
+    description:'Leading used vehicle importer in Pakistan with multi-country sourcing.',
+    social:{linkedin:false,facebook:false,twitter:false},
+    leadContacts:[{name:'Import Dept.',email:'—',phone:'—',role:'进口部',linkedin:false,facebook:false}],
+    customs:[{date:'2025-11-20',hs:'8703',desc:'Used vehicles',amount:'$186,000',origin:'Japan'},{date:'2025-10-08',hs:'8703',desc:'Used cars',amount:'$142,000',origin:'UAE'}],
+    trade:{volume:'$320万/季',freq:'18批/季',trend:'↑ 12%',
+      records:[{date:'2025-11-20',desc:'Used vehicles',supplier:'Tokyo Auto Export',region:'日本',amount:'186,000',qty:'48',weight:'—'}],
+      chartPoints:[8,10,12,14,16,18,15,14,16,18,20,18]},
+    tags:['汽车','HS 8703'] }
+};
+
+const EXAMPLES = [
+  '帮我找最近3个月采购二手车的肯尼亚企业',
+  '查一下"Google"公司的信息和联系人',
+  '查找2025.10.1-2025.12.31出口到巴基斯坦的二手车贸易记录'
+];
+
+const INTENTS = [
+  [['品类','二手车'],['国家','肯尼亚'],['时间','近3个月'],['类型','采购商']],
+  [['企业','Google'],['需求','企业信息 + 联系人']],
+  [['品类','二手车'],['出口国','—'],['目的国','巴基斯坦'],['时间','2025.10.1 - 2025.12.31']]
+];
+
+const PROFILE = {
+  products: 'LED 照明灯具、智能照明',
+  markets: '美国、德国、英国'
+};
+
+const state = {
+  hasProfile: true,
+  converted: 0,
+  ignored: new Set(['h1','h2','h3']),
+  ignoreReasons: new Map([
+    ['h1', { reason:'品类不匹配', note:'', date:'2026-08-12' }],
+    ['h2', { reason:'采购规模太小', note:'', date:'2026-08-08' }],
+    ['h3', { reason:'暂时不跟进', note:'下季度再看', date:'2026-07-29' }]
+  ]),
+  convertedIds: new Set(),
+  checkedIds: new Set(),
+  restoredIds: new Set(),
+  tabs: [{ id:'feed', title:'今日推荐', kind:'feed' }],
+  activeTab: 'feed',
+  showIgnored: false,
+  detailSrc: 'AI搜索',
+  selectedId: null,
+  pendingConvert: null,
+  pendingIgnore: null,
+  pendingIgnoreReason: '',
+  asstHistoryOpen: false,
+  searchHistory: [],
+  minedRecs: [],
+  mining: null,
+  mineProgress: 0,
+  previewWait: false
+};
+
+function getLead(id) {
+  return RECS.find(r => r.id === id) || HIST_LEADS.find(r => r.id === id) || (state.minedRecs || []).find(r => r.id === id) || EXTRA_DETAILS[id];
+}
+
+function feedPool() {
+  return [...HIST_LEADS.filter(h => state.restoredIds.has(h.id)), ...RECS, ...(state.minedRecs || [])];
+}
+
+function isAsstConverted(r) {
+  return state.convertedIds.has(r.id) || !!r.crmCustomerId;
+}
+
+function asstStatusTagHTML(r) {
+  const converted = isAsstConverted(r);
+  const label = converted ? '已建档' : '已背调';
+  const status = converted ? 'archived' : 'background';
+  return `<span class="asst-crm-tag ${status}">${label}</span>`;
+}
+
+function asstEntHitCardClass(r) {
+  let cls = 'asst-ent-hit';
+  if (state.ignored.has(r.id)) cls += ' ignored clickable';
+  else if (isAsstConverted(r)) cls += ' converted';
+  else cls += ' clickable';
+  return cls;
+}
+
+function asstHitActionsHTML(r, src) {
+  const converted = isAsstConverted(r);
+  const ignored = state.ignored.has(r.id);
+  if (ignored) return '<div class="asst-hit-status ignored">已忽略</div>';
+  if (converted) {
+    const cid = r.crmCustomerId || r.id;
+    return `<div class="asst-hit-actions single" onclick="event.stopPropagation()">
+      <button class="btn btn-ghost" onclick="goToCustomerDetail('${cid}')">查看</button>
+    </div>`;
+  }
+  return `<div class="asst-hit-actions dual" onclick="event.stopPropagation()">
+    <button class="btn btn-convert" onclick="convertLead('${r.id}','${src}')">转客户</button>
+    <button class="btn btn-ignore" onclick="ignoreAsstHit('${r.id}')">忽略</button>
+  </div>`;
+}
+
+function asstEntHitCard(r, src, mode) {
+  if (!r || !r.name) return '';
+  if (mode === 'recommend') return asstRecommendHitCard(r, src);
+  return asstCompanyHitCardInner(r, src);
+}
+
+function asstRecommendHitCard(r, src) {
+  const score = r.score != null && r.score !== '—' ? r.score : null;
+  const click = !isAsstConverted(r)
+    ? ` onclick="openAsstLeadDetail('${r.id}','${src}','recommend')"` : '';
+  return `<div class="${asstEntHitCardClass(r)} asst-rec-hit" data-id="${r.id}" data-src="${src}" data-card-type="ent" data-card-mode="recommend"${click}>
+    <div class="asst-ent-row asst-rec-top">
+      <div class="asst-company-icon">🏢</div>
+      <div class="asst-company-main">
+        <div class="asst-company-name-row">
+          <span class="asst-company-name">${r.name}</span>
+          ${asstStatusTagHTML(r)}
+          ${r.country ? `<span class="asst-company-country">${r.country}</span>` : ''}
+        </div>
+        ${r.type ? `<div class="asst-rec-meta">${r.type}</div>` : ''}
+      </div>
+      ${score != null ? `<div class="asst-hit-score" style="--p:${score}"><span>${score}</span></div>` : ''}
+    </div>
+    ${r.reason ? `<div class="asst-rec-reason">${r.reason}</div>` : ''}
+    ${asstHitActionsHTML(r, src)}
+  </div>`;
+}
+
+function asstCompanyHitCardInner(r, src) {
+  const click = !isAsstConverted(r)
+    ? ` onclick="openAsstLeadDetail('${r.id}','${src}','search')"` : '';
+  const comm = [
+    r.phone && r.phone !== '—' ? '📞' : '',
+    r.email && r.email !== '—' ? '✉️' : ''
+  ].filter(Boolean).join(' ');
+  return `<div class="${asstEntHitCardClass(r)}" data-id="${r.id}" data-src="${src}" data-card-type="ent" data-card-mode="company"${click}>
+    <div class="asst-ent-row">
+      <div class="asst-company-icon">🏢</div>
+      <div class="asst-company-main">
+        <div class="asst-company-name-row">
+          <span class="asst-company-name">${r.name}</span>
+          ${asstStatusTagHTML(r)}
+          ${r.country ? `<span class="asst-company-country">${r.country}</span>` : ''}
+        </div>
+        ${comm ? `<div class="asst-company-comm">${comm}</div>` : ''}
+      </div>
+    </div>
+    <div class="asst-company-fields">
+      <div><dt>网址</dt><dd>${r.website || '—'}</dd></div>
+      <div><dt>行业</dt><dd>${r.industry || '—'}</dd></div>
+      <div><dt>公司描述</dt><dd>${r.description || '—'}</dd></div>
+    </div>
+    ${asstHitActionsHTML(r, src)}
+  </div>`;
+}
+
+function asstRecHitCard(r, src) {
+  return asstEntHitCard(r, src, 'recommend');
+}
+
+function asstCompanyHitCard(r, src) {
+  return asstEntHitCard(r, src, 'company');
+}
+
+function highlightTradeText(text, keywords) {
+  let out = cfEsc(text || '—');
+  (keywords || []).forEach(kw => {
+    out = out.replace(new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), m => `<mark class="kw-hit">${m}</mark>`);
+  });
+  return out;
+}
+
+function asstTradeRecordRow(rec) {
+  return `<div class="asst-trade-row" onclick="openTradeRecordDetail('${rec.id}')">
+    <div class="asst-trade-icon">📄</div>
+    <div class="asst-trade-main">
+      <div class="asst-trade-id">${rec.recordId}</div>
+      <div class="asst-trade-field"><dt>采购商</dt><dd>${cfEsc(rec.buyer)}</dd></div>
+      <div class="asst-trade-field"><dt>供应商</dt><dd>${cfEsc(rec.supplier)}</dd></div>
+      <div class="asst-trade-field"><dt>产品描述</dt><dd>${highlightTradeText(rec.productDesc, rec.highlight)}</dd></div>
+    </div>
+  </div>`;
+}
+
+function asstTradeRecordList(records) {
+  return `<div class="asst-trade-list">${records.map(asstTradeRecordRow).join('')}</div>`;
+}
+
+function buildTradeRecordDetailHTML(rec) {
+  if (!rec) return '';
+  return `<div class="trade-detail-body">
+    <div class="trade-detail-section">
+      <div class="trade-detail-title">贸易信息</div>
+      <div class="trade-detail-grid">
+        <div class="trade-detail-row"><dt>贸易时间</dt><dd>${rec.tradeDate || '—'}</dd></div>
+        <div class="trade-detail-row"><dt>贸易记录ID</dt><dd>${rec.recordId || '—'}</dd></div>
+        <div class="trade-detail-row"><dt>关单号</dt><dd>${rec.customsNo || '—'}</dd></div>
+        <div class="trade-detail-row"><dt>提单号</dt><dd>${rec.blNo || '—'}</dd></div>
+        <div class="trade-detail-row"><dt>数据类型</dt><dd>${rec.dataType || '—'}</dd></div>
+      </div>
+    </div>
+    <div class="trade-detail-section">
+      <div class="trade-detail-title">采购/供应商信息</div>
+      <div class="trade-detail-grid">
+        <div class="trade-detail-row"><dt>采购商</dt><dd class="link" onclick="toast('跳转企业详情')">${rec.buyer || '—'}</dd></div>
+        <div class="trade-detail-row"><dt>供应商</dt><dd class="link" onclick="toast('跳转企业详情')">${rec.supplier || '—'}</dd></div>
+      </div>
+    </div>
+    <div class="trade-detail-section">
+      <div class="trade-detail-title">产品信息</div>
+      <div class="trade-detail-grid">
+        <div class="trade-detail-row"><dt>产品描述</dt><dd>${highlightTradeText(rec.productDesc, rec.highlight)}</dd></div>
+        <div class="trade-detail-row"><dt>海关编码</dt><dd>${rec.hsCode || '—'}</dd></div>
+        <div class="trade-detail-row"><dt>数量</dt><dd>${rec.qty || '—'}${rec.qtyUnit ? ' (' + rec.qtyUnit + ')' : ''}</dd></div>
+        <div class="trade-detail-row"><dt>重量 (KG)</dt><dd>${rec.weight || '—'}</dd></div>
+        <div class="trade-detail-row"><dt>金额 (USD)</dt><dd>${rec.amount || '—'}</dd></div>
+      </div>
+    </div>
+    <div class="trade-detail-section">
+      <div class="trade-detail-title">货运信息</div>
+      <div class="trade-detail-grid">
+        <div class="trade-detail-row"><dt>原产国</dt><dd>${rec.originCountry || '—'}</dd></div>
+        <div class="trade-detail-row"><dt>目的国</dt><dd>${rec.destCountry || '—'}</dd></div>
+        <div class="trade-detail-row"><dt>起运港</dt><dd>${rec.portLoad || '—'}</dd></div>
+        <div class="trade-detail-row"><dt>目的港</dt><dd>${rec.portDischarge || '—'}</dd></div>
+        <div class="trade-detail-row"><dt>运输方式</dt><dd>${rec.transport || '—'}</dd></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function setAsstDetailTitle(title) {
+  const el = document.getElementById('asst-detail-title');
+  if (el) el.textContent = title || '详情';
+}
+
+function showAsstDetail(title, bodyHtml, actionsHtml) {
+  setAsstDetailTitle(title);
+  document.getElementById('asst-detail-body').innerHTML = bodyHtml || '';
+  document.getElementById('asst-detail-actions').innerHTML = actionsHtml || '';
+  document.getElementById('asst-detail').classList.add('show');
+  document.getElementById('asst-footer').style.display = 'none';
+  toggleAsstHistory(false);
+}
+
+function openTradeRecordDetail(recordId) {
+  const rec = TRADE_SEARCH_RECORDS.find(r => r.id === recordId);
+  if (!rec) return;
+  if (!document.body.classList.contains('assistant-open')) {
+    document.body.classList.add('assistant-open');
+  }
+  state.selectedId = null;
+  showAsstDetail('贸易记录详情', buildTradeRecordDetailHTML(rec), '');
+}
+
+function leadContactsTableHTML(r) {
+  const rows = r.leadContacts || [];
+  if (!rows.length) return '<div class="lead-empty">暂无联系人</div>';
+  return `<table class="lead-contacts-table"><thead><tr>
+    <th></th><th>联系人</th><th>邮箱</th><th>电话</th><th>社媒</th><th>职务</th><th>操作</th>
+  </tr></thead><tbody>${rows.map(x => {
+    const emails = leadNormalizeEmails(x);
+    const social = x.social || { linkedin: x.linkedin, facebook: x.facebook, twitter: x.twitter };
+    return `<tr>
+      <td><input type="checkbox" onclick="event.stopPropagation()"></td>
+      <td>${x.name}</td>
+      <td>${emails.length ? emails.map(leadEmailLine).join('') : '—'}</td>
+      <td>${x.phone || '—'}</td>
+      <td>${leadSocialCell(social)}</td>
+      <td>${x.role || '—'}</td>
+      <td><div class="pcard-actions">${leadReachIcons(x)}</div></td></tr>`;
+  }).join('')}</tbody></table>`;
+}
+
+function buildAsstLeadContentHTML(r, mode) {
+  if (mode === 'search') {
+    return `${leadOverviewCardHTML(r)}
+      <div class="lead-tabs">
+        <span class="lead-tab active">联系人</span>
+      </div>
+      <div class="lead-tab-body">${leadContactCardsHTML(r)}</div>`;
+  }
+  return buildLeadContentHTML(r);
+}
+
+function openAsstLeadDetail(id, src, mode) {
+  const r = getLead(id);
+  if (!r || isAsstConverted(r)) return;
+  openLeadDetail(id, src, mode);
+}
+
+function refreshAsstHitCard(id) {
+  document.querySelectorAll(`.asst-ent-hit[data-id="${id}"]`).forEach(el => {
+    const r = getLead(id);
+    if (!r) return;
+    const src = el.dataset.src || 'AI搜索';
+    const mode = el.dataset.cardMode || 'recommend';
+    el.outerHTML = mode === 'company' ? asstCompanyHitCardInner(r, src) : asstRecommendHitCard(r, src);
+  });
+}
+
+function ignoreAsstHit(id) {
+  if (state.ignored.has(id)) return;
+  openIgnoreModal([id]);
+}
+
+function goToCustomerDetail(customerId) {
+  window.open('customer-detail.html?id=' + encodeURIComponent(customerId), '_blank');
+  toast('跳转客户管理详情');
+}
+
+function miniCard(r, src) {
+  return asstRecHitCard(r, src);
+}
+
+const CARD_TODAY = '2026-08-20';
+
+function lastImportIso(r) {
+  return (r.customs && r.customs[0] && r.customs[0].date) || (r.trade && r.trade.records && r.trade.records[0] && r.trade.records[0].date) || '';
+}
+function formatImportWhen(iso) {
+  if (!iso) return '—';
+  const days = Math.round((new Date(CARD_TODAY + 'T00:00:00') - new Date(iso + 'T00:00:00')) / 86400000);
+  if (days === 0) return '今天';
+  if (days === 1) return '昨天';
+  if (days > 0 && days <= 60) return days + '天前';
+  const m = String(iso).slice(5, 7).replace(/^0/, '');
+  const d = String(iso).slice(8, 10).replace(/^0/, '');
+  return m && d ? `${m}月${d}日` : iso;
+}
+function cardAmount(r) {
+  if (r.metrics && r.metrics[0] && r.metrics[0][1]) return String(r.metrics[0][1]).replace(/\/年$/, '');
+  const v = (r.trade && r.trade.volume) || r.volume || '';
+  return String(v).replace(/\/年$/, '') || '—';
+}
+function cardTrend(r) {
+  const blob = [r.hsSummary, r.aiSummary, r.reason].filter(Boolean).join(' ');
+  const yoy = blob.match(/YoY\s*\+?\s*(-?\d+%)/i) || blob.match(/同比增长\s*(\d+%)/);
+  if (yoy) {
+    const n = yoy[1].startsWith('+') || yoy[1].startsWith('-') ? yoy[1] : '+' + yoy[1];
+    return { label: 'YoY ' + n, tone: n.startsWith('-') ? 'down' : 'up' };
+  }
+  if (/趋势上升|需求在放大|进口趋势上升/.test(blob)) return { label: '上升', tone: 'up' };
+  if (/持平|同比持平|频次稳定|规模稳定/.test(blob)) return { label: '稳定', tone: '' };
+  const t = (r.trade && r.trade.trend) || '';
+  if (/↓|下滑|下降/.test(blob + t) && !/增长|上升/.test(blob)) return { label: '下滑', tone: 'down' };
+  if (/稳定/.test(t)) return { label: '稳定', tone: '' };
+  return { label: t || '—', tone: '' };
+}
+function cardReach(r) {
+  const c = (r.leadContacts || [])[0];
+  if (!c || !c.name) return { text: '暂无采购联系人', ok: false };
+  const emails = leadNormalizeEmails(c);
+  const verified = emails.some(e => e.status === 'verified');
+  const hasEmail = emails.some(e => e.address && e.address !== '—');
+  const role = c.role && c.role !== '—' ? c.role : '';
+  const parts = [c.name];
+  if (role) parts.push(role);
+  if (verified) parts.push('邮箱已验证');
+  else if (hasEmail) parts.push('有邮箱');
+  else if (c.phone && c.phone !== '—') parts.push('有电话');
+  else return { text: parts.join(' · ') + ' · 暂无验证邮箱', ok: false };
+  return { text: parts.join(' · '), ok: true };
+}
+function cardMetrics(r) {
+  const trend = cardTrend(r);
+  return [
+    ['近12月采购额', cardAmount(r), ''],
+    ['最近进口', formatImportWhen(lastImportIso(r)), ''],
+    ['采购趋势', trend.label, trend.tone]
+  ];
+}
+
+function recCountryTag(r) {
+  if (!r.country) return '';
+  return `<span class="tag country">${r.country}</span>`;
+}
+
+function recStars(r) {
+  const n = Number(r.score) >= 70 ? 5 : 4;
+  return `<div class="rec-stars" title="匹配 ${n} 星">${'⭐'.repeat(n)}</div>`;
+}
+
+function scoreRing(score) {
+  return `<div class="score-ring" style="--p:${score}"><div class="score-inner">${score}</div></div>`;
+}
+
+function card(r, src, compact) {
+  const converted = state.convertedIds.has(r.id);
+  const ignored = state.ignored.has(r.id);
+  if (!compact && (ignored || converted)) return '';
+  if (compact && ignored) return '';
+  if (compact) return miniCard(r, src);
+  const metrics = cardMetrics(r).map(([a,b,tone])=>`<div class="rec-metric"><dt>${a}</dt><dd${tone?` class="${tone}"`:''}>${b}</dd></div>`).join('');
+  const reach = cardReach(r);
+  const checked = state.checkedIds.has(r.id);
+  return `<div class="rec-card ${converted?'converted':''} ${state.selectedId===r.id?'selected':''} ${checked?'checked':''}" id="card-${r.id}" onclick="selectRec('${r.id}','${src}')">
+    <div class="rec-top">
+      <label class="rec-check" onclick="event.stopPropagation()">
+        <input type="checkbox" ${checked?'checked':''} onclick="event.stopPropagation();toggleCheck('${r.id}', this.checked)">
+      </label>
+      <div class="rec-top-main">
+        <div class="rec-company"><span class="rec-company-name">${r.name}</span>${recCountryTag(r)}</div>
+      </div>
+      ${recStars(r)}
+    </div>
+    <div class="rec-why"><strong>为什么推荐？</strong>${r.aiSummary || r.reason}</div>
+    <div class="rec-metrics">${metrics}</div>
+    <div class="rec-reach ${reach.ok?'':'weak'}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <span>${reach.text}</span>
+    </div>
+    <div class="rec-actions" onclick="event.stopPropagation()">
+      <button class="btn btn-convert" type="button" onclick="event.stopPropagation();convertLead('${r.id}','${src}')">存入CRM</button>
+      <button class="btn btn-ignore" type="button" onclick="event.stopPropagation();ignoreLead('${r.id}')">忽略</button>
+    </div>
+  </div>`;
+}
+
+let leadTab = 'contacts';
+const LEAD_TABS = [
+  {id:'contacts', label:'联系人'},
+  {id:'trade', label:'贸易数据'},
+  {id:'exhibitions', label:'参展情况'},
+  {id:'rfq', label:'RFQ清单'}
+];
+let leadTradeSub = 'records';
+let leadDescOpen = false;
+
+function countryFlag(country) {
+  const map = { '美国':'🇺🇸', 'USA':'🇺🇸', '英国':'🇬🇧', '德国':'🇩🇪', '瑞典':'🇸🇪', '加拿大':'🇨🇦', '日本':'🇯🇵' };
+  return map[country] || '🏳️';
+}
+
+function countryCode(country) {
+  const map = { '美国':'US', 'USA':'US', '英国':'GB', '德国':'DE', '瑞典':'SE', '加拿大':'CA', '日本':'JP', '巴基斯坦':'PK' };
+  return map[country] || String(country || '').slice(0, 2).toUpperCase() || '—';
+}
+
+function leadInitials(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '?';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+
+function leadDash(v) {
+  return v && v !== '—' ? v : '';
+}
+
+function leadTypeLabel(t) {
+  const map = {
+    Importer:'进口商', 进口商:'进口商',
+    Distributor:'分销商', 分销商:'分销商', Wholesaler:'分销商', 批发商:'分销商',
+    Exporter:'出口商', 出口商:'出口商'
+  };
+  return map[t] || '';
+}
+
+function leadReadableReasons(r) {
+  if (r.aiReasons?.length) return r.aiReasons.slice(0, 5);
+  if (r.aiSummary) return [r.aiSummary];
+  if (r.reason) return [r.reason];
+  return [];
+}
+
+function leadReachCard(icon, value, okText) {
+  if (value) {
+    return `<div class="ov-reach-card">
+      <div class="ov-reach-top"><span class="ic">${icon}</span><span title="${cfEsc(value)}">${value}</span></div>
+      <div class="ov-ok">✓ ${okText}</div>
+    </div>`;
+  }
+  return `<div class="ov-reach-card">
+    <div class="ov-reach-top"><span class="ic">${icon}</span><span>暂无</span></div>
+    <div class="ov-miss">待补充</div>
+  </div>`;
+}
+
+function leadOverviewCardHTML(r) {
+  const website = leadDash(r.website);
+  const email = leadDash(r.email);
+  const phone = leadDash(r.phone);
+  const reasons = leadReadableReasons(r);
+  const webCard = website
+    ? `<div class="ov-reach-card" style="cursor:pointer" onclick="event.stopPropagation();openLeadWebsite('${cfEsc(website)}')">
+        <div class="ov-reach-top"><span class="ic">🔗</span><span title="${cfEsc(website)}">${website.replace(/^https?:\/\//,'')}</span></div>
+        <div class="ov-ok">✓ 官网可访问</div>
+      </div>`
+    : leadReachCard('🔗', '', '官网可访问');
+  return `
+    <div class="ov-head">
+      <div class="ov-av">${leadInitials(r.name).slice(0, 1)}</div>
+      <div class="ov-main">
+        <div class="ov-name-row">
+          <div class="ov-name">${r.name}</div>
+        </div>
+        <div class="ov-tags">
+          ${r.country?`<span class="ov-tag ov-tag-country">${countryFlag(r.country)} ${r.country}</span>`:''}
+        </div>
+      </div>
+    </div>
+    <div class="ov-box">
+      <div class="ov-meta">
+        <span><i>成立时间：</i>${r.founded || '—'}</span>
+        <span><i>行业：</i>${r.industry || '—'}</span>
+        <span><i>年采购额：</i>${r.volume || '—'}</span>
+      </div>
+      <div class="ov-profile"><i>地址：</i>${r.address || '—'}</div>
+      <div class="ov-profile"><i>公司描述：</i>${r.description || '—'}</div>
+      <div class="ov-reach">
+        ${leadReachCard('✉', email, '邮箱格式有效')}
+        ${leadReachCard('☎', phone, '电话区号匹配')}
+        ${webCard}
+      </div>
+    </div>
+    ${reasons.length ? `<div class="ov-ai">
+      <div class="ov-ai-h">AI 推荐理由</div>
+      <ul>${reasons.map(e => `<li>${e}</li>`).join('')}</ul>
+    </div>` : ''}`;
+}
+
+function leadContactCardsHTML(r) {
+  const rows = r.leadContacts || [];
+  if (!rows.length) return '<div class="lead-empty">暂无联系人</div>';
+  return `<div class="pcard-grid">${rows.map(x => {
+    const emails = leadNormalizeEmails(x);
+    const social = x.social || { linkedin: x.linkedin, facebook: x.facebook, twitter: x.twitter };
+    const phone = leadPhone(x);
+    return `<div class="pcard">
+      <div class="pcard-h">
+        <div class="pcard-av">${leadInitials(x.name)}</div>
+        <div class="pcard-h-main">
+          <div class="pcard-name">${x.name}</div>
+          <div class="pcard-role">${x.role || '—'}</div>
+        </div>
+        <div class="pcard-actions">${leadReachIcons(x)}</div>
+      </div>
+      <div class="pcard-reach">
+        <div class="pcard-kv"><dt>邮箱</dt><dd>${emails.length ? emails.map(leadEmailLine).join('') : '—'}</dd></div>
+        <div class="pcard-kv"><dt>电话</dt><dd>${phone || '—'}</dd></div>
+        <div class="pcard-kv"><dt>社媒</dt><dd>${leadSocialCell(social)}</dd></div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function copyLeadText(text) {
+  const v = String(text || '');
+  if (!v) return;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(v).then(() => toast('已复制')).catch(() => toast('已复制：' + v));
+  } else {
+    toast('已复制：' + v);
+  }
+}
+
+function sendLeadMail(name) {
+  toast('发邮件：' + (name || '联系人'));
+}
+function sendLeadWa(phone, name) {
+  const digits = String(phone || '').replace(/\D/g, '');
+  if (digits) window.open('https://wa.me/' + digits, '_blank', 'noopener');
+  else toast('暂无 WhatsApp');
+}
+function icoMail() {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>';
+}
+function icoWa() {
+  return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.74.46 3.45 1.32 4.95L2 22l5.3-1.39A9.86 9.86 0 0012.04 22c5.46 0 9.9-4.44 9.9-9.9S17.5 2 12.04 2zm5.75 14.12c-.24.67-1.4 1.24-1.94 1.32-.5.07-1.14.1-1.84-.12-.42-.13-.97-.32-1.67-.62-2.94-1.27-4.86-4.23-5.01-4.43-.15-.2-1.23-1.64-1.23-3.13 0-1.49.78-2.22 1.06-2.52.27-.3.6-.37.8-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.15.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.39-.45.52-.15.15-.3.3-.13.58.17.27.76 1.25 1.63 2.03 1.12 1 2.07 1.32 2.36 1.47.3.15.46.12.64-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.02.96.3.15.5.22.57.34.08.12.08.7-.16 1.37z"/></svg>';
+}
+function leadReachIcons(x) {
+  const name = cfEsc(x?.name || '');
+  const phone = leadPhone(x) || String(x?.wa || '').trim();
+  const hasWa = !!(phone && phone !== '—');
+  const waPhone = cfEsc(phone);
+  const waBtn = hasWa
+    ? `<button class="pcard-ico wa" type="button" title="WhatsApp" aria-label="WhatsApp" onclick="event.stopPropagation();sendLeadWa('${waPhone}','${name}')">${icoWa()}</button>`
+    : '';
+  return `${waBtn}<button class="pcard-ico mail" type="button" title="发邮件" aria-label="发邮件" data-name="${name}" onclick="event.stopPropagation();sendLeadMail(this.dataset.name)">${icoMail()}</button>`;
+}
+
+function openLeadWebsite(url) {
+  toast('打开官网：' + (url || ''));
+}
+
+function selectRec(id, src) {
+  openLeadTab(id, src);
+}
+
+function openLeadPanel(id, src) {
+  openLeadTab(id, src);
+}
+
+function renderTabs() {
+  const el = document.getElementById('ws-tabs');
+  if (!el) return;
+  el.innerHTML = state.tabs.map(t => `<button type="button" class="ws-tab ${state.activeTab===t.id?'active':''}" onclick="activateTab('${t.id}')">
+      <span class="ws-tab-title">${cfEsc(t.title)}</span>
+      ${t.id !== 'feed' ? `<span class="ws-tab-close" onclick="closeTab('${t.id}',event)">×</span>` : ''}
+    </button>`).join('');
+}
+
+function showWorkspacePage(name) {
+  document.getElementById('page-feed')?.classList.toggle('show', name === 'feed');
+  document.getElementById('page-lead')?.classList.toggle('show', name === 'lead');
+  document.getElementById('page-history')?.classList.toggle('show', name === 'history');
+}
+
+function activateTab(id) {
+  const tab = state.tabs.find(t => t.id === id);
+  if (!tab) return;
+  state.activeTab = id;
+  renderTabs();
+  if (tab.kind === 'feed') {
+    state.selectedId = null;
+    showWorkspacePage('feed');
+    return;
+  }
+  if (tab.kind === 'history') {
+    showWorkspacePage('history');
+    renderDiscoveredHistory();
+    return;
+  }
+  const r = getLead(id);
+  if (!r) { closeTab(id); return; }
+  state.selectedId = id;
+  showWorkspacePage('lead');
+  renderLeadPanel(r);
+}
+
+function closeTab(id, ev) {
+  if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+  if (id === 'feed') return;
+  const idx = state.tabs.findIndex(t => t.id === id);
+  if (idx < 0) return;
+  const wasActive = state.activeTab === id;
+  state.tabs.splice(idx, 1);
+  if (state.selectedId === id) state.selectedId = null;
+  if (wasActive) {
+    const next = state.tabs[idx] || state.tabs[idx - 1] || state.tabs[0];
+    activateTab(next.id);
+  } else {
+    renderTabs();
+  }
+}
+
+function closeLeadTabs(ids) {
+  const set = new Set(ids || []);
+  if (!set.size) return;
+  const closingActive = set.has(state.activeTab);
+  state.tabs = state.tabs.filter(t => !set.has(t.id));
+  if (set.has(state.selectedId)) state.selectedId = null;
+  if (closingActive || !state.tabs.some(t => t.id === state.activeTab)) activateTab('feed');
+  else renderTabs();
+}
+
+function openLeadTab(id, src) {
+  const r = getLead(id);
+  if (!r) return;
+  closeAssistant();
+  closeLeadDetail();
+  state.detailSrc = src || '每日推荐';
+  leadTab = 'contacts';
+  leadTradeSub = 'records';
+  leadDescOpen = false;
+  if (!state.tabs.some(t => t.id === id)) {
+    state.tabs.push({ id, title: r.name, kind: 'lead' });
+  }
+  activateTab(id);
+}
+
+function openHistoryTab() {
+  if (!state.tabs.some(t => t.id === 'history')) {
+    state.tabs.push({ id: 'history', title: '历史推荐', kind: 'history' });
+  }
+  activateTab('history');
+}
+
+function discoveredPool() {
+  return [...RECS, ...HIST_LEADS, ...(state.minedRecs || [])];
+}
+
+function recDateLabel(r) {
+  const d = r.recommendedAt || CARD_TODAY;
+  return d === CARD_TODAY ? '今日' : d;
+}
+
+function renderDiscoveredHistory() {
+  const list = discoveredPool().slice().sort((a, b) => String(b.recommendedAt || CARD_TODAY).localeCompare(String(a.recommendedAt || CARD_TODAY)));
+  const root = document.getElementById('hist-discovered-list');
+  if (!root) return;
+  if (!list.length) {
+    root.innerHTML = `<div class="empty-state" style="display:block"><div class="empty-state-icon">📋</div><h3>暂无历史推荐</h3><p>每日推荐过的企业会出现在这里。</p></div>`;
+    return;
+  }
+  root.innerHTML = `<table class="hist-table">
+    <thead><tr><th>公司名称</th><th>国家</th><th>推荐日期</th><th>操作</th></tr></thead>
+    <tbody>${list.map(r => {
+      const converted = state.convertedIds.has(r.id);
+      const ignored = state.ignored.has(r.id);
+      return `<tr>
+        <td><button type="button" class="hist-name" onclick="openLeadTab('${r.id}','每日推荐')">${r.name}</button></td>
+        <td>${r.country || '—'}</td>
+        <td class="hist-date">${recDateLabel(r)}</td>
+        <td><div class="hist-ops">
+          <button class="btn btn-convert" type="button" ${converted ? 'disabled' : ''} onclick="convertLead('${r.id}','每日推荐')">${converted ? '已存入CRM' : '存入CRM'}</button>
+          <button class="btn btn-ignore" type="button" ${ignored || converted ? 'disabled' : ''} onclick="ignoreLead('${r.id}')">忽略</button>
+        </div></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function buildLeadContentHTML(r) {
+  return `
+    ${leadOverviewCardHTML(r)}
+    <div class="lead-tabs">
+      ${LEAD_TABS.map(t => `<button class="lead-tab ${leadTab === t.id ? 'active' : ''}" data-tab="${t.id}" onclick="setLeadTab('${t.id}')">${t.label}</button>`).join('')}
+    </div>
+    <div class="lead-tab-body">${leadTabContent(r)}</div>`;
+}
+
+function leadFootHTML(r) {
+  const converted = isAsstConverted(r);
+  if (converted) {
+    return `<button class="btn btn-convert" disabled>已存入CRM</button>`;
+  }
+  return `
+    <button class="btn btn-convert" onclick="convertLead('${r.id}','${state.detailSrc}')">存入CRM</button>
+    ${state.ignored.has(r.id) ? '' : `<button class="btn btn-ignore" onclick="ignoreLead('${r.id}')">忽略</button>`}`;
+}
+
+function asstDetailFootHTML(r) {
+  const converted = isAsstConverted(r);
+  const ignored = state.ignored.has(r.id);
+  if (ignored) return '<div class="asst-hit-status ignored" style="margin:0;border:none">已忽略</div>';
+  if (converted) {
+    const cid = r.crmCustomerId || r.id;
+    return `<button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="goToCustomerDetail('${cid}')">查看</button>`;
+  }
+  return `
+    <button class="btn btn-convert" onclick="convertLead('${r.id}','${state.detailSrc}')">存入CRM</button>
+    <button class="btn btn-ignore" onclick="ignoreAsstHit('${r.id}')">忽略</button>`;
+}
+
+function getActiveLeadRoot() {
+  if (document.getElementById('asst-detail').classList.contains('show'))
+    return document.getElementById('asst-detail-body');
+  return document.getElementById('lead-body');
+}
+
+function renderLeadPanel(r) {
+  document.getElementById('lead-body').innerHTML = buildLeadContentHTML(r);
+  document.getElementById('lead-foot').innerHTML = leadFootHTML(r);
+  const page = document.getElementById('page-lead');
+  if (page) page.scrollTop = 0;
+}
+
+const LEAD_PIE_COLORS = ['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#64748b','#94a3b8'];
+const EMAIL_STATUS_LABELS = { verified:'已验证', risky:'待验证', invalid:'无效', catchall:'泛邮箱' };
+
+function emailStatusIcon(status) {
+  const s = status || 'risky';
+  const title = EMAIL_STATUS_LABELS[s] || '待验证';
+  const inner = {
+    verified: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>',
+    risky: '?',
+    invalid: '✕',
+    catchall: '…'
+  };
+  return `<span class="email-status-icon ${s}" title="${title}">${inner[s] || '?'}</span>`;
+}
+
+function leadEmailLine(e) {
+  const typeLabel = e.type === 'personal' ? '个人' : '企业';
+  const typeCls = e.type === 'personal' ? 'personal' : 'corp';
+  return `<div class="email-line"><span class="email-addr">${e.address}</span>
+    <span class="email-type ${typeCls}">${typeLabel}</span>
+    ${emailStatusIcon(e.status)}</div>`;
+}
+
+function parseLeadTradeNum(v) {
+  if (typeof v === 'number') return v;
+  return parseFloat(String(v || '').replace(/[^0-9.]/g, '')) || 0;
+}
+
+function aggregateLeadRecords(records, key) {
+  const map = {};
+  (records || []).forEach(r => {
+    const k = r[key] || '—';
+    if (!map[k]) map[k] = { name: k, desc: r.desc || '', count: 0, amount: 0, qty: 0, weight: 0, region: r.region || '' };
+    map[k].count += 1;
+    map[k].amount += parseLeadTradeNum(r.amount);
+    map[k].qty += parseLeadTradeNum(r.qty);
+    map[k].weight += parseLeadTradeNum(r.weight);
+  });
+  return Object.values(map).sort((a, b) => b.count - a.count);
+}
+
+function leadPieGradient(items) {
+  const total = items.reduce((s, x) => s + x.count, 0) || 1;
+  let acc = 0;
+  return `conic-gradient(${items.map((x, i) => {
+    const pct = (x.count / total) * 100;
+    const start = acc;
+    acc += pct;
+    return `${LEAD_PIE_COLORS[i % LEAD_PIE_COLORS.length]} ${start}% ${acc}%`;
+  }).join(', ')})`;
+}
+
+function fmtLeadAmount(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(2) + 'M';
+  if (n >= 1000) return n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  return n.toFixed(2);
+}
+
+function leadNormalizeEmails(x) {
+  if (x.emails?.length) return x.emails;
+  if (x.email) return [{ address: x.email, type: 'corporate', status: 'verified' }];
+  return [];
+}
+
+function leadPhone(x) {
+  const p = String(x?.phone || '').trim();
+  return (!p || p === '—') ? '' : p;
+}
+
+function leadSocialCell(src) {
+  const s = src || { linkedin: false, facebook: false, twitter: false };
+  const bits = [];
+  if (s.linkedin) bits.push('<span class="social-icon li">in</span>');
+  if (s.facebook) bits.push('<span class="social-icon fb">f</span>');
+  if (s.twitter) bits.push('<span class="social-icon tw">𝕏</span>');
+  return bits.length ? `<div class="social-cell">${bits.join('')}</div>` : '<span style="color:var(--muted)">—</span>';
+}
+
+function getLeadTradeBundle(r) {
+  const t = r.trade;
+  if (!t) return null;
+  const records = t.records || [];
+  return {
+    records,
+    partnerKey: 'supplier',
+    partnerCol: '供应商',
+    regionCol: '目的国',
+    destCountry: r.country || '',
+    partnersHeadTop: 'Top 10 供应商',
+    partnersHeadAll: '全部供应商',
+    partnersColName: '供应商',
+    regionHeadTop: 'Top 10 供应区域',
+    regionHeadAll: '全部供应区域'
+  };
+}
+
+function getLastPurchaseDate(t, records) {
+  if (t?.lastPurchase) return t.lastPurchase;
+  if (!records?.length) return '—';
+  return records.map(r => r.date).sort((a, b) => b.localeCompare(a))[0];
+}
+
+function leadTradeSection(title, html) {
+  return `<div class="lead-trade-section"><div class="lead-trade-section-title">${title}</div>${html}</div>`;
+}
+
+function uniqueTradeCount(records, key) {
+  return new Set((records || []).map(x => String(x[key] || '').trim()).filter(v => v && v !== '—')).size;
+}
+function formatCount(n, unit) {
+  return n ? `${n} ${unit}` : '—';
+}
+function leadTradeOverviewHTML(t, records) {
+  const src = records || [];
+  const suppliers = uniqueTradeCount(src, 'supplier') || uniqueTradeCount(src, 'buyer');
+  const products = uniqueTradeCount(src, 'hs') || uniqueTradeCount(src, 'desc');
+  const countries = uniqueTradeCount(src, 'region') || uniqueTradeCount(src, 'origin');
+  const items = [
+    {label:'年采购额', value: t?.volume || '—'},
+    {label:'采购频数', value: t?.freq || '—'},
+    {label:'最近采购时间', value: getLastPurchaseDate(t, src)},
+    {label:'累计供应商数', value: formatCount(suppliers, '家')},
+    {label:'累计产品数', value: formatCount(products, '个')},
+    {label:'累计采购国家', value: formatCount(countries, '个')}
+  ];
+  return `<div class="lead-overview-cards">${items.map(x => `<div class="lead-overview-card"><dt>${x.label}</dt><dd>${x.value}</dd></div>`).join('')}</div>`;
+}
+
+function leadTradeTrendHTML(t) {
+  const pts = t.chartPoints || [];
+  if (!pts.length) return '<div class="lead-empty" style="padding:12px">暂无趋势数据</div>';
+  const max = Math.max(...pts, 1);
+  const bars = pts.map(v => `<div class="lead-trend-bar" style="height:${Math.max(6, Math.round((v / max) * 100))}%"></div>`).join('');
+  const labels = pts.map((_, i) => `<span>${i + 1}月</span>`).join('');
+  return `<div class="lead-trend-chart">${bars}</div><div class="lead-trend-labels">${labels}</div>`;
+}
+
+function leadTradeRecords(records, cfg) {
+  const partnerCol = cfg?.partnerCol || '供应商';
+  return `<div class="lead-trade-all"><span>贸易明细 · 共 ${records.length} 条</span></div>
+    ${records.length ? `<table class="lead-table"><thead><tr>
+      <th>交易日期</th><th>产品描述</th><th>海关编码</th><th>${partnerCol}</th><th>目的国</th><th>金额(USD)</th><th>数量</th><th>重量</th>
+    </tr></thead><tbody>${records.map(x => `<tr>
+      <td>${x.date}</td><td>${x.desc}</td><td>${x.hs || '—'}</td><td>${x.supplier || x.buyer || '—'}</td><td>${x.destCountry || cfg?.destCountry || '—'}</td>
+      <td class="num">${x.amount}</td><td class="num">${x.qty}</td><td class="num">${x.weight}</td>
+    </tr>`).join('')}</tbody></table>` : '<div class="lead-empty">暂无明细</div>'}`;
+}
+
+function leadTradeAnalysis(items, cfg) {
+  const top = items.slice(0, 10);
+  const max = top[0]?.count || 1;
+  const pie = top.length ? `<div class="lead-trade-pie" style="background:${leadPieGradient(top)}"><div class="lead-trade-pie-center">Top ${Math.min(top.length, 10)}</div></div>` : '';
+  const ranks = top.map((x, i) => `<div class="lead-rank-item">
+    <span>${i + 1}.</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${x.name}">${x.name}</span>
+    <div class="lead-rank-bar"><i style="width:${Math.max(8, (x.count / max) * 100)}%;background:linear-gradient(90deg,${LEAD_PIE_COLORS[i % LEAD_PIE_COLORS.length]},${LEAD_PIE_COLORS[(i + 1) % LEAD_PIE_COLORS.length]})"></i></div>
+    <span class="lead-rank-val">${x.count}</span></div>`).join('');
+  const rows = items.map(x => `<tr>
+    <td>${cfg.rowName ? cfg.rowName(x) : x.name}</td>
+    ${(cfg.extraCols || []).map(fn => `<td>${fn.render(x)}</td>`).join('')}
+    <td class="num">${x.count}</td><td class="num">${fmtLeadAmount(x.amount)}</td>
+    <td class="num">${x.qty ? x.qty.toLocaleString() : '—'}</td><td class="num">${x.weight ? x.weight.toLocaleString() : '—'}</td>
+  </tr>`).join('');
+  return `<div class="lead-trade-analysis">
+    <div class="lead-trade-analysis-head">${cfg.headTop}</div>
+    <div class="lead-trade-analysis-body">${pie}<div class="lead-rank">${ranks}</div></div>
+    <div class="lead-trade-all"><span>${cfg.headAll}</span><span style="font-size:10px;color:var(--muted);cursor:pointer">筛选</span></div>
+    <table class="lead-table"><thead><tr>
+      <th>${cfg.colName}</th>${(cfg.extraCols || []).map(fn => `<th>${fn.label}</th>`).join('')}
+      <th>交易次数</th><th>总金额</th><th>数量</th><th>重量</th>
+    </tr></thead><tbody>${rows || '<tr><td colspan="6">暂无数据</td></tr>'}</tbody></table>
+  </div>`;
+}
+
+function leadTradeContent(r) {
+  const t = r.trade;
+  if (!t) {
+    const rows = r.customs || [];
+    if (!rows.length) return '<div class="lead-empty">暂无海关数据</div>';
+    const overviewSrc = rows.map(x => ({date:x.date, desc:x.desc, hs:x.hs, region:x.origin, origin:x.origin, supplier:x.supplier}));
+    const fakeT = {volume: r.volume || (r.metrics && r.metrics[0] && r.metrics[0][1]) || '—', freq: (r.metrics && r.metrics[2] && r.metrics[2][1]) || '—'};
+    return `
+      ${leadTradeSection('采购概览', leadTradeOverviewHTML(fakeT, overviewSrc))}
+      ${leadTradeSection('贸易记录', `<table class="lead-table"><thead><tr><th>日期</th><th>HS</th><th>品名</th><th>金额</th><th>原产国</th></tr></thead><tbody>
+        ${rows.map(x => `<tr><td>${x.date}</td><td>${x.hs}</td><td>${x.desc}</td><td>${x.amount}</td><td>${x.origin}</td></tr>`).join('')}
+      </tbody></table>`)}`;
+  }
+  const bundle = getLeadTradeBundle(r);
+  const records = bundle.records;
+  return `
+    ${leadTradeSection('采购概览', leadTradeOverviewHTML(t, records))}
+    ${leadTradeRecords(records, bundle)}`;
+}
+
+function leadEmptyHint(title) {
+  return `<div class="lead-empty-card"><div class="lead-empty-title">${title}</div></div>`;
+}
+
+function leadExhibitionsHTML(r) {
+  const rows = r.exhibitions || [];
+  if (!rows.length) return leadEmptyHint('暂未找到公开参展记录');
+  return `<div class="pcard-grid">${rows.map(x => `<div class="pcard">
+    <div class="pcard-name">${x.name || '—'}</div>
+    <div class="pcard-role">${[x.date, x.city, x.role].filter(Boolean).join(' · ') || '—'}</div>
+  </div>`).join('')}</div>`;
+}
+
+function leadRfqHTML(r) {
+  const rows = r.rfqs || [];
+  if (!rows.length) return leadEmptyHint('暂未找到公开报价请求');
+  return `<div class="pcard-grid">${rows.map(x => `<div class="pcard">
+    <div class="pcard-name">${x.title || '—'}</div>
+    <div class="pcard-role">${[x.date, x.category].filter(Boolean).join(' · ') || '—'}</div>
+  </div>`).join('')}</div>`;
+}
+
+function leadTabContent(r) {
+  if (leadTab === 'contacts') return leadContactCardsHTML(r);
+  if (leadTab === 'exhibitions') return leadExhibitionsHTML(r);
+  if (leadTab === 'rfq') return leadRfqHTML(r);
+  return `<div class="ov-card">${leadTradeContent(r)}</div>`;
+}
+
+function setLeadTradeSub(s) {
+  leadTradeSub = s;
+  const r = getLead(state.selectedId);
+  if (!r) return;
+  const root = getActiveLeadRoot();
+  const tabBody = root.querySelector('.lead-tab-body');
+  if (tabBody) tabBody.innerHTML = leadTabContent(r);
+}
+
+function setLeadTab(t) {
+  leadTab = t === 'customs' ? 'trade' : t;
+  const r = getLead(state.selectedId);
+  if (!r) return;
+  const root = getActiveLeadRoot();
+  root.querySelectorAll('.lead-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === leadTab);
+  });
+  const tabBody = root.querySelector('.lead-tab-body');
+  if (tabBody) tabBody.innerHTML = leadTabContent(r);
+}
+
+function closeLeadPanel() {
+  if (state.selectedId && state.tabs.some(t => t.id === state.selectedId)) {
+    closeTab(state.selectedId);
+    return;
+  }
+  activateTab('feed');
+}
+
+function closeExplain() { closeLeadPanel(); }
+
+function ignoredCard(r) {
+  const fb = state.ignoreReasons.get(r.id);
+  const why = fb ? `<div class="rec-ignore-why">忽略原因：${cfEsc(fb.reason)}${fb.note ? ' · ' + cfEsc(fb.note) : ''}</div>` : '';
+  return `<div class="rec-card ignored-card" onclick="openLeadTab('${r.id}','每日推荐')">
+    <div class="rec-top">
+      <div class="rec-top-main">
+        <div class="rec-company"><span class="rec-company-name">${r.name}</span>${recCountryTag(r)}</div>
+        ${why}
+      </div>
+      ${recStars(r)}
+    </div>
+    <div class="rec-actions" onclick="event.stopPropagation()">
+      <button class="btn btn-restore" onclick="event.stopPropagation();restoreLead('${r.id}')">恢复至待处理</button>
+    </div>
+  </div>`;
+}
+
+function renderProfile() {
+  const area = document.getElementById('hero-profile');
+  const cta = document.getElementById('profile-cta');
+  if (state.hasProfile) {
+    area.innerHTML = `<div class="hero-profile">
+      主营产品：<strong>${PROFILE.products}</strong> · 目标市场：<strong>${PROFILE.markets}</strong>
+    </div>`;
+    if (cta) cta.style.display = '';
+  } else {
+    area.innerHTML = `<div class="hero-profile-empty">
+      尚未配置企业画像。完善主营产品、目标市场等信息后，Agent 将于次日 08:00 自动生成推荐。
+      <a href="#" onclick="toast('跳转至「企业画像」');return false"> 去完善企业画像 →</a>
+    </div>`;
+    if (cta) cta.style.display = 'none';
+  }
+  document.getElementById('demo-toggle') && (document.getElementById('demo-toggle').textContent = state.hasProfile ? '预览：切换无画像状态' : '预览：切换有画像状态');
+}
+
+function render() {
+  renderProfile();
+  const toolbar = document.getElementById('feed-toolbar');
+  const batchActions = document.getElementById('feed-batch-actions');
+
+  if (!state.hasProfile) {
+    toolbar.querySelector('h2').innerHTML = '今日推荐 <span class="feed-meta" id="daily-meta">等待画像配置</span>';
+    batchActions.style.display = 'none';
+    document.getElementById('feed-footer').style.display = 'none';
+    document.getElementById('ignored-panel').classList.remove('show');
+    document.getElementById('daily-feed').innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">📋</div>
+      <h3>暂无推荐</h3>
+      <p>完善企业画像后，Agent 将根据您的主营产品、目标市场等信息，每日自动推送匹配的潜客推荐。</p>
+      <button class="btn btn-warn" onclick="toast('跳转至「企业画像」')">去完善企业画像</button>
+    </div>`;
+    document.getElementById('stat-today').textContent = '—';
+    document.getElementById('stat-total').textContent = '—';
+    const badge = document.getElementById('badge-pending');
+    if (badge) badge.textContent = '0';
+    document.getElementById('stat-converted').textContent = '0';
+    document.getElementById('metric-converted').style.opacity = '.5';
+    if (state.activeTab === 'history') renderDiscoveredHistory();
+    return;
+  }
+
+  toolbar.querySelector('h2').innerHTML = '今日推荐 <span class="feed-meta" id="daily-meta">08:00 更新</span>';
+  const pendingList = feedPool().filter(r => !state.ignored.has(r.id) && !state.convertedIds.has(r.id));
+  const ignoredList = feedPool().filter(r => state.ignored.has(r.id));
+  const showDailyWait = state.previewWait || (!pendingList.length && state.mining !== 'buy');
+  syncBatchToolbar(showDailyWait || state.mining === 'buy' ? [] : pendingList);
+  document.getElementById('feed-footer').style.display = 'flex';
+
+  if (state.mining === 'buy') {
+    toolbar.querySelector('h2').innerHTML = '今日推荐 <span class="feed-meta" id="daily-meta">正在挖掘</span>';
+    document.getElementById('daily-feed').innerHTML = mineStateHTML('buy');
+    requestAnimationFrame(syncMineProgressUI);
+  } else if (showDailyWait) {
+    toolbar.querySelector('h2').innerHTML = '今日推荐 <span class="feed-meta" id="daily-meta">明日 08:00 推送</span>';
+    document.getElementById('daily-feed').innerHTML = mineStateHTML('daily');
+  } else {
+    document.getElementById('daily-feed').innerHTML = pendingList.map(r => card(r, '每日推荐')).join('');
+  }
+
+  document.getElementById('stat-today').textContent = pendingList.length + 28;
+  document.getElementById('stat-total').textContent = 89 + state.converted;
+  const badge = document.getElementById('badge-pending');
+  if (badge) badge.textContent = pendingList.length;
+  document.getElementById('stat-converted').textContent = state.converted;
+  document.getElementById('metric-converted').style.opacity = state.converted > 0 ? '1' : '.55';
+  const linkIgnored = document.getElementById('link-ignored');
+  linkIgnored.textContent = state.showIgnored ? '收起已忽略' : `查看今日已忽略 (${ignoredList.length})`;
+  linkIgnored.classList.toggle('disabled', ignoredList.length === 0);
+
+  document.getElementById('ignored-feed').innerHTML = ignoredList.map(r => ignoredCard(r)).join('') || '<div class="empty-state" style="grid-column:1/-1;padding:24px">暂无已忽略记录</div>';
+  document.getElementById('ignored-panel').classList.toggle('show', state.showIgnored && ignoredList.length > 0);
+  const waitBtn = document.getElementById('wait-toggle');
+  if (waitBtn) waitBtn.textContent = state.previewWait ? '预览：恢复今日推荐' : '预览：08:00 前等待推送';
+  if (state.activeTab === 'history') renderDiscoveredHistory();
+}
+
+function toggleIgnored() {
+  const n = feedPool().filter(r => state.ignored.has(r.id)).length;
+  if (n === 0) return;
+  state.showIgnored = !state.showIgnored;
+  render();
+}
+
+function restoreLead(id) {
+  state.ignored.delete(id);
+  state.ignoreReasons.delete(id);
+  if (HIST_LEADS.some(h => h.id === id)) state.restoredIds.add(id);
+  toast('已恢复至待处理');
+  render();
+  if (state.activeTab === id) {
+    const r = getLead(id);
+    if (r) renderLeadPanel(r);
+  }
+}
+
+function goToCRM() {
+  if (state.converted === 0) {
+    toast('暂无已转客户');
+    return;
+  }
+  window.open('crm-v2.html?view=enterprise', '_blank');
+  toast('跳转客户管理 · 已转客户');
+}
+
+function toggleProfile() {
+  state.hasProfile = !state.hasProfile;
+  render();
+}
+
+function openAssistant() {
+  if (!AIMI_ENABLED) return;
+  closeLeadPanel();
+  toggleAsstHistory(false);
+  document.body.classList.add('assistant-open');
+  setTimeout(() => document.getElementById('asst-input')?.focus(), 300);
+}
+function closeAssistant() {
+  closeLeadDetail();
+  toggleAsstHistory(false);
+  document.body.classList.remove('assistant-open');
+}
+
+function toggleAsstHistory(open) {
+  const next = open !== undefined ? !!open : !state.asstHistoryOpen;
+  state.asstHistoryOpen = next;
+  document.getElementById('asst-history-popover')?.classList.toggle('show', next);
+  document.getElementById('asst-history-btn')?.classList.toggle('active', next);
+  const btn = document.getElementById('asst-history-btn');
+  if (btn) btn.setAttribute('aria-expanded', next ? 'true' : 'false');
+  if (next) renderSearchHistory();
+}
+
+function historyTypeClass(label) {
+  if (label === '企业信息') return 'company';
+  if (label === '贸易记录') return 'trade';
+  return 'recommend';
+}
+
+function formatHistoryTime(d) {
+  const date = d instanceof Date ? d : new Date(d);
+  const now = new Date();
+  const isToday = date.toDateString() === now.toDateString();
+  const hm = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  if (isToday) return '今天 ' + hm;
+  return date.toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' }) + ' ' + hm;
+}
+
+function renderSearchHistory() {
+  const list = document.getElementById('asst-history-list');
+  const badge = document.getElementById('asst-history-badge');
+  const countLabel = document.getElementById('asst-history-count-label');
+  if (!list) return;
+  const n = state.searchHistory.length;
+  if (badge) {
+    badge.textContent = n > 99 ? '99+' : String(n);
+    badge.classList.toggle('show', n > 0);
+  }
+  if (countLabel) countLabel.textContent = n ? `共 ${n} 条` : '';
+  list.innerHTML = n
+    ? state.searchHistory.map(h => `<div class="asst-history-item" onclick="jumpToHistory('${h.userMsgId}')">
+        <div class="asst-history-item-top">
+          <span class="asst-history-type ${historyTypeClass(h.typeLabel)}">${h.typeLabel}</span>
+          <span class="asst-history-time">${formatHistoryTime(h.time)}</span>
+        </div>
+        <div class="asst-history-query">${cfEsc(h.query)}</div>
+      </div>`).join('')
+    : '<div class="asst-history-empty">暂无搜索记录<br><span style="font-size:11px;opacity:.85">搜索后会自动保存在这里</span></div>';
+}
+
+function saveSearchHistory(entry) {
+  state.searchHistory.unshift({
+    query: entry.query,
+    userMsgId: entry.userMsgId,
+    aiMsgId: entry.aiMsgId,
+    typeLabel: entry.typeLabel,
+    resultHead: entry.resultHead,
+    time: new Date()
+  });
+  if (state.searchHistory.length > 30) state.searchHistory.length = 30;
+  renderSearchHistory();
+}
+
+function jumpToHistory(userMsgId) {
+  toggleAsstHistory(false);
+  setTimeout(() => {
+    const el = document.querySelector(`[data-msg-id="${userMsgId}"]`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.classList.add('history-highlight');
+      setTimeout(() => el.classList.remove('history-highlight'), 1200);
+    }
+  }, 80);
+}
+
+function openLeadDetail(id, src, mode) {
+  const r = getLead(id);
+  if (!r) return;
+  closeLeadPanel();
+  if (!document.body.classList.contains('assistant-open')) {
+    document.body.classList.add('assistant-open');
+  }
+  state.selectedId = id;
+  state.detailSrc = src || 'AI搜索';
+  state.asstDetailMode = mode || 'recommend';
+  leadTab = 'contacts';
+  leadTradeSub = 'records';
+  leadDescOpen = false;
+  showAsstDetail(r.name, buildAsstLeadContentHTML(r, state.asstDetailMode), asstDetailFootHTML(r));
+}
+
+function closeLeadDetail() {
+  document.getElementById('asst-detail').classList.remove('show');
+  document.getElementById('asst-footer').style.display = 'block';
+  setAsstDetailTitle('详情');
+}
+
+function appendMsg(role, html, hasResults, msgId) {
+  const chat = document.getElementById('asst-chat');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role + (hasResults ? ' has-results' : '');
+  if (msgId) div.dataset.msgId = msgId;
+  div.innerHTML = `<div class="msg-bubble">${html}</div><div class="msg-time">${role === 'user' ? '你' : 'Agent'}</div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function quickSearch(i) {
+  document.getElementById('asst-input').value = EXAMPLES[i];
+  sendMessage();
+}
+
+function sendMessage() {
+  const input = document.getElementById('asst-input');
+  const text = input.value.trim();
+  if (!text) return;
+  toggleAsstHistory(false);
+  const userMsgId = 'msg-u-' + Date.now();
+  appendMsg('user', cfEsc(text), false, userMsgId);
+  input.value = '';
+
+  let idx = 0;
+  if (text.includes('Google') || text.includes('google') || text.includes('联系人')) idx = 1;
+  if (text.includes('巴基斯坦') || text.includes('贸易记录') || text.includes('2025')) idx = 2;
+
+  setTimeout(() => {
+    const intentHtml = INTENTS[idx].map(([a,b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join('');
+    let resultHead = '匹配企业 · Top 3';
+    let typeLabel = '匹配企业';
+    let results = '';
+    if (idx === 0) {
+      results = '<div class="asst-result-list">' + RECS.slice(0, 3).map(r => asstEntHitCard(r, 'AI搜索', 'recommend')).join('') + '</div>';
+    }
+    if (idx === 1) {
+      resultHead = '企业信息 · 2 条';
+      typeLabel = '企业信息';
+      results = '<div class="asst-result-list">' + [EXTRA_DETAILS.google, EXTRA_DETAILS['google-corp']].map(r => asstEntHitCard(r, 'AI搜索', 'company')).join('') + '</div>';
+    }
+    if (idx === 2) {
+      resultHead = '贸易记录 · 126 条';
+      typeLabel = '贸易记录';
+      results = asstTradeRecordList(TRADE_SEARCH_RECORDS);
+    }
+    const resultHeadHtml = `<div class="asst-result-head">${resultHead}</div>`;
+    const aiMsgId = 'msg-a-' + Date.now();
+    appendMsg('ai', `<div class="asst-reply">
+      <div class="asst-reply-label">已理解你的需求</div>
+      <div class="intent-mini">${intentHtml}</div>
+      <div class="asst-result">
+        ${resultHeadHtml}
+        ${results}
+      </div>
+    </div>`, true, aiMsgId);
+    saveSearchHistory({ query: text, userMsgId, aiMsgId, typeLabel, resultHead });
+  }, 600);
+}
+
+function convertSourceLabel(src) {
+  if (src === '每日推荐' || src === 'agent_daily') return '潜客挖掘agent';
+  if (src === 'AI搜索' || src === 'agent_search') return 'AI 搜索';
+  return src || '潜客挖掘agent';
+}
+
+function payloadFromLead(r, src) {
+  const contacts = (r.leadContacts || []).map(c => {
+    const emails = typeof leadNormalizeEmails === 'function' ? leadNormalizeEmails(c || {}) : [];
+    return {
+      name: c.name || '',
+      role: c.role || '',
+      email: emails[0]?.address || c.email || '',
+      phone: c.phone && c.phone !== '—' ? c.phone : ''
+    };
+  }).filter(c => c.name || c.email || c.phone);
+  return {
+    name: r.name,
+    website: r.website,
+    email: r.email,
+    industry: r.industry,
+    phone: r.phone,
+    founded: r.founded,
+    address: r.address,
+    description: r.description,
+    notes: r.notes,
+    contacts,
+    source: convertSourceLabel(src)
+  };
+}
+
+function commitConvert(ids, src, payload) {
+  const pending = ids.filter(id => !state.convertedIds.has(id));
+  if (!pending.length) return;
+  if (payload) state.lastConvertPayload = payload;
+  else if (pending.length === 1) {
+    const r = getLead(pending[0]);
+    if (r) state.lastConvertPayload = payloadFromLead(r, src);
+  }
+  pending.forEach(id => {
+    state.convertedIds.add(id);
+    state.converted++;
+    state.checkedIds.delete(id);
+    state.ignored.delete(id);
+    state.ignoreReasons.delete(id);
+  });
+  toast('加入CRM成功');
+  if (document.getElementById('asst-detail')?.classList.contains('show')) closeLeadDetail();
+  closeLeadTabs(pending);
+  render();
+  pending.forEach(id => refreshAsstHitCard(id));
+}
+
+function confirmConvert() {
+  if (!state.pendingConvert) return;
+  const { ids, src } = state.pendingConvert;
+  if (ids.length === 1) {
+    const form = readConvertForm();
+    if (!form.name) { toast('请填写公司名称'); return; }
+    closeConvertModal();
+    commitConvert(ids, src, { ...form, source: convertSourceLabel(src) });
+    return;
+  }
+  closeConvertModal();
+  commitConvert(ids, src);
+}
+
+function convertLead(id, src) {
+  if (state.convertedIds.has(id)) return;
+  const r = getLead(id);
+  if (!r) return;
+  commitConvert([id], src, payloadFromLead(r, src));
+}
+
+function cfEsc(v) {
+  return String(v ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function buildConvertContactRow(c, idx) {
+  const emails = leadNormalizeEmails(c || {});
+  const email = emails[0]?.address || c?.email || '';
+  return `<tr data-idx="${idx}">
+    <td><input class="cf-c-name" value="${cfEsc(c?.name)}" placeholder="姓名"></td>
+    <td><input class="cf-c-role" value="${cfEsc(c?.role)}" placeholder="职务"></td>
+    <td><input class="cf-c-email" value="${cfEsc(email)}" placeholder="邮箱"></td>
+    <td><input class="cf-c-phone" value="${cfEsc(c?.phone)}" placeholder="电话"></td>
+    <td><button type="button" class="cf-c-del" onclick="removeConvertContactRow(this)">删除</button></td>
+  </tr>`;
+}
+
+function buildConvertContactRows(contacts) {
+  const list = contacts?.length ? contacts : [{}];
+  return list.map((c, i) => buildConvertContactRow(c, i)).join('');
+}
+
+function addConvertContactRow() {
+  const tbody = document.getElementById('cf-contacts-body');
+  if (!tbody) return;
+  const idx = tbody.querySelectorAll('tr').length;
+  tbody.insertAdjacentHTML('beforeend', buildConvertContactRow({}, idx));
+}
+
+function removeConvertContactRow(btn) {
+  const tbody = document.getElementById('cf-contacts-body');
+  if (!tbody) return;
+  if (tbody.querySelectorAll('tr').length <= 1) {
+    toast('至少保留一位联系人');
+    return;
+  }
+  btn.closest('tr').remove();
+}
+
+function buildConvertForm(r, src) {
+  const contacts = r.leadContacts || [];
+  return `<div class="convert-form">
+    <div class="convert-section-title">基本信息</div>
+    <div class="convert-form-grid">
+      <label class="full"><span>公司名称 *</span><input id="cf-name" value="${cfEsc(r.name)}"></label>
+      <label><span>公司官网</span><input id="cf-website" value="${cfEsc(r.website)}"></label>
+      <label><span>邮箱</span><input id="cf-email" value="${cfEsc(r.email)}"></label>
+      <label><span>行业</span><input id="cf-industry" value="${cfEsc(r.industry)}"></label>
+      <label><span>电话</span><input id="cf-phone" value="${cfEsc(r.phone)}"></label>
+      <label><span>成立年份</span><input id="cf-founded" value="${cfEsc(r.founded)}"></label>
+      <label class="full"><span>地址</span><input id="cf-address" value="${cfEsc(r.address)}"></label>
+      <label class="full"><span>公司描述</span><textarea id="cf-desc">${cfEsc(r.description)}</textarea></label>
+      <label class="full"><span>备注</span><textarea id="cf-notes">${cfEsc(r.notes)}</textarea></label>
+    </div>
+    <div class="convert-section-head">
+      <div class="convert-section-title">联系人</div>
+      <button type="button" class="link-btn" onclick="addConvertContactRow()">+ 添加联系人</button>
+    </div>
+    <div class="convert-contacts-wrap">
+      <table class="convert-contacts-edit">
+        <thead><tr><th>姓名</th><th>职务</th><th>邮箱</th><th>电话</th><th></th></tr></thead>
+        <tbody id="cf-contacts-body">${buildConvertContactRows(contacts)}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function readConvertForm() {
+  const contacts = [];
+  document.querySelectorAll('#cf-contacts-body tr').forEach(tr => {
+    const name = tr.querySelector('.cf-c-name')?.value.trim() || '';
+    const role = tr.querySelector('.cf-c-role')?.value.trim() || '';
+    const email = tr.querySelector('.cf-c-email')?.value.trim() || '';
+    const phone = tr.querySelector('.cf-c-phone')?.value.trim() || '';
+    if (name || role || email || phone) contacts.push({ name, role, email, phone });
+  });
+  return {
+    name: document.getElementById('cf-name')?.value.trim(),
+    website: document.getElementById('cf-website')?.value.trim(),
+    email: document.getElementById('cf-email')?.value.trim(),
+    industry: document.getElementById('cf-industry')?.value.trim(),
+    phone: document.getElementById('cf-phone')?.value.trim(),
+    founded: document.getElementById('cf-founded')?.value.trim(),
+    address: document.getElementById('cf-address')?.value.trim(),
+    description: document.getElementById('cf-desc')?.value.trim(),
+    notes: document.getElementById('cf-notes')?.value.trim(),
+    contacts
+  };
+}
+
+function openConvertModal(ids, src) {
+  const pending = ids.filter(id => !state.convertedIds.has(id));
+  if (!pending.length) return;
+  state.pendingConvert = { ids: pending, src: src || '每日推荐' };
+  const isBatch = pending.length > 1;
+  document.getElementById('convert-modal-sub').textContent = isBatch
+    ? `确认以下 ${pending.length} 家企业，将批量写入客户管理 · 阶段：待联系`
+    : '核对并编辑企业信息，确认后写入客户管理 · 阶段：待联系';
+  document.getElementById('convert-confirm-btn').textContent = '确认';
+  if (isBatch) {
+    document.getElementById('convert-preview').innerHTML = pending.map(id => {
+      const r = getLead(id);
+      return r ? `<div style="padding:8px 0;border-bottom:1px solid var(--border)"><strong>${r.name}</strong>${r.country ? ' · ' + r.country : ''}</div>` : '';
+    }).join('') + '<p style="font-size:11px;color:var(--muted);margin-top:10px">批量转客户将使用各企业默认信息；如需编辑请单独转客户。</p>';
+  } else {
+    const r = getLead(pending[0]);
+    document.getElementById('convert-preview').innerHTML = r ? buildConvertForm(r, state.pendingConvert.src) : '';
+  }
+  document.getElementById('convert-modal').classList.add('show');
+}
+
+function closeConvertModal() {
+  state.pendingConvert = null;
+  document.getElementById('convert-modal').classList.remove('show');
+}
+
+function ignoreLead(id) {
+  if (state.ignored.has(id) || state.convertedIds.has(id)) return;
+  openIgnoreModal([id]);
+}
+
+function pendingRecs() {
+  return feedPool().filter(r => !state.ignored.has(r.id) && !state.convertedIds.has(r.id));
+}
+
+function checkedPendingIds() {
+  return pendingRecs().map(r => r.id).filter(id => state.checkedIds.has(id));
+}
+
+function syncBatchToolbar(pendingList) {
+  const list = pendingList || pendingRecs();
+  const batchActions = document.getElementById('feed-batch-actions');
+  if (!batchActions) return;
+  if (!state.hasProfile || !list.length) {
+    batchActions.style.display = 'none';
+    return;
+  }
+  batchActions.style.display = 'flex';
+  const pendingSet = new Set(list.map(r => r.id));
+  [...state.checkedIds].forEach(id => { if (!pendingSet.has(id)) state.checkedIds.delete(id); });
+  const n = state.checkedIds.size;
+  const all = document.getElementById('check-all');
+  if (all) {
+    all.checked = n > 0 && n === list.length;
+    all.indeterminate = n > 0 && n < list.length;
+  }
+  const count = document.getElementById('batch-count');
+  if (count) count.textContent = n ? `已选 ${n} 条` : '未选择';
+  const bi = document.getElementById('btn-batch-ignore');
+  const bc = document.getElementById('btn-batch-convert');
+  if (bi) bi.disabled = n === 0;
+  if (bc) bc.disabled = n === 0;
+}
+
+function toggleCheck(id, on) {
+  if (on) state.checkedIds.add(id);
+  else state.checkedIds.delete(id);
+  document.getElementById('card-' + id)?.classList.toggle('checked', on);
+  syncBatchToolbar();
+}
+
+function toggleSelectAll(ev) {
+  ev.stopPropagation();
+  const list = pendingRecs();
+  if (ev.target.checked) list.forEach(r => state.checkedIds.add(r.id));
+  else state.checkedIds.clear();
+  render();
+}
+
+function openIgnoreModal(ids) {
+  const pending = ids.filter(id => !state.ignored.has(id) && !state.convertedIds.has(id));
+  if (!pending.length) return;
+  state.pendingIgnore = pending;
+  state.pendingIgnoreReason = '';
+  document.getElementById('ignore-modal-sub').textContent = `已选 ${pending.length} 家企业。反馈将用于优化后续匹配。`;
+  document.getElementById('ignore-reasons').innerHTML = IGNORE_REASONS.map(reason =>
+    `<button type="button" class="ignore-reason" data-reason="${cfEsc(reason)}" onclick="selectIgnoreReason(this)">${reason}</button>`
+  ).join('');
+  document.getElementById('ignore-note').value = '';
+  document.getElementById('ignore-modal').classList.add('show');
+}
+
+function selectIgnoreReason(btn) {
+  document.querySelectorAll('#ignore-reasons .ignore-reason').forEach(el => el.classList.remove('active'));
+  btn.classList.add('active');
+  state.pendingIgnoreReason = btn.dataset.reason || '';
+}
+
+function closeIgnoreModal() {
+  state.pendingIgnore = null;
+  state.pendingIgnoreReason = '';
+  document.getElementById('ignore-modal').classList.remove('show');
+}
+
+function confirmIgnore() {
+  const ids = state.pendingIgnore || [];
+  if (!ids.length) return;
+  if (!state.pendingIgnoreReason) { toast('请选择忽略原因'); return; }
+  const reason = state.pendingIgnoreReason;
+  const note = document.getElementById('ignore-note').value.trim();
+  closeIgnoreModal();
+  commitIgnore(ids, reason, note);
+}
+
+function commitIgnore(ids, reason, note) {
+  ids.forEach(id => {
+    if (state.convertedIds.has(id)) return;
+    state.ignored.add(id);
+    state.ignoreReasons.set(id, { reason, note: note || '', date: CARD_TODAY });
+    state.checkedIds.delete(id);
+  });
+  toast('忽略完成');
+  closeLeadTabs(ids);
+  if (document.getElementById('asst-detail')?.classList.contains('show')) closeLeadDetail();
+  ids.forEach(id => refreshAsstHitCard(id));
+  render();
+}
+
+function batchConvert() {
+  const ids = checkedPendingIds();
+  if (!ids.length) { toast('请先勾选要存入的推荐'); return; }
+  commitConvert(ids, '每日推荐');
+}
+
+function batchIgnore() {
+  const ids = checkedPendingIds();
+  if (!ids.length) { toast('请先勾选要忽略的推荐'); return; }
+  openIgnoreModal(ids);
+}
+
+let buyPackQty = 20;
+let buyPackPrice = 200;
+let mineTimer = null;
+const MINE_STEPS = ['扫描目标市场海关记录', '按主营产品匹配进口商', '校验企业与联系人', '生成推荐理由与评分'];
+
+function selectBuyPack(btn) {
+  document.querySelectorAll('#buy-packs .buy-pack').forEach(el => el.classList.remove('active'));
+  btn.classList.add('active');
+  buyPackQty = Number(btn.dataset.pack) || 20;
+  buyPackPrice = Number(btn.dataset.price) || 200;
+  const confirmBtn = document.getElementById('buy-confirm-btn');
+  if (confirmBtn) confirmBtn.textContent = '确认支付 ' + buyPackPrice + ' 元';
+}
+
+function openBuyMore() {
+  if (state.mining === 'buy') { toast('正在挖掘中，请稍候'); return; }
+  document.getElementById('buy-modal').classList.add('show');
+}
+
+function closeBuyMore() {
+  document.getElementById('buy-modal').classList.remove('show');
+}
+
+function mineStateHTML(kind) {
+  const buy = kind === 'buy';
+  return `<div class="mine-state">
+    <div class="mine-visual"><div class="mine-ring"></div><div class="mine-ring d2"></div><div class="mine-core"></div></div>
+    <h3>潜在买家获取中</h3>
+    <p>${buy
+      ? '系统正在海关和企业数据库中匹配潜在买家'
+      : '系统正在按企业画像持续匹配，将于明天 08:00 更新到今日推荐。'}</p>
+    ${buy
+      ? `<div class="mine-bar"><i id="mine-bar-fill" style="width:${state.mineProgress || 0}%"></i></div><div class="mine-step" id="mine-step-text">${MINE_STEPS[Math.min(MINE_STEPS.length - 1, Math.floor((state.mineProgress || 0) / 25))]}</div>`
+      : `<button class="btn btn-warn" type="button" onclick="openBuyMore()">获取更多推荐</button>`}
+  </div>`;
+}
+
+function syncMineProgressUI() {
+  const fill = document.getElementById('mine-bar-fill');
+  const txt = document.getElementById('mine-step-text');
+  if (fill) fill.style.width = (state.mineProgress || 0) + '%';
+  if (txt) txt.textContent = MINE_STEPS[Math.min(MINE_STEPS.length - 1, Math.floor((state.mineProgress || 0) / 25))];
+}
+
+function cloneRec(base, patch) {
+  const r = JSON.parse(JSON.stringify(base));
+  Object.assign(r, patch);
+  r.recommendedAt = CARD_TODAY;
+  return r;
+}
+
+function buildMinedRecs(n) {
+  const src = [
+    cloneRec(RECS[2], { id:'m1', name:'Helios Licht GmbH', country:'德国', aiSummary:'德国照明进口商，品类与画像匹配，采购经理邮箱已验证。' }),
+    cloneRec(RECS[3], { id:'m2', name:'BrightPath Ltd', country:'英国', aiSummary:'英国渠道分销商，近半年进口稳定，适合以样品目录切入。' }),
+    cloneRec(HIST_LEADS[3], { id:'m3', name:'Fjell Light AS', country:'挪威', score:74, aiSummary:'挪威照明进口商，近半年进口频次上升。' }),
+    cloneRec(HIST_LEADS[4], { id:'m4', name:'NorthGlow Inc.', country:'加拿大', score:71, aiSummary:'加拿大照明分销商，渠道覆盖东部零售。' })
+  ];
+  const existing = new Set((state.minedRecs || []).map(r => r.id));
+  const fresh = src.filter(r => !existing.has(r.id));
+  return fresh.slice(0, Math.max(2, Math.min(n, fresh.length)));
+}
+
+function confirmBuyMore() {
+  closeBuyMore();
+  state.previewWait = false;
+  state.mining = 'buy';
+  state.mineProgress = 6;
+  render();
+  clearInterval(mineTimer);
+  mineTimer = setInterval(function () {
+    state.mineProgress = Math.min(100, state.mineProgress + 7 + Math.round(Math.random() * 9));
+    syncMineProgressUI();
+    if (state.mineProgress >= 100) {
+      clearInterval(mineTimer);
+      mineTimer = null;
+      finishBuyMining();
+    }
+  }, 360);
+}
+
+function finishBuyMining() {
+  const added = buildMinedRecs(4);
+  state.minedRecs = (state.minedRecs || []).concat(added);
+  state.mining = null;
+  state.mineProgress = 0;
+  render();
+  showMineNotice('挖掘完成', `已为你匹配到 ${added.length} 家潜在买家，已写入今日推荐。`);
+}
+
+function showMineNotice(title, body) {
+  const el = document.getElementById('mine-notice');
+  if (!el) { toast(title + ' · ' + body); return; }
+  document.getElementById('mine-notice-title').textContent = title;
+  document.getElementById('mine-notice-body').textContent = body;
+  el.classList.add('show');
+  setTimeout(function () { el.classList.remove('show'); }, 5200);
+}
+
+function toggleWaitPreview() {
+  state.previewWait = !state.previewWait;
+  const btn = document.getElementById('wait-toggle');
+  if (btn) btn.textContent = state.previewWait ? '预览：恢复今日推荐' : '预览：08:00 前等待推送';
+  render();
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('ignore-modal').classList.contains('show')) { closeIgnoreModal(); return; }
+  if (document.getElementById('buy-modal').classList.contains('show')) { closeBuyMore(); return; }
+  if (document.getElementById('convert-modal').classList.contains('show')) { closeConvertModal(); return; }
+  if (document.getElementById('asst-detail').classList.contains('show')) { closeLeadDetail(); return; }
+  if (state.asstHistoryOpen) { toggleAsstHistory(false); return; }
+  closeAssistant();
+});
+
+document.addEventListener('mousedown', e => {
+  if (!state.asstHistoryOpen) return;
+  const wrap = document.getElementById('asst-history-wrap');
+  if (wrap && !wrap.contains(e.target)) toggleAsstHistory(false);
+});
+
+if (location.hash === '#no-profile') state.hasProfile = false;
+if (location.hash === '#wait') state.previewWait = true;
+renderTabs();
+renderSearchHistory();
+render();
+setTimeout(function () { if (state.hasProfile) startAgentTour(false); }, 600);
+
+function agentTourSteps() {
+  return [
+    { kicker:'潜客挖掘', sel:'#hero-profile-row', title:'确认企业画像', body:'推荐来自主营产品和目标市场。画像越准，今日推荐越精准' },
+    { kicker:'潜客挖掘', sel:'#daily-feed .rec-card', title:'今日推荐', body:'查看推荐理由、核心指标和可触达联系人，判断企业价值', radius:'12px' },
+    { kicker:'潜客挖掘', sel:'#daily-feed .btn-convert', title:'存入CRM', body:'看准了存入CRM，沉淀客户资产，持续进行跟进管理' },
+    { kicker:'潜客挖掘', sel:'#feed-batch-actions', title:'批量处理更高效', body:'勾选企业数据后，可批量存入CRM或批量忽略，一键操作更方便。' },
+    { kicker:'潜客挖掘', sel:'#metric-converted', title:'去客户管理跟进', body:'已存入的客户可在 【AI CRM】 继续跟进。', doneLabel:'完成' }
+  ];
+}
+function startAgentTour(force) {
+  if (!window.TradeOnboarding) return;
+  const steps = agentTourSteps().filter(function (s) { return !s.sel || s.before || document.querySelector(s.sel); });
+  TradeOnboarding.start(steps, { storageKey: 'agent', force: !!force });
+}
+</script>
+</body>
+</html>

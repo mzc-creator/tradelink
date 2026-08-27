@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeLink · AI Workspace</title>
+<style>
+:root {
+  --bg:#f4f6f9; --card:#fff; --text:#0f172a; --muted:#64748b;
+  --border:#e8ecf1; --sidebar:#0f172a;
+  --gold:#c9a227; --agent:#7c3aed; --agent-bg:rgba(124,58,237,.08);
+  --copilot-w:400px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden}
+.app{display:flex;height:100vh}
+.icon-nav{width:56px;background:var(--sidebar);display:flex;flex-direction:column;align-items:center;padding:14px 0;flex-shrink:0}
+.icon-btn{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.45);margin-bottom:6px;font-size:17px;text-decoration:none}
+.icon-btn.active{background:rgba(201,162,39,.15);color:#c9a227}
+.icon-spacer{flex:1}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0;margin-right:var(--copilot-w)}
+
+.page-head{background:var(--card);border-bottom:1px solid var(--border);padding:20px 28px;flex-shrink:0}
+.page-head h1{font-size:20px;font-weight:700;margin-bottom:4px}
+.page-head p{font-size:13px;color:var(--muted)}
+
+.workspace-body{flex:1;overflow-y:auto;padding:24px 28px}
+.context-bar{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--agent-bg);border:1px solid rgba(124,58,237,.15);border-radius:12px;margin-bottom:20px;font-size:13px}
+.context-bar strong{color:var(--agent)}
+
+.action-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:28px}
+.action-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:.15s}
+.action-card:hover{border-color:rgba(124,58,237,.3);box-shadow:0 4px 16px rgba(0,0,0,.04);transform:translateY(-1px)}
+.action-icon{font-size:24px;margin-bottom:10px}
+.action-card h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.action-card p{font-size:11px;color:var(--muted);line-height:1.45}
+
+.section-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.history-list{display:flex;flex-direction:column;gap:8px}
+.history-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:.12s}
+.history-item:hover{border-color:rgba(124,58,237,.2)}
+.history-item h4{font-size:13px;font-weight:600;margin-bottom:4px}
+.history-item p{font-size:11px;color:var(--muted);line-height:1.45}
+.history-meta{font-size:10px;color:var(--muted);margin-top:6px}
+
+.copilot{position:fixed;top:0;right:0;width:var(--copilot-w);height:100vh;background:var(--card);border-left:1px solid var(--border);box-shadow:-8px 0 32px rgba(0,0,0,.06);display:flex;flex-direction:column;z-index:10}
+.copilot-head{padding:16px 18px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(124,58,237,.06),transparent)}
+.copilot-head h2{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.copilot-dot{width:8px;height:8px;background:#10b981;border-radius:50%}
+.copilot-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.copilot-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:95%;font-size:13px;line-height:1.55}
+.msg.bot{align-self:flex-start}
+.msg.user{align-self:flex-end}
+.msg-bubble{padding:10px 12px;border-radius:12px}
+.msg.bot .msg-bubble{background:var(--bg);border:1px solid var(--border)}
+.msg.user .msg-bubble{background:var(--agent);color:#fff}
+.quick-actions{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.qa-btn{padding:8px 12px;border-radius:9px;font-size:11px;background:var(--card);border:1px solid var(--border);cursor:pointer;text-align:left;font-family:inherit}
+.qa-btn:hover{background:var(--agent-bg);border-color:rgba(124,58,237,.25);color:var(--agent)}
+.copilot-foot{padding:12px 14px;border-top:1px solid var(--border)}
+.copilot-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;resize:none;background:var(--bg)}
+.copilot-input:focus{outline:none;border-color:var(--agent)}
+.btn{padding:8px 14px;border-radius:9px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;background:var(--agent);color:#fff;margin-top:8px;width:100%}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.3s;z-index:200}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="icon-nav">
+    <a class="icon-btn" href="crm-v2.html">👥</a>
+    <a class="icon-btn" href="proactive-agent-v1.html">✦</a>
+    <a class="icon-btn active" href="ai-workspace.html">🤖</a>
+    <div class="icon-spacer"></div>
+  </nav>
+
+  <div class="main">
+    <header class="page-head">
+      <h1>AI Workspace</h1>
+      <p>统一 AI 操作入口 · 未来 Agent 能力持续扩展于此</p>
+    </header>
+    <div class="workspace-body">
+      <div class="context-bar" id="context-bar">
+        <strong>✦</strong> 当前客户：<span id="ctx-name">ABC Trading</span> · 可在右侧 Copilot 直接操作
+      </div>
+
+      <div class="section-title">AI 能力</div>
+      <div class="action-grid">
+        <div class="action-card" onclick="runAction('email')">
+          <div class="action-icon">✉️</div>
+          <h3>生成开发邮件</h3>
+          <p>基于客户画像与采购数据生成个性化开发信</p>
+        </div>
+        <div class="action-card" onclick="runAction('whatsapp')">
+          <div class="action-icon">💬</div>
+          <h3>生成 WhatsApp</h3>
+          <p>生成简短、适合即时通讯的开场消息</p>
+        </div>
+        <div class="action-card" onclick="runAction('website')">
+          <div class="action-icon">🌐</div>
+          <h3>分析官网</h3>
+          <p>抓取并分析企业官网产品与定位</p>
+        </div>
+        <div class="action-card" onclick="runAction('trade')">
+          <div class="action-icon">📊</div>
+          <h3>分析采购趋势</h3>
+          <p>进口频次、金额、供应商集中度分析</p>
+        </div>
+        <div class="action-card" onclick="runAction('contact')">
+          <div class="action-icon">🔍</div>
+          <h3>寻找联系人</h3>
+          <p>AI 从企业数据库与公开渠道寻找采购负责人</p>
+        </div>
+        <div class="action-card" onclick="runAction('compete')">
+          <div class="action-icon">⚔️</div>
+          <h3>分析竞争供应商</h3>
+          <p>识别主要竞争对手与替换机会</p>
+        </div>
+      </div>
+
+      <div class="section-title">AI 历史</div>
+      <div class="history-list" id="history"></div>
+    </div>
+  </div>
+
+  <aside class="copilot">
+    <div class="copilot-head">
+      <h2><span class="copilot-dot"></span> Copilot</h2>
+      <div class="copilot-sub">你可以：</div>
+    </div>
+    <div class="copilot-body" id="copilot-chat">
+      <div class="msg bot">
+        <div class="msg-bubble">
+          我是 AI Copilot，可以帮你完成客户开发相关操作。选择左侧能力，或直接告诉我你想做什么。
+          <div class="quick-actions">
+            <button class="qa-btn" onclick="runAction('email')">生成开发邮件</button>
+            <button class="qa-btn" onclick="runAction('whatsapp')">生成 WhatsApp</button>
+            <button class="qa-btn" onclick="runAction('contact')">寻找联系人</button>
+            <button class="qa-btn" onclick="runAction('trade')">分析采购趋势</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="copilot-foot">
+      <textarea class="copilot-input" id="copilot-input" rows="2" placeholder="告诉 Copilot 你想做什么…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendCopilot()}"></textarea>
+      <button class="btn" onclick="sendCopilot()">发送</button>
+    </div>
+  </aside>
+</div>
+
+<script>
+const NAMES = { c1:'ABC Trading', c3:'BrightHome GmbH', c4:'LumiTrade USA Inc.' };
+const id = new URLSearchParams(location.search).get('id') || 'c1';
+document.getElementById('ctx-name').textContent = NAMES[id] || 'ABC Trading';
+
+const HISTORY = [
+  { title:'生成开发邮件 · ABC Trading', desc:'英文开发信，提及 LED 批次交期优势', time:'今天 10:32', customer:'ABC Trading' },
+  { title:'分析采购趋势 · LumiTrade USA', desc:'年进口 $450 万，供应商亚洲集中，近 28 天有新批次', time:'今天 09:15', customer:'LumiTrade USA' },
+  { title:'寻找联系人 · LumiTrade USA', desc:'找到 VP Purchasing Michael Ross，邮箱已验证', time:'昨天 16:40', customer:'LumiTrade USA' },
+  { title:'分析竞争供应商 · BrightHome GmbH', desc:'主要供应商 3 家，2 家来自中国，替换窗口期', time:'昨天 11:20', customer:'BrightHome GmbH' },
+  { title:'生成 WhatsApp · Tom', desc:'简短询价回复，附 3 款主力型号', time:'3天前', customer:'Tom · ABC Trading' }
+];
+
+const ACTION_MSG = {
+  email: '正在生成开发邮件…\n\nSubject: LED Supply Partnership — Competitive Lead Times\n\nDear Tom,\n\nWe noticed ABC Trading\'s consistent LED imports (HS 9405) and would like to introduce our product line with 15-day lead times…',
+  whatsapp: 'Hi Tom! Thanks for your inquiry. Here are our top 3 LED models with specs and MOQ. Happy to send a formal quote — when works for a quick call?',
+  website: '官网分析完成：\n· 主营：Commercial & Residential LED\n· 定位：Mid-to-high end distributor\n· 产品线：Panel lights, Downlights, Smart bulbs\n· 建议切入点：Commercial panel series',
+  trade: '采购趋势分析：\n· 年进口 $320 万 · 23 批次\n· 近 6 月频次下降 18%\n· 供应商集中（3 家）\n· 判断：可能在评估新供应商',
+  contact: '找到 2 位联系人：\n1. Tom · 采购经理 · tom@abctrading.com ✓\n2. Lisa Wang · CEO · lisa@abctrading.com',
+  compete: '竞争供应商分析：\n· 主要来源：中国 2 家、越南 1 家\n· 头部供应商占 65% 份额\n· 替换机会：交期与质保条款'
+};
+
+function renderHistory() {
+  document.getElementById('history').innerHTML = HISTORY.map(h => `
+    <div class="history-item" onclick="toast('查看：${h.title}')">
+      <h4>${h.title}</h4>
+      <p>${h.desc}</p>
+      <div class="history-meta">${h.time} · ${h.customer}</div>
+    </div>`).join('');
+}
+
+function appendCopilot(role, text) {
+  const chat = document.getElementById('copilot-chat');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function runAction(type) {
+  appendCopilot('user', {email:'生成开发邮件',whatsapp:'生成 WhatsApp',website:'分析官网',trade:'分析采购趋势',contact:'寻找联系人',compete:'分析竞争供应商'}[type]);
+  setTimeout(() => appendCopilot('bot', ACTION_MSG[type] || '已完成'), 500);
+  toast('AI 任务已执行');
+}
+
+function sendCopilot() {
+  const inp = document.getElementById('copilot-input');
+  if (!inp.value.trim()) return;
+  appendCopilot('user', inp.value.trim());
+  inp.value = '';
+  setTimeout(() => appendCopilot('bot', '好的，我来处理。请稍候…\n\n（原型演示：选择上方快捷能力体验完整流程）'), 400);
+}
+
+function toast(msg) {
+  let t = document.querySelector('.toast');
+  if (!t) { t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+renderHistory();
+</script>
+</body>
+</html>

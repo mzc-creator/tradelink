@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TradeLink AI · 外贸智能获客</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">T</span>
+        <span class="logo-text">TradeLink AI</span>
+      </div>
+      <nav class="nav">
+        <a href="#" class="nav-item active" data-screen="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
+          <span>工作台</span>
+        </a>
+        <a href="#" class="nav-item" data-screen="discover">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <span>发现客户</span>
+        </a>
+        <a href="#" class="nav-item" data-screen="customers">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          <span>客户管理</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="db-status">
+          <span class="status-dot"></span>
+          <span>海关 · 企业 · 联系人</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Screen 1: Dashboard -->
+      <section id="screen-dashboard" class="screen active">
+        <header class="screen-header">
+          <h1>工作台</h1>
+          <p class="subtitle">基于海关与企业数据库的智能获客</p>
+        </header>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value">2,847</span>
+            <span class="stat-label">潜在客户</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">156</span>
+            <span class="stat-label">跟进中</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">23%</span>
+            <span class="stat-label">转化率</span>
+          </div>
+        </div>
+        <div class="cta-section">
+          <div class="cta-card">
+            <h2>一键发现高质量客户</h2>
+            <p>AI 智能匹配海关交易记录、企业资质与联系人信息，精准推荐高意向客户</p>
+            <button class="btn-primary" data-action="go-discover">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              开始发现
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen 2: Discover (One-click) -->
+      <section id="screen-discover" class="screen">
+        <header class="screen-header">
+          <h1>发现客户</h1>
+          <p class="subtitle">输入产品关键词，AI 自动匹配潜在客户</p>
+        </header>
+        <div class="discover-form">
+          <div class="form-group">
+            <label>产品 / 品类关键词</label>
+            <input type="text" placeholder="例如：机械零部件、电子产品..." id="search-keyword">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>目标地区（可选）</label>
+              <select id="search-region">
+                <option value="">全部地区</option>
+                <option value="us">北美</option>
+                <option value="eu">欧洲</option>
+                <option value="sea">东南亚</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>客户质量</label>
+              <select id="search-quality">
+                <option value="high">高质量优先</option>
+                <option value="all">全部</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-primary btn-large" id="btn-discover">
+            <span class="btn-icon">⚡</span>
+            一键智能匹配
+          </button>
+        </div>
+        <div class="discover-result" id="discover-result" style="display:none">
+          <h3>匹配完成 · 发现 <strong id="match-count">0</strong> 家潜在客户</h3>
+          <p class="hint">已根据海关交易、企业规模、联系人职位进行智能排序</p>
+          <button class="btn-secondary" data-action="go-customers">查看客户列表 →</button>
+        </div>
+      </section>
+
+      <!-- Screen 3: Customer List -->
+      <section id="screen-customers" class="screen">
+        <header class="screen-header">
+          <h1>客户管理</h1>
+          <p class="subtitle">潜在客户与跟进状态</p>
+          <div class="header-actions">
+            <input type="text" placeholder="搜索客户..." class="search-input" id="customer-search">
+          </div>
+        </header>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>公司名称</th>
+                <th>联系人</th>
+                <th>地区</th>
+                <th>匹配度</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="customer-tbody">
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Screen 4: Customer Detail (Modal) -->
+      <div id="customer-detail" class="modal">
+        <div class="modal-backdrop" data-close="modal"></div>
+        <div class="modal-content">
+          <button class="modal-close" data-close="modal">×</button>
+          <header class="modal-header">
+            <h2 id="detail-company">—</h2>
+            <span class="badge" id="detail-status">—</span>
+          </header>
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>企业信息</h4>
+              <dl>
+                <dt>海关编码</dt>
+                <dd id="detail-code">—</dd>
+                <dt>地区</dt>
+                <dd id="detail-region">—</dd>
+                <dt>年进口额</dt>
+                <dd id="detail-volume">—</dd>
+              </dl>
+            </div>
+            <div class="detail-section">
+              <h4>联系人</h4>
+              <dl>
+                <dt>姓名</dt>
+                <dd id="detail-contact">—</dd>
+                <dt>职位</dt>
+                <dd id="detail-title">—</dd>
+                <dt>邮箱</dt>
+                <dd><a href="#" id="detail-email">—</a></dd>
+              </dl>
+            </div>
+          </div>
+          <div class="follow-up-section">
+            <h4>跟进记录</h4>
+            <ul class="timeline" id="follow-timeline">
+              <!-- Filled by JS -->
+            </ul>
+            <div class="add-follow">
+              <textarea placeholder="添加跟进记录..." id="follow-note"></textarea>
+              <div class="add-follow-actions">
+                <input type="date" id="follow-date" class="date-input">
+                <button class="btn-primary btn-sm" id="btn-add-follow">保存</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
