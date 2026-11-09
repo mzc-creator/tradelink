@@ -38,7 +38,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
 .btn-ghost{background:#fff;color:var(--text);border:1px solid var(--border)}
 .btn-ghost:hover{border-color:rgba(201,162,39,.4);color:#92400e}
 
-.toolbar{padding:10px 20px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.toolbar{padding:10px 20px;background:var(--card);border-bottom:0;display:flex;align-items:center;gap:10px;flex-shrink:0}
 .filter-grid{flex:1;min-width:0;display:grid;gap:10px;grid-template-columns:repeat(5,minmax(0,1fr))}
 .filter-item{min-width:0;display:flex;flex-direction:row;align-items:center;gap:8px}
 .filter-item[hidden]{display:none}
@@ -64,7 +64,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
 
 .crow{display:grid;gap:8px;align-items:center;padding:16px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;min-height:72px;cursor:pointer;transition:.12s;font-size:12px}
 .crow > div{min-width:0;overflow:hidden}
-.crow > .ent-people{overflow:visible}
+.crow > .ent-people,.crow > .crow-ops{overflow:visible}
 .crow-ops{display:flex;flex-direction:row;align-items:center;gap:6px;flex-wrap:nowrap}
 .op-link{height:26px;padding:0 9px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;line-height:24px;white-space:nowrap}
 .op-follow{color:#92400e;background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.35)}
@@ -205,6 +205,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
   .crow-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;font-size:12px}
   .ai-cell{margin-top:8px}
 }
+  /* AI CRM 列表：紧凑表格与批量操作 */
+  .list-area{padding:12px 20px 16px;background:#fff}.list-head{top:0;min-height:58px;align-items:center;padding:0 16px;background:#f8fafc;border-bottom:1px solid #edf1f6;font-size:12px;letter-spacing:0}.list-head,.crow.ent{grid-template-columns:32px minmax(130px,1.35fr) minmax(64px,.65fr) minmax(112px,1.05fr) minmax(70px,.72fr) minmax(100px,.95fr) minmax(130px,1.25fr) minmax(76px,.72fr) minmax(92px,.85fr) minmax(120px,1.05fr) 104px}.crow{gap:8px;min-height:56px;padding:9px 16px;margin:0;border:0;border-bottom:1px solid #edf1f6;border-radius:0;box-shadow:none!important;font-size:12px}.crow:hover{background:#fafcff}.crow-name{font-size:13px;font-weight:600;color:#3d5afe}.tag-stage,.tag-src{padding:2px 6px;border-radius:5px}.crow-ops{gap:6px;position:relative}.op-link{height:24px;line-height:22px;padding:0 7px;font-size:11px}.row-check{display:flex;align-items:center;justify-content:center}.row-check input,.check-all{width:15px;height:15px;accent-color:#536dfe;cursor:pointer}.owner-cell{font-size:12px;color:#43516a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.more-wrap{position:relative;display:inline-flex;align-items:center}.more-btn{width:24px;height:24px;border:0;background:#fff;color:#64748b;border-radius:5px;font-size:19px;line-height:1;cursor:pointer}.more-btn:hover{background:#f3f6fb}.more-menu{position:absolute;z-index:10;right:0;top:24px;min-width:68px;padding:4px;background:#fff;border:1px solid #e1e7f0;border-radius:6px;box-shadow:0 8px 20px rgba(20,37,63,.12);visibility:hidden;opacity:0;transition:.12s}.more-wrap:hover .more-menu{visibility:visible;opacity:1}.more-menu button{width:100%;border:0;border-radius:4px;background:#fff;color:#e24444;padding:6px 8px;text-align:left;font-size:12px;cursor:pointer}.more-menu button:hover{background:#fff5f5}.batch-bar{height:48px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #e8edf4;background:#f8faff;padding:0 12px;font-size:12px;color:#53627b}.batch-bar[hidden]{display:none}.batch-count{color:#3d5afe;font-weight:700}.batch-btn{height:28px;padding:0 11px;border:1px solid #d7e0ec;border-radius:5px;background:#fff;color:#42526d;font-size:12px;cursor:pointer}.batch-btn:hover{border-color:#9eafff;color:#3d5afe}.batch-btn.danger{color:#df3d3d}.batch-btn.danger:hover{border-color:#f1bcbc;background:#fff7f7}
+  .filter-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.crm-owner-filter{position:relative;flex:1;min-width:0}.mini-owner-trigger{position:relative;width:100%;height:34px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);padding:0 26px 0 10px;text-align:left;font-size:13px;cursor:pointer}.mini-owner-trigger::after{content:'⌄';position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}.crm-owner-menu{position:absolute;z-index:40;left:0;top:37px;width:220px;padding:8px;background:#fff;border:1px solid #dce4ef;border-radius:8px;box-shadow:0 12px 26px rgba(20,37,63,.14)}.crm-owner-menu[hidden]{display:none}.crm-owner-search{height:30px;display:flex;align-items:center;gap:5px;padding:0 7px;border:1px solid #dbe3ed;border-radius:5px;color:#8b9ab0}.crm-owner-search input{min-width:0;flex:1;border:0;outline:0;font-size:12px}.crm-owner-option{display:flex;align-items:center;gap:7px;padding:7px 3px;color:#40516d;font-size:12px;cursor:pointer}.crm-owner-option:hover{background:#f6f8fc}.crm-owner-option input{width:14px;height:14px;accent-color:#536dfe}.crm-owner-avatar{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;background:#e0e8f5;color:#405b82;font-size:10px;font-weight:700}
+.crm-action-mask{position:fixed;inset:0;z-index:230;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.35)}.crm-action-mask.show{display:flex}.crm-action-dialog{width:min(420px,100%);background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 20px 60px rgba(15,23,42,.2);padding:20px}.crm-action-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.crm-action-head h3{font-size:16px}.crm-action-close{border:0;background:none;color:var(--muted);font-size:21px;line-height:1;cursor:pointer}.crm-action-sub{margin-bottom:14px;color:var(--muted);font-size:12px;line-height:1.6}.crm-assign-options{display:flex;flex-direction:column;gap:4px;max-height:260px;overflow-y:auto;padding:2px 0}.crm-assign-option{display:flex;align-items:center;gap:8px;padding:8px 7px;border-radius:7px;font-size:13px;color:#40516d;cursor:pointer}.crm-assign-option:hover{background:#f6f8fc}.crm-assign-option input{width:15px;height:15px;accent-color:#536dfe}.crm-action-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.crm-delete-dialog .crm-action-sub{color:#475569}.crm-delete-warning{margin:8px 0 0;padding:10px 11px;border-radius:8px;background:#fff7f7;color:#b42318;font-size:12px;line-height:1.65}.crm-action-danger{background:#d64545;color:#fff}.crm-action-danger:hover{background:#bd3434}.more-wrap.open .more-menu{visibility:visible;opacity:1}.more-menu button:first-child{color:#42526d}.more-menu button:first-child:hover{background:#f6f8fc}@media(max-width:900px){.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.crm-tabbar{display:flex;align-items:center;gap:16px;padding:0 20px;background:#fff;border-bottom:1px solid #edf1f6;flex-shrink:0}.crm-tabs{display:flex;align-items:center;gap:4px;flex:1;min-width:0;padding:14px 0 0;background:#fff;overflow-x:auto;flex-shrink:1;border-bottom:0}.crm-tab{display:inline-flex;align-items:center;gap:7px;position:relative;padding:10px 12px 12px;border:0;background:transparent;color:#64748b;font-family:inherit;font-size:13px;font-weight:500;white-space:nowrap;cursor:pointer}.crm-tab:hover{color:#3d5afe}.crm-tab.active{color:#3d5afe;font-weight:600}.crm-tab.active:after{content:'';position:absolute;left:10px;right:10px;bottom:-1px;height:2px;border-radius:2px;background:#536dfe}.crm-tab-count{min-width:18px;padding:1px 6px;border-radius:10px;background:#f1f5f9;color:#64748b;font-size:11px;line-height:16px;text-align:center}.crm-tab.active .crm-tab-count{background:#eef1ff;color:#3d5afe}.crm-tab-divider{height:18px;width:1px;background:#e7ebf2;margin:0 4px}.crm-tabbar .btn{height:34px;padding:0 14px;flex-shrink:0;margin-bottom:4px}@media(max-width:900px){.crm-tabbar{gap:8px;padding:0 12px}.crm-tabs{padding-top:14px}.crm-tab{padding-left:9px;padding-right:9px}}
 </style>
 </head>
 <body>
@@ -215,7 +220,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
     <nav class="app-rail-nav">
       <a class="app-rail-item" href="proactive-agent-v1.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-        增长引擎
+        潜客挖掘
       </a>
       <a class="app-rail-item" href="#" onclick="toast('AI 社媒即将上线');return false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
@@ -225,13 +230,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 10h.01M12 10h4"/></svg>
         AI 广告
       </a>
-      <a class="app-rail-item" href="#" onclick="toast('AI 互动即将上线');return false">
+      <a class="app-rail-item" href="ai-interaction.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         AI 互动
       </a>
       <a class="app-rail-item active" href="crm-v2.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         AI CRM
+      </a>
+      <a class="app-rail-item" href="customer-allocation.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/><circle cx="17" cy="16" r="3" fill="currentColor" stroke="none"/></svg>
+        客户分配
       </a>
       <a class="app-rail-item" href="#" onclick="toast('AI 创意即将上线');return false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 00-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5A7 7 0 0012 2z"/></svg>
@@ -251,6 +260,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
   </aside>
 
   <div class="main">
+    <div class="crm-tabbar">
+      <nav class="crm-tabs" id="crm-tabs" aria-label="客户分类"></nav>
+      <button class="btn btn-gold" id="btn-archive" type="button" onclick="toast('智能建档')">智能建档</button>
+    </div>
     <div class="toolbar">
       <div class="filter-grid" id="filter-grid">
         <div class="filter-item">
@@ -268,7 +281,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
             <option value="AI获客页表单">AI获客页表单</option>
           </select>
         </div>
-        <div class="filter-item" id="filt-stage">
+        <div class="filter-item owner-filter-item">
+          <label>负责人</label>
+          <div class="crm-owner-filter">
+            <button class="mini-owner-trigger" id="crm-owner-trigger" type="button" onclick="toggleCrmOwnerFilter(event)">请选择</button>
+            <div class="crm-owner-menu" id="crm-owner-menu" hidden onclick="event.stopPropagation()">
+              <label class="crm-owner-search">⌕<input id="crm-owner-search" placeholder="搜索负责人" oninput="renderCrmOwnerOptions()"></label>
+              <div id="crm-owner-options"></div>
+            </div>
+          </div>
+        </div>
+        <div class="filter-item" id="filter-stage">
           <label>阶段</label>
           <select class="mini-sel" id="sel-stage">
             <option value="">全部</option>
@@ -306,11 +329,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
       <div class="filter-actions">
         <button class="btn btn-ghost" type="button" onclick="resetFilters()">重置</button>
         <button class="btn btn-gold" type="button" onclick="applyFilters()">查询</button>
-        <button class="btn btn-gold" id="btn-archive" type="button" onclick="toast('智能建档')">智能建档</button>
       </div>
     </div>
 
     <div class="list-area">
+      <div class="batch-bar" id="batch-bar" hidden><span>已选择 <b class="batch-count" id="batch-count">0</b> 项</span><button class="batch-btn" type="button" onclick="batchAssign()">分配</button><button class="batch-btn" type="button" onclick="batchExport()">导出</button><button class="batch-btn danger" type="button" onclick="batchDelete()">删除</button></div>
       <div class="list-head" id="list-head"></div>
       <div id="customer-list"></div>
       <div class="page-foot">
@@ -334,6 +357,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
       <button type="button" class="btn btn-ghost" onclick="closeArchiveModal()">取消</button>
       <button type="button" class="btn btn-gold" onclick="saveArchiveModal()">保存</button>
     </div>
+  </div>
+</div>
+<div class="crm-action-mask" id="assign-mask" onclick="if(event.target===this)closeAssignDialog()">
+  <div class="crm-action-dialog" role="dialog" aria-labelledby="assign-title" onclick="event.stopPropagation()">
+    <div class="crm-action-head"><h3 id="assign-title">分配负责人</h3><button class="crm-action-close" type="button" onclick="closeAssignDialog()" aria-label="关闭">×</button></div>
+    <p class="crm-action-sub" id="assign-sub"></p>
+    <div class="crm-assign-options" id="assign-options"></div>
+    <div class="crm-action-foot"><button type="button" class="btn btn-ghost" onclick="closeAssignDialog()">取消</button><button type="button" class="btn btn-gold" onclick="confirmAssignDialog()">确定</button></div>
+  </div>
+</div>
+<div class="crm-action-mask" id="delete-mask" onclick="if(event.target===this)closeDeleteDialog()">
+  <div class="crm-action-dialog crm-delete-dialog" role="dialog" aria-labelledby="delete-title" onclick="event.stopPropagation()">
+    <div class="crm-action-head"><h3 id="delete-title">删除客户</h3><button class="crm-action-close" type="button" onclick="closeDeleteDialog()" aria-label="关闭">×</button></div>
+    <p class="crm-action-sub">删除客户数据，将同步删除客户下联系人，跟进记录等所有信息且不可回复，确定继续删除吗</p>
+    <div class="crm-action-foot"><button type="button" class="btn btn-ghost" onclick="closeDeleteDialog()">取消</button><button type="button" class="btn crm-action-danger" onclick="confirmDeleteDialog()">确定删除</button></div>
   </div>
 </div>
 <div id="people-tip" onmouseenter="keepPeopleTip()" onmouseleave="hidePeopleTip()"></div>
@@ -516,9 +554,25 @@ const CONTACTS = [
 
 let currentView = 'enterprise';
 const TODAY = '2026-08-20';
-let appliedFilters = { kw:'', source:'', stage:'', interact:'', created:'' };
+let appliedFilters = { kw:'', source:'', owner:[], stage:'', interact:'', created:'' };
+let activeCustomerTab = 'all';
+const CRM_STAGES = ['待联系','需求确认','报价','谈判','成交','失单'];
+let selectedEnterpriseIds = new Set();
+const CRM_OWNERS = ['王强','张三','李四','王五','陈敏','刘辉','李娜','赵雨','周明','孙悦'];
+let selectedCrmOwners = [];
+let pendingAssignIds = [];
+let pendingDeleteIds = [];
 
-const ENT_HEAD = ['公司名称','国家','联系人','阶段','来源','互动内容','互动时间','创建时间','操作'];
+const ENT_HEAD = ['','公司名称','国家','联系人','阶段','来源','互动内容','互动时间','负责人','创建时间','操作'];
+
+function ownerOf(c) {
+  const owners = ['王强','陈敏','刘辉','李娜'];
+  return c.owner || owners[String(c.id || '').split('').reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % owners.length];
+}
+function renderCrmOwnerOptions(){const term=(document.getElementById('crm-owner-search')?.value||'').trim(),items=CRM_OWNERS.filter(name=>name.includes(term));document.getElementById('crm-owner-options').innerHTML=items.map(name=>`<label class="crm-owner-option"><input type="checkbox" value="${name}" ${selectedCrmOwners.includes(name)?'checked':''} onchange="setCrmOwnerFilter('${name}',this.checked)"><span class="crm-owner-avatar">${name[0]}</span>${name}</label>`).join('')||'<p style="padding:8px;color:var(--muted);font-size:12px">未找到负责人</p>';syncCrmOwnerTrigger()}
+function setCrmOwnerFilter(name,checked){selectedCrmOwners=checked?[...selectedCrmOwners,name]:selectedCrmOwners.filter(item=>item!==name);syncCrmOwnerTrigger()}
+function syncCrmOwnerTrigger(){const trigger=document.getElementById('crm-owner-trigger');if(trigger)trigger.textContent=selectedCrmOwners.length?`${selectedCrmOwners.length} 人`:'请选择'}
+function toggleCrmOwnerFilter(event){event.stopPropagation();const menu=document.getElementById('crm-owner-menu');menu.hidden=!menu.hidden;if(!menu.hidden){document.getElementById('crm-owner-search').value='';renderCrmOwnerOptions();document.getElementById('crm-owner-search').focus()}}
 
 function displaySource(src) {
   return src === '主动营销Agent' ? '潜客挖掘agent' : src;
@@ -551,8 +605,6 @@ function channelIcons(p) {
   if (dashVal(p.email)) bits.push(`<span class="ch-ico mail" title="${escHtml(p.email)}">${ciIcon('mail')}</span>`);
   const phone = dashVal(p.phone) && p.phone !== p.wa ? p.phone : '';
   if (phone) bits.push(`<span class="ch-ico phone" title="${escHtml(phone)}">${ciIcon('phone')}</span>`);
-  const soc = socialIcons(p);
-  if (soc) bits.push(soc);
   return bits.length ? `<span class="ch-icos">${bits.join('')}</span>` : '';
 }
 function peopleCell(c) {
@@ -659,11 +711,11 @@ function matchDateFilter(iso, key) {
   return true;
 }
 
-function getList() {
+function getFilteredCustomerBase() {
   let list = [...ENTERPRISES];
-  const { kw, source, stage, interact, created } = appliedFilters;
-  if (stage) list = list.filter(c => c.status === stage);
+  const { kw, source, owner, interact, created } = appliedFilters;
   if (source) list = list.filter(c => c.source === source);
+  if (owner?.length) list = list.filter(c => owner.includes(ownerOf(c)));
   if (interact) list = list.filter(c => interactLabel(c.interactionAt) === interact);
   if (created) list = list.filter(c => matchDateFilter(c.createdAt, created));
   if (kw) {
@@ -675,6 +727,30 @@ function getList() {
     });
   }
   return list;
+}
+function getList() {
+  let list = getFilteredCustomerBase();
+  if (activeCustomerTab === 'all' && appliedFilters.stage) {
+    list = list.filter(c => c.status === appliedFilters.stage);
+  } else if (activeCustomerTab.startsWith('stage:')) {
+    const stage = activeCustomerTab.slice(6);
+    list = list.filter(c => c.status === stage);
+  }
+  return list;
+}
+function setCustomerTab(tab) {
+  activeCustomerTab = tab;
+  if (tab !== 'all') {
+    appliedFilters.stage = '';
+    document.getElementById('sel-stage').value = '';
+  }
+  renderList();
+}
+function renderCustomerTabs() {
+  const base = getFilteredCustomerBase();
+  const tab = (key, label, count) => `<button type="button" class="crm-tab${activeCustomerTab === key ? ' active' : ''}" aria-pressed="${activeCustomerTab === key}" onclick="setCustomerTab('${key}')">${label}<span class="crm-tab-count">${count}</span></button>`;
+  document.getElementById('crm-tabs').innerHTML = tab('all','全部',base.length) + '<span class="crm-tab-divider" aria-hidden="true"></span>' + CRM_STAGES.map(stage => tab('stage:'+stage,stage,base.filter(c => c.status === stage).length)).join('');
+  document.getElementById('filter-stage').hidden = activeCustomerTab !== 'all';
 }
 
 function sourceTag(src) {
@@ -698,10 +774,13 @@ function replyNow(id) {
 
 function opsCell(kind, id) {
   return `<div class="crow-ops" onclick="event.stopPropagation()">
-    <button type="button" class="op-link op-follow" onclick="listFollow('${kind}','${id}')">跟进</button>
     <button type="button" class="op-link op-edit" onclick="listEdit('${kind}','${id}')">编辑</button>
+    <button type="button" class="op-link op-follow" onclick="listFollow('${kind}','${id}')">跟进</button>
+    <span class="more-wrap"><button type="button" class="more-btn" aria-label="更多操作" onclick="toggleRowMore(event,this)">⋮</button><span class="more-menu"><button type="button" onclick="assignEnterprise('${id}')">分配</button><button type="button" onclick="deleteEnterprise('${id}')">删除</button></span></span>
   </div>`;
 }
+function closeRowMenus(){document.querySelectorAll('.more-wrap.open').forEach(el=>el.classList.remove('open'))}
+function toggleRowMore(event,button){event.stopPropagation();const wrap=button.closest('.more-wrap');const wasOpen=wrap?.classList.contains('open');closeRowMenus();if(wrap&&!wasOpen)wrap.classList.add('open')}
 function listFollow(kind, id) {
   if (kind === 'ent') {
     location.href = 'customer-detail.html?id=' + encodeURIComponent(id) + '&follow=1';
@@ -805,6 +884,7 @@ function submitListFollow() {
 
 function entRow(c, i) {
   return `<div class="crow ent"${i===0?' id="tour-ent-row"':''} onclick="goDetail('${c.id}')">
+    <div class="row-check"><input type="checkbox" aria-label="选择${escHtml(c.name)}" ${selectedEnterpriseIds.has(c.id) ? 'checked' : ''} onclick="event.stopPropagation()" onchange="toggleEnterpriseSelection('${c.id}',this.checked)"></div>
     <div><div class="crow-name">${c.name}</div></div>
     <div>${countryLabel(c.country)}</div>
     ${peopleCell(c)}
@@ -812,6 +892,7 @@ function entRow(c, i) {
     <div>${sourceTag(c.source)}</div>
     ${interactionCell(c)}
     <div class="interaction-time">${interactLabel(c.interactionAt)}</div>
+    <div class="owner-cell">${ownerOf(c)}</div>
     <div class="interaction-time">${c.createdAt || '—'}</div>
     ${opsCell('ent', c.id)}
   </div>`;
@@ -852,17 +933,93 @@ function conRow(c, i) {
   </div>`;
 }
 function renderList() {
+  renderCustomerTabs();
   const list = getList();
   const head = document.getElementById('list-head');
   head.className = 'list-head';
-  head.innerHTML = ENT_HEAD.map(h => `<span>${h}</span>`).join('');
+  const allChecked = list.length && list.every(c => selectedEnterpriseIds.has(c.id));
+  head.innerHTML = ENT_HEAD.map((h, index) => index === 0 ? `<span class="row-check"><input class="check-all" type="checkbox" aria-label="全选" ${allChecked ? 'checked' : ''} onchange="toggleAllEnterpriseSelection(this.checked)"></span>` : `<span>${h}</span>`).join('');
 
   const el = document.getElementById('customer-list');
   if (!list.length) {
     el.innerHTML = '<div class="empty">暂无客户</div>';
+    updateBatchBar();
     return;
   }
   el.innerHTML = list.map((c, i) => entRow(c, i)).join('');
+  updateBatchBar();
+}
+
+function toggleEnterpriseSelection(id, checked) {
+  if (checked) selectedEnterpriseIds.add(id); else selectedEnterpriseIds.delete(id);
+  renderList();
+}
+function toggleAllEnterpriseSelection(checked) {
+  const list = getList();
+  list.forEach(c => checked ? selectedEnterpriseIds.add(c.id) : selectedEnterpriseIds.delete(c.id));
+  renderList();
+}
+function updateBatchBar() {
+  const count = selectedEnterpriseIds.size;
+  document.getElementById('batch-bar').hidden = count === 0;
+  document.getElementById('batch-count').textContent = count;
+}
+function openAssignDialog(ids){
+  const valid=[...new Set(ids)].filter(id=>ENTERPRISES.some(item=>item.id===id));
+  if(!valid.length)return;
+  pendingAssignIds=valid;
+  const current=valid.length===1?ownerOf(ENTERPRISES.find(item=>item.id===valid[0])):'';
+  document.getElementById('assign-sub').textContent=valid.length===1?'请选择负责人':'已选择 '+valid.length+' 位客户，请选择一位负责人';
+  document.getElementById('assign-options').innerHTML=CRM_OWNERS.map(name=>`<label class="crm-assign-option"><input type="radio" name="assign-owner" value="${escHtml(name)}" ${name===current?'checked':''}><span class="crm-owner-avatar">${escHtml(name[0])}</span><span>${escHtml(name)}</span></label>`).join('');
+  closeRowMenus();
+  document.getElementById('assign-mask').classList.add('show');
+}
+function closeAssignDialog(){pendingAssignIds=[];document.getElementById('assign-mask')?.classList.remove('show')}
+function confirmAssignDialog(){
+  const owner=document.querySelector('input[name="assign-owner"]:checked')?.value;
+  if(!owner){toast('请选择负责人');return}
+  ENTERPRISES.forEach(item=>{if(pendingAssignIds.includes(item.id))item.owner=owner});
+  const count=pendingAssignIds.length;
+  closeAssignDialog();
+  renderList();
+  toast(`已将 ${count} 位客户分配给${owner}`);
+}
+function assignEnterprise(id){openAssignDialog([id])}
+function deleteEnterprise(id){openDeleteDialog([id])}
+function openDeleteDialog(ids){
+  const valid=[...new Set(ids)].filter(id=>ENTERPRISES.some(item=>item.id===id));
+  if(!valid.length)return;
+  pendingDeleteIds=valid;
+  closeRowMenus();
+  document.getElementById('delete-mask').classList.add('show');
+}
+function closeDeleteDialog(){pendingDeleteIds=[];document.getElementById('delete-mask')?.classList.remove('show')}
+function confirmDeleteDialog(){
+  const ids=new Set(pendingDeleteIds);
+  if(!ids.size){closeDeleteDialog();return}
+  for(let i=ENTERPRISES.length-1;i>=0;i--)if(ids.has(ENTERPRISES[i].id))ENTERPRISES.splice(i,1);
+  for(let i=CONTACTS.length-1;i>=0;i--)if(ids.has(CONTACTS[i].companyId))CONTACTS.splice(i,1);
+  ids.forEach(id=>selectedEnterpriseIds.delete(id));
+  const count=ids.size;
+  closeDeleteDialog();
+  renderList();
+  toast(`已删除 ${count} 位客户及其关联数据`);
+}
+function batchAssign(){openAssignDialog([...selectedEnterpriseIds])}
+function batchExport() {
+  const rows = ENTERPRISES.filter(c => selectedEnterpriseIds.has(c.id)).map(c => [c.name, countryLabel(c.country), ownerOf(c), c.status, displaySource(c.source), c.createdAt || '—']);
+  const csv = '\ufeff公司名称,国家,负责人,阶段,来源,创建时间\n' + rows.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8;' }));
+  link.download = 'AI-CRM-客户.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+  toast('导出已开始');
+}
+function batchDelete() {
+  const count = selectedEnterpriseIds.size;
+  if (!count) return;
+  openDeleteDialog([...selectedEnterpriseIds]);
 }
 
 function goDetail(id) {
@@ -1097,6 +1254,7 @@ function applyFilters() {
   appliedFilters = {
     kw: (document.getElementById('kw-input').value || '').trim().toLowerCase(),
     source: document.getElementById('sel-source').value,
+    owner: [...selectedCrmOwners],
     stage: document.getElementById('sel-stage').value,
     interact: document.getElementById('sel-interact').value,
     created: document.getElementById('sel-created').value
@@ -1104,9 +1262,12 @@ function applyFilters() {
   renderList();
 }
 function resetFilters() {
+  selectedCrmOwners = [];
   document.getElementById('kw-input').value = '';
-  document.getElementById('sel-stage').value = '';
   document.getElementById('sel-source').value = '';
+  document.getElementById('sel-stage').value = '';
+  syncCrmOwnerTrigger();
+  renderCrmOwnerOptions();
   document.getElementById('sel-interact').value = '';
   document.getElementById('sel-created').value = '';
   applyFilters();
@@ -1127,7 +1288,8 @@ if (params.get('source') === 'agent') {
   syncFilterBar();
   renderList();
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeArchiveModal(); closeListFollow(); closeContactDrawer(); hidePeopleTip(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeArchiveModal(); closeListFollow(); closeContactDrawer(); closeAssignDialog(); closeDeleteDialog(); hidePeopleTip(); closeRowMenus(); } });
+document.addEventListener('click', () => { closeRowMenus(); const ownerMenu=document.getElementById('crm-owner-menu'); if(ownerMenu) ownerMenu.hidden=true; });
 document.querySelector('.list-area')?.addEventListener('scroll', hidePeopleTip);
 
 function tourPrep() {
@@ -1140,7 +1302,7 @@ function startCrmTour(force) {
   const first = (typeof getList === 'function' ? getList() : [])[0];
   const detailHref = first ? ('customer-detail.html?id=' + encodeURIComponent(first.id) + '&tour=1') : '';
   const steps = [
-    { kicker:'客户管理', sel:'#tour-ent-row', title:'客户概览', body:'查看客户阶段、来源、主要联系人和最近互动，快速识别优先跟进客户。点击行区域进入详情。', before: tourPrep, href: detailHref, continue: true, doneLabel:'下一步' }
+    { kicker:'客户管理', sel:'#tour-ent-row', title:'客户概览', body:'查看客户阶段、来源、联系人和最近互动，快速识别优先跟进客户。点击行区域进入详情。', before: tourPrep, href: detailHref, continue: true, doneLabel:'下一步' }
   ].filter(function (s) { return !s.sel || s.before || document.querySelector(s.sel); });
   TradeOnboarding.start(steps, { storageKey: 'crm', force: !!force, offset: 0, total: 5 });
 }

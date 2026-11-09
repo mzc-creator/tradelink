@@ -58,7 +58,7 @@
     if (href) location.href = href;
   }
 
-  function placeCard(card, holeRect) {
+  function placeCard(card, holeRect, step) {
     if (!holeRect) {
       card.classList.add('center');
       card.style.left = '';
@@ -67,6 +67,15 @@
     }
     card.classList.remove('center');
     const pad = 12, cw = card.offsetWidth, ch = card.offsetHeight;
+    if (step && step.placement === 'right') {
+      let rightLeft = holeRect.right + pad;
+      if (rightLeft + cw > window.innerWidth - 12) rightLeft = holeRect.left - cw - pad;
+      rightLeft = Math.min(Math.max(12, rightLeft), Math.max(12, window.innerWidth - cw - 12));
+      let rightTop = Math.min(Math.max(12, holeRect.top), Math.max(12, window.innerHeight - ch - 12));
+      card.style.left = rightLeft + 'px';
+      card.style.top = rightTop + 'px';
+      return;
+    }
     let top = holeRect.bottom + pad;
     if (top + ch > window.innerHeight - 12 && holeRect.top > ch + pad) top = holeRect.top - ch - pad;
     top = Math.min(Math.max(12, top), Math.max(12, window.innerHeight - ch - 12));
@@ -91,7 +100,7 @@
     p.textContent = step.body || '';
     p.style.display = step.body ? '' : 'none';
     card.querySelector('.tl-tour-prog').textContent = (session.offset + session.index + 1) + ' / ' + session.total;
-    card.querySelector('.tl-tour-prev').style.visibility = session.index === 0 ? 'hidden' : 'visible';
+    card.querySelector('.tl-tour-prev').style.visibility = session.index === 0 && !session._backHref ? 'hidden' : 'visible';
     card.querySelector('.tl-tour-next').textContent = session.index === session.steps.length - 1
       ? (step.doneLabel || (step.continue ? '下一步' : '完成')) : '下一步';
 
@@ -107,7 +116,7 @@
         hole.style.width = Math.max(24, r.width + p * 2) + 'px';
         hole.style.height = Math.max(24, r.height + p * 2) + 'px';
         hole.style.borderRadius = step.radius || '12px';
-        placeCard(card, r);
+        placeCard(card, r, step);
       } else {
         mask.style.display = 'block';
         hole.style.display = 'none';
@@ -125,15 +134,24 @@
     if (!session) return;
     if (session.index >= session.steps.length - 1) {
       const last = session.steps[session.index];
+      const onComplete = session._onComplete;
       session._finishHref = last.href || '';
       close(!last.continue);
+      if (!last.continue && typeof onComplete === 'function') onComplete();
       return;
     }
     session.index += 1;
     paint();
   }
   function prev() {
-    if (!session || session.index === 0) return;
+    if (!session) return;
+    if (session.index === 0) {
+      if (!session._backHref) return;
+      const href = session._backHref;
+      close(false);
+      location.href = href;
+      return;
+    }
     session.index -= 1;
     paint();
   }
@@ -145,7 +163,7 @@
     if (!steps || !steps.length) return;
     ensureStyle();
     close(false);
-    session = { steps: steps.slice(), index: 0, key: key, _finishHref: '', offset: opts.offset || 0, total: opts.total || steps.length };
+    session = { steps: steps.slice(), index: 0, key: key, _finishHref: '', _backHref: opts.backHref || '', _onComplete: opts.onComplete, offset: opts.offset || 0, total: opts.total || steps.length };
     const root = document.createElement('div');
     root.id = 'tl-tour-root';
     root.className = 'active';

@@ -36,12 +36,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
 .detail-left{width:320px;flex-shrink:0;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0;overflow:hidden}
 .left-back{display:block;padding:8px 14px 2px;font-size:12px;color:var(--muted);text-decoration:none;flex-shrink:0}
 .left-back:hover{color:var(--agent)}
-.left-id{display:flex;align-items:center;gap:8px;padding:6px 14px 8px;flex-shrink:0}
+.left-id{display:flex;align-items:center;gap:8px;padding:6px 14px 8px;flex-shrink:0}.left-owner-top{margin-left:auto;display:flex;align-items:center}.left-owner-top select{width:96px;height:28px;border:1px solid var(--border);border-radius:6px;background:#fafbfc;color:var(--text);font:600 12px inherit;outline:none;cursor:pointer;padding:0 7px}.left-owner-top select:focus{border-color:rgba(201,162,39,.55)}
+.left-stage{display:flex;flex-direction:column;align-items:stretch;gap:3px;margin:0 14px 4px;padding:2px 0;min-width:0}.left-stage span{font-size:11px;color:var(--muted);font-weight:500;line-height:1.3}.left-stage select{width:100%;height:28px;line-height:20px;border:1px solid var(--border);border-radius:6px;background:#fafbfc;color:var(--text);font:500 12px inherit;outline:none;cursor:pointer;padding:4px 8px;box-sizing:border-box}.left-stage select:focus{border-color:rgba(201,162,39,.55)}
+.left-profile-wrap{display:flex;flex-direction:column;flex:1;min-height:0}
 .left-av{width:32px;height:32px;border-radius:50%;background:#e8e8e4;color:#111;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
 .left-id-main{flex:1;min-width:0}
 .left-name{font-size:15px;font-weight:700;line-height:1.25;word-break:break-word}
 .left-type{font-size:11px;color:var(--muted);margin-top:1px}
-.left-fields{display:flex;flex-direction:column;justify-content:space-evenly;gap:0;padding:0 14px;flex:1;min-height:0;overflow:hidden}
+.left-fields{display:flex;flex-direction:column;justify-content:space-evenly;gap:0;padding:0 14px;flex:1;min-height:0;overflow-y:auto}
 .sys-box{flex-shrink:0;margin:6px 14px 8px;padding:8px 10px;background:#f8fafc;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted);line-height:1.5}
 .sys-title{font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px}
 .sys-row{display:flex;gap:8px;align-items:flex-start}
@@ -60,6 +62,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
 .mod.collapsed .mod-body{display:none}
 .mod-head h3{font-size:14px;font-weight:700}
 .mod-head span,.mod-link{font-size:12px;color:var(--muted);font-weight:500}
+.contacts-head-actions{display:flex;align-items:center;gap:8px}.add-contact-btn{border:1px solid rgba(124,58,237,.28);border-radius:6px;background:#fff;color:var(--agent);font:600 12px inherit;padding:5px 9px;cursor:pointer}.add-contact-btn:hover{background:var(--agent-bg);border-color:rgba(124,58,237,.45)}
 .mod-toggle{font-size:12px;color:var(--agent);font-weight:600}
 .mod-link{border:none;background:none;cursor:pointer;font-family:inherit;color:var(--agent);font-weight:600}
 .mod-body{padding:14px 16px}
@@ -90,6 +93,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
 .kpi-card.highlight{border-color:rgba(245,166,35,.35);background:linear-gradient(135deg,rgba(245,166,35,.06),var(--card))}
 .overview-main{display:block}
 .overview-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;min-height:0}
+.mod.contacts-mod{overflow:visible}
 .overview-card.ov-follow .follow-box{border:none;border-radius:0}
 .overview-card-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);background:#fafbfc}
 .overview-card-head h3{font-size:12px;font-weight:600}
@@ -141,13 +145,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
 .co-field textarea.inline-input{height:28px;min-height:28px;max-height:28px;line-height:20px}
 
 .pcard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:stretch;width:100%}
-.pcard{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:10px 12px;min-width:0;cursor:pointer;transition:.12s;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.pcard-grid.contact-scroll{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;padding-bottom:5px}.pcard-grid.contact-scroll .pcard{flex:0 0 calc(50% - 5px);scroll-snap-align:start}.pcard-grid.contact-scroll::-webkit-scrollbar{height:6px}.pcard-grid.contact-scroll::-webkit-scrollbar-thumb{background:#d7dee8;border-radius:999px}@media(max-width:700px){.pcard-grid.contact-scroll .pcard{flex-basis:86%}}
+.pcard{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:10px 12px;min-width:0;cursor:pointer;transition:.12s;display:flex;flex-direction:column;gap:8px;overflow:visible}
 .pcard:hover{border-color:rgba(124,58,237,.28);box-shadow:0 2px 10px rgba(15,23,42,.05)}
 @media(max-width:1100px){.pcard-grid{grid-template-columns:1fr}}
 .pcard-h{display:flex;align-items:center;gap:8px;min-width:0}
 .pcard-av{width:28px;height:28px;border-radius:50%;background:#e0e7ff;color:#4338ca;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0}
-.pcard-h-main{flex:1;min-width:0;overflow:hidden}
-.pcard-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden}
+.pcard-h-main{flex:1;min-width:0;overflow:visible}
+.pcard-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;min-width:0;overflow:visible}
 .pcard-name-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pcard-role{font-size:11px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pcard-actions{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
@@ -157,6 +162,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
 .pcard-ico.mail:hover{background:#e2e8f0;color:#334155}
 .pcard-ico.wa{background:#dcfce7;color:#16a34a}
 .pcard-ico.wa:hover{background:#bbf7d0;color:#15803d}
+.duplicate-wrap{position:relative;display:flex}
+.duplicate-tag{height:auto;padding:2px 6px;border:1px solid #f2c36b;border-radius:999px;background:#fff8e8;color:#a16207;font:600 10px/1.2 inherit;cursor:pointer;white-space:nowrap}
+.duplicate-tag:hover,.duplicate-wrap:focus-within .duplicate-tag{background:#fff0c9;color:#92400e}
+.duplicate-popover{position:absolute;left:-42px;top:29px;width:260px;padding:10px 12px 8px;background:#fff;border:1px solid #e6eaf0;border-radius:10px;box-shadow:0 8px 20px rgba(15,23,42,.14);z-index:20;opacity:0;visibility:hidden;transform:translateY(-4px);pointer-events:none;transition:opacity .16s ease,transform .16s ease,visibility .16s}
+.duplicate-wrap:hover .duplicate-popover,.duplicate-wrap:focus-within .duplicate-popover{opacity:1;visibility:visible;transform:translateY(0);pointer-events:auto}
+.duplicate-popover::before{content:'';position:absolute;left:50px;top:-5px;width:9px;height:9px;background:#fff;border-left:1px solid #e6eaf0;border-top:1px solid #e6eaf0;transform:rotate(45deg)}
+.duplicate-popover-head{font-size:12px;font-weight:500;color:#334155;margin-bottom:8px}.duplicate-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5px 0}.duplicate-item-main{min-width:0}.duplicate-name{font-size:13px;color:#c68a13;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.duplicate-name-link{border:none;background:none;padding:0;color:#c68a13;font:500 13px inherit;text-align:left;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.duplicate-name-link:hover{text-decoration:underline;color:#a16207}.duplicate-reason{flex:0 0 auto;max-width:112px;font-size:11px;color:#64748b;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.duplicate-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:9px;padding-top:7px;border-top:1px solid #f1f5f9}.duplicate-action{min-width:38px;height:24px;border:1px solid #e2e8f0;border-radius:3px;background:#fff;padding:0 8px;font:500 12px inherit;cursor:pointer;color:#64748b}.duplicate-action:hover{color:#334155;background:#f8fafc}.duplicate-action.merge{border-color:#c89a2e;background:#c89a2e;color:#fff}.duplicate-action.merge:hover{background:#b78416}
 .pcard-reach{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 10px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 8px;min-width:0}
 .pcard-kv{min-width:0;overflow:hidden}
 .pcard-kv dt{font-size:10px;color:var(--muted);font-weight:600;margin-bottom:2px}
@@ -253,6 +265,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
 .mv-body{flex:1;min-width:0;border:none;padding:0;font-size:13px;font-weight:500;outline:none;font-family:inherit;background:transparent;color:var(--text)}
 .mv-del{border:none;background:none;color:var(--muted);cursor:pointer;font-size:14px;line-height:1;padding:0 0 0 8px;flex-shrink:0}
 .mv-del:hover{color:#b91c1c}
+.merge-mask{position:fixed;inset:0;background:rgba(15,23,42,.38);z-index:220;opacity:0;pointer-events:none;transition:opacity .2s ease}.merge-mask.show{opacity:1;pointer-events:auto}
+.merge-modal{position:fixed;left:50%;top:50%;z-index:221;width:min(680px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow:auto;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 24px 60px rgba(15,23,42,.22);opacity:0;pointer-events:none;transform:translate(-50%,-47%) scale(.98);transition:opacity .2s ease,transform .2s ease}.merge-modal.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.merge-head{display:flex;align-items:flex-start;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border)}.merge-head h2{font-size:17px;line-height:1.35}.merge-head p{margin-top:4px;font-size:12px;line-height:1.45;color:var(--muted)}
+.merge-body{padding:16px 20px}.merge-rule{font-size:12px;line-height:1.55;color:#475569;background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:14px}.merge-rule b{color:var(--text)}
+.merge-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.merge-person{border:1px solid var(--border);border-radius:10px;padding:12px}.merge-person.candidate{border-color:rgba(124,58,237,.32);background:#fcfbff}.merge-person-label{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:7px}.merge-person.candidate .merge-person-label{color:var(--agent)}.merge-person-name{font-size:15px;font-weight:700;margin-bottom:9px}.merge-field{font-size:11px;line-height:1.55;color:#475569;margin:4px 0}.merge-field b{display:block;color:#94a3b8;font-size:10px;font-weight:600}.merge-select{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:11px;color:var(--agent);cursor:pointer}.merge-select input{accent-color:var(--agent)}
+.merge-company{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}.merge-company h3{font-size:13px;margin-bottom:5px}.merge-company p{font-size:12px;color:var(--muted);margin-bottom:8px}.merge-company-choice{display:flex;gap:8px;flex-wrap:wrap}.merge-company-choice label{display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;cursor:pointer}.merge-company-choice input{accent-color:var(--agent)}
+.cluster-evidence{margin:0 0 14px;padding:10px 12px;border:1px solid #fde7b0;border-radius:9px;background:#fffcf5}.cluster-evidence h3{font-size:12px;color:#92400e;margin-bottom:5px}.cluster-evidence p{font-size:11px;line-height:1.55;color:#64748b}.cluster-link{display:inline-block;color:#a16207;margin-right:6px}.merge-preservation{margin-top:14px;padding-top:13px;border-top:1px solid var(--border)}.merge-preservation h3{font-size:13px;margin-bottom:7px}.merge-preservation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.merge-preservation-item{font-size:11px;line-height:1.45;color:#475569;padding:7px 8px;border-radius:7px;background:#f8fafc}.merge-preservation-item b{display:block;color:#334155;margin-bottom:2px}.merge-company-note{font-size:11px;line-height:1.5;color:#64748b;margin-top:8px}
+.merge-conflicts{margin-top:14px;padding-top:13px;border-top:1px solid var(--border)}.merge-conflicts h3{font-size:13px;margin-bottom:4px}.merge-conflicts>p{font-size:11px;color:var(--muted);margin-bottom:8px}.merge-conflict-row{display:grid;grid-template-columns:54px minmax(0,1fr);gap:8px;padding:8px 0;border-top:1px solid #f1f5f9}.merge-conflict-row:first-of-type{border-top:none}.merge-conflict-label{font-size:11px;font-weight:700;color:#475569;padding-top:5px}.merge-conflict-options{display:flex;flex-wrap:wrap;gap:5px}.merge-conflict-options label{max-width:100%;display:flex;align-items:center;gap:4px;border:1px solid var(--border);border-radius:6px;padding:4px 6px;font-size:11px;cursor:pointer;overflow:hidden}.merge-conflict-options span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.merge-conflict-options input{accent-color:var(--agent)}
+.merge-person.master{border-color:#c9a227;background:#fffdf6}.merge-master-choice{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:11px;color:#92400e;cursor:pointer}.merge-master-choice input{accent-color:#c9a227}@media(max-width:620px){.merge-preservation-grid{grid-template-columns:1fr}}
+.merge-foot{display:flex;justify-content:flex-end;gap:9px;padding:13px 20px;border-top:1px solid var(--border)}.btn-secondary{padding:7px 14px;border-radius:8px;font:600 12px inherit;color:#475569;background:#fff;border:1px solid var(--border);cursor:pointer}.btn-secondary:hover{background:#f8fafc}@media(max-width:620px){.merge-compare{grid-template-columns:1fr}.merge-modal{max-height:calc(100vh - 20px)}}
+.merge-modal{width:min(480px,calc(100vw - 28px));border-radius:12px}.merge-head{display:block;padding:18px 16px 8px;border-bottom:none}.merge-head h2{font-size:16px}.merge-head p{display:none}.merge-head>.cdrawer-close{position:absolute;right:12px;top:10px}.merge-steps{display:flex;align-items:center;gap:8px;margin-top:17px;padding:0 2px}.merge-step{display:flex;align-items:center;gap:6px;color:#cbd5e1;font-size:12px;white-space:nowrap}.merge-step.active{color:#475569}.merge-step-index{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid #dbe2ea;border-radius:50%;font-size:12px;font-weight:600;color:#94a3b8}.merge-step.active .merge-step-index{border-color:#c99a2c;background:#c99a2c;color:#fff}.merge-step-line{height:1px;flex:1;background:#e5e7eb;min-width:22px}.merge-body{padding:8px 14px 16px}.merge-intro{margin:0 0 13px;font-size:12px;line-height:1.5;color:#475569}.merge-contact-list{display:flex;flex-direction:column;gap:6px}.merge-contact-row{display:flex;align-items:center;gap:10px;min-height:72px;padding:9px 10px;border:1px solid #edf0f4;border-radius:9px;background:#fff;cursor:pointer;box-sizing:border-box}.merge-contact-row:hover{border-color:#e9c979;background:#fffdf7}.merge-contact-row.selected{border-color:#e9c979;background:#fffdf5;box-shadow:0 0 0 1px rgba(201,162,39,.08)}.merge-contact-radio{width:17px;height:17px;flex:0 0 auto;accent-color:#c99a2c}.merge-contact-avatar{width:38px;height:38px;flex:0 0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e8f0f9;color:#4d6b88;font-size:14px;font-weight:700}.merge-contact-info{min-width:0;flex:1}.merge-contact-name{display:flex;align-items:center;gap:7px;min-width:0;font-size:13px;font-weight:700;color:#334155}.merge-contact-name-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.merge-recommended{font-size:10px;font-weight:500;color:#c68a13;white-space:nowrap}.merge-contact-company{margin-top:2px;font-size:11px;color:#64748b}.merge-contact-meta{display:flex;align-items:center;gap:10px;margin-top:5px;min-width:0;color:#64748b;font-size:10px;line-height:1.2}.merge-contact-meta span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.merge-contact-meta .merge-meta-phone::before{content:'⌕';margin-right:4px;color:#94a3b8}.merge-contact-meta .merge-meta-email::before{content:'✉';margin-right:4px;color:#94a3b8}.merge-contact-meta .merge-meta-wa::before{content:'▣';margin-right:4px;color:#94a3b8}.merge-auto{margin-top:16px;padding:10px 10px 12px;border:1px solid #edf0f4;border-radius:9px;background:#fff}.merge-auto-title{display:flex;align-items:center;gap:6px;color:#4d91c8;font-size:11px;font-weight:600}.merge-auto-info{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border:1px solid #5aa2d5;border-radius:50%;font-size:10px;font-weight:700}.merge-auto-items{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-top:13px;color:#64748b;font-size:10px}.merge-auto-item{display:flex;align-items:center;gap:4px;white-space:nowrap}.merge-auto-icon{font-size:13px;color:#8b9caf}.merge-modal .merge-foot{padding:12px 14px}
+.merge-step.done{color:#a16207}.merge-step.done .merge-step-index{border-color:#e9c979;background:#fff8e8;color:#b47c13}.merge-contact-head{display:flex;align-items:center;gap:8px;min-width:0}.merge-contact-company{margin:0 0 0 auto;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}.merge-contact-meta{justify-content:space-between}.merge-contact-meta span{flex:1 1 0}
+.crm-tour-complete-overlay{position:fixed;inset:0;z-index:260;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.45);opacity:0;pointer-events:none;transition:opacity .22s ease}.crm-tour-complete-overlay.show{opacity:1;pointer-events:auto}.crm-tour-complete-card{width:min(460px,100%);background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(15,23,42,.2);text-align:center;padding:28px 24px 22px;transform:translateY(12px);transition:transform .22s ease}.crm-tour-complete-overlay.show .crm-tour-complete-card{transform:translateY(0)}.crm-tour-complete-card h2{font-size:19px;line-height:1.4;margin:0 0 12px;color:var(--text)}.crm-tour-complete-card h2::before{content:'✦';color:var(--agent);font-size:20px;margin-right:7px}.crm-tour-complete-card p{font-size:13px;line-height:1.75;color:var(--muted);margin:0 auto 22px;max-width:360px}.crm-tour-complete-card .btn{min-width:112px;justify-content:center}
+.merge-success-overlay{position:fixed;inset:0;z-index:240;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.4);opacity:0;pointer-events:none;transition:opacity .2s ease}.merge-success-overlay.show{opacity:1;pointer-events:auto}.merge-success-card{position:relative;width:min(380px,100%);padding:24px 18px 18px;border-radius:12px;background:#fff;box-shadow:0 22px 55px rgba(15,23,42,.2);text-align:center;transform:translateY(10px);transition:transform .2s ease}.merge-success-overlay.show .merge-success-card{transform:translateY(0)}.merge-success-close{position:absolute;right:11px;top:8px;border:none;background:none;color:#94a3b8;font-size:22px;line-height:1;cursor:pointer}.merge-success-close:hover{color:#475569}.merge-success-icon{width:62px;height:62px;margin:0 auto 12px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e9f8ef;color:#13b764;font-size:40px;line-height:1;font-weight:500}.merge-success-card h2{margin:0 0 10px;font-size:23px;line-height:1.35;color:#0f172a}.merge-success-card>p{margin:0 0 18px;color:#94a3b8;font-size:13px}.merge-success-contact{padding:14px 13px 12px;border:1px solid #e5eaf0;border-radius:9px;text-align:left;background:#fff}.merge-success-person{display:flex;align-items:flex-start;gap:10px}.merge-success-avatar{width:44px;height:44px;flex:0 0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e5eef8;color:#526d89;font-size:15px;font-weight:700}.merge-success-main{min-width:0;flex:1}.merge-success-name-row{display:flex;align-items:center;gap:8px;min-width:0}.merge-success-name{font-size:15px;font-weight:700;color:#334155;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.merge-success-company{font-size:12px;color:#64748b;margin-top:4px}.merge-success-details{display:flex;flex-direction:column;gap:5px;margin:12px 0 0 54px;color:#64748b;font-size:12px}.merge-success-detail{display:flex;align-items:center;gap:7px;min-width:0}.merge-success-detail-icon{width:15px;color:#94a3b8;text-align:center;flex:0 0 auto}.merge-success-detail-value{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.merge-success-socials{display:flex;gap:7px;margin:10px 0 0 54px}.merge-success-social{width:20px;height:20px;border-radius:4px;display:inline-flex;align-items:center;justify-content:center;background:#1677bd;color:#fff;font-size:11px;font-weight:700}.merge-success-view{display:block;width:100%;margin-top:22px;height:42px;border-radius:8px;background:#c99a2c;color:#fff;font-size:13px}.merge-success-view:hover{background:#b78316}
+.merge-success-social-more{background:#e7edf3;color:#64748b}
+.merge-auto-items{display:grid;grid-template-columns:repeat(5,minmax(72px,1fr));gap:6px;margin-top:10px;align-items:stretch;overflow-x:auto;padding-bottom:2px}.merge-auto-item{display:grid;grid-template-columns:16px minmax(0,1fr);grid-template-rows:auto auto;column-gap:4px;row-gap:2px;min-width:72px;min-height:49px;padding:6px;border:1px solid #edf0f4;border-radius:7px;background:#fafbfc;box-shadow:0 1px 2px rgba(15,23,42,.02)}.merge-auto-item:last-child{grid-column:auto}.merge-auto-item-name{grid-column:2;grid-row:1;color:#64748b;font-size:10px;font-weight:600;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.merge-auto-item-action{grid-column:2;grid-row:2;margin:0;color:#334155;font-size:10px;font-weight:700;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.merge-auto-icon{grid-column:1;grid-row:1 / span 2;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;margin-top:1px;border-radius:4px;background:#eef2f7;color:#70839a;font-size:10px}
+.add-contact-mask{position:fixed;inset:0;z-index:230;background:rgba(15,23,42,.34);opacity:0;pointer-events:none;transition:opacity .2s ease}.add-contact-mask.show{opacity:1;pointer-events:auto}.add-contact-dialog{position:absolute;top:0;right:0;width:min(460px,100%);height:100%;display:flex;flex-direction:column;background:#fff;border-left:1px solid var(--border);box-shadow:-20px 0 55px rgba(15,23,42,.2);transform:translateX(100%);transition:transform .24s ease}.add-contact-mask.show .add-contact-dialog{transform:translateX(0)}.add-contact-head{display:flex;align-items:center;justify-content:space-between;padding:17px 20px 14px;border-bottom:1px solid var(--border);flex:none}.add-contact-head h3{font-size:16px}.add-contact-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:14px 12px;flex:1;overflow-y:auto;padding:18px 20px 22px}.add-contact-field{display:flex;flex-direction:column;gap:6px;min-width:0}.add-contact-field.full{grid-column:1/-1}.add-contact-field label{font-size:12px;color:#475569;font-weight:600}.add-contact-field input,.add-contact-field select,.add-contact-field textarea{width:100%;height:36px;padding:7px 10px;border:1px solid var(--border);border-radius:7px;background:#fff;color:var(--text);font:13px inherit;outline:none}.add-contact-field textarea{height:72px;resize:vertical;line-height:1.5}.add-contact-field input:focus,.add-contact-field select:focus,.add-contact-field textarea:focus{border-color:rgba(201,162,39,.65);box-shadow:0 0 0 3px rgba(201,162,39,.1)}.add-contact-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--border);flex:none}@media(max-width:560px){.add-contact-form{grid-template-columns:1fr}.add-contact-field.full{grid-column:auto}}
+@media(max-width:460px){.merge-auto-items{grid-template-columns:repeat(5,minmax(72px,1fr));overflow-x:auto}}
+.company-multi{cursor:default}.company-multi dt{display:flex;align-items:center;justify-content:space-between}.company-add{border:none;background:none;color:var(--agent);font:700 15px inherit;line-height:1;cursor:pointer;padding:0 2px}.company-add:disabled{color:#cbd5e1;cursor:not-allowed}.company-multi-rows{display:flex;flex-direction:column;gap:5px}.company-multi-row{display:flex;align-items:center;gap:4px}.company-multi-row input{width:100%;height:28px;border:1px solid var(--border);border-radius:6px;background:#fafbfc;color:var(--text);font:500 12px inherit;padding:4px 8px;outline:none}.company-multi-row input:focus{border-color:rgba(201,162,39,.55);background:#fff}.company-multi-row button{border:none;background:none;color:#94a3b8;font-size:15px;line-height:1;cursor:pointer;padding:0}.company-multi-row button:hover{color:#b91c1c}
 </style>
 </head>
 <body>
@@ -263,7 +294,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
     <nav class="app-rail-nav">
       <a class="app-rail-item" href="proactive-agent-v1.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-        增长引擎
+        潜客挖掘
       </a>
       <a class="app-rail-item" href="#" onclick="toast('AI 社媒即将上线');return false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
@@ -273,13 +304,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 10h.01M12 10h4"/></svg>
         AI 广告
       </a>
-      <a class="app-rail-item" href="#" onclick="toast('AI 互动即将上线');return false">
+      <a class="app-rail-item" href="ai-interaction.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         AI 互动
       </a>
       <a class="app-rail-item active" href="crm-v2.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         AI CRM
+      </a>
+      <a class="app-rail-item" href="customer-allocation.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/><circle cx="17" cy="16" r="3" fill="currentColor" stroke="none"/></svg>
+        客户分配
       </a>
       <a class="app-rail-item" href="#" onclick="toast('AI 创意即将上线');return false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 00-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5A7 7 0 0012 2z"/></svg>
@@ -304,6 +339,40 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
 </div>
 <div class="cdrawer-mask" id="cdrawer-mask" onclick="closeContactDrawer()"></div>
 <aside class="cdrawer" id="cdrawer"></aside>
+<div class="add-contact-mask" id="add-contact-mask" onclick="if(event.target===this)closeAddContact()">
+  <section class="add-contact-dialog" role="dialog" aria-modal="true" aria-labelledby="add-contact-title" onclick="event.stopPropagation()">
+    <header class="add-contact-head"><h3 id="add-contact-title">添加联系人</h3><button class="cdrawer-close" type="button" aria-label="关闭" onclick="closeAddContact()">×</button></header>
+    <form class="add-contact-form" onsubmit="confirmAddContact(event)">
+      <div class="add-contact-field full"><label for="new-contact-name">联系人名称</label><input id="new-contact-name" type="text" maxlength="60" autocomplete="off" placeholder="请输入联系人名称" required></div>
+      <div class="add-contact-field"><label for="new-contact-role">职位</label><input id="new-contact-role" type="text" maxlength="60" placeholder="请输入职位"></div>
+      <div class="add-contact-field"><label for="new-contact-email">邮箱</label><input id="new-contact-email" type="email" maxlength="120" placeholder="请输入邮箱"></div>
+      <div class="add-contact-field"><label for="new-contact-wa">WhatsApp</label><input id="new-contact-wa" type="text" maxlength="40" placeholder="请输入 WhatsApp"></div>
+      <div class="add-contact-field"><label for="new-contact-phone">手机</label><input id="new-contact-phone" type="text" maxlength="40" placeholder="请输入手机号码"></div>
+      <div class="add-contact-field"><label for="new-contact-social-platform">社媒平台</label><select id="new-contact-social-platform"><option value="">请选择平台</option><option value="LinkedIn">LinkedIn</option><option value="Facebook">Facebook</option><option value="Twitter">Twitter</option><option value="Instagram">Instagram</option><option value="YouTube">YouTube</option><option value="TikTok">TikTok</option><option value="其他">其他</option></select></div>
+      <div class="add-contact-field"><label for="new-contact-social-url">社媒主页</label><input id="new-contact-social-url" type="text" maxlength="180" placeholder="请输入主页链接"></div>
+      <div class="add-contact-field full"><label for="new-contact-notes">备注</label><textarea id="new-contact-notes" maxlength="300" placeholder="请输入备注"></textarea></div>
+    </form>
+    <footer class="add-contact-foot"><button class="btn-secondary" type="button" onclick="closeAddContact()">取消</button><button class="btn btn-primary" type="button" onclick="confirmAddContact(event)">确定添加</button></footer>
+  </section>
+</div>
+<div class="merge-mask" id="merge-mask" onclick="closeMergeModal()"></div>
+<section class="merge-modal" id="merge-modal" role="dialog" aria-modal="true" aria-labelledby="merge-title"></section>
+<div class="merge-success-overlay" id="merge-success-overlay" onclick="if(event.target===this)closeMergeSuccess()">
+  <section class="merge-success-card" role="dialog" aria-modal="true" aria-labelledby="merge-success-title">
+    <button class="merge-success-close" type="button" aria-label="关闭" onclick="closeMergeSuccess()">×</button>
+    <div class="merge-success-icon" aria-hidden="true">✓</div>
+    <h2 id="merge-success-title">合并成功</h2>
+    <p id="merge-success-copy"></p>
+    <div class="merge-success-contact" id="merge-success-contact"></div>
+    <button class="merge-success-view btn btn-primary" type="button" onclick="viewMergedContactDetails()">查看联系人详情</button>
+  </section>
+</div>
+<div class="crm-tour-complete-overlay" id="crm-tour-complete" onclick="if(event.target===this)closeCrmTourComplete()">
+  <section class="crm-tour-complete-card" role="dialog" aria-modal="true" aria-labelledby="crm-tour-complete-title">
+    <h2 id="crm-tour-complete-title">恭喜！你已完成AI CRM新手引导，记得及时跟进重点客户哦！</h2>
+    <button class="btn btn-gold" type="button" onclick="location.href='crm-v2.html';">开始使用</button>
+  </section>
+</div>
 <script src="onboarding.js"></script>
 <script>
 const DATA = {
@@ -425,6 +494,17 @@ const id = qs.get('id') || 'c1';
 const raw = DATA[id] || DATA.c1;
 if (raw.kind === 'contact' && raw.companyId) location.replace('customer-detail.html?id=' + raw.companyId);
 const c = raw.kind === 'contact' ? (DATA[raw.companyId] || DATA.c1) : raw;
+// 原型数据：实际接入时由判重服务返回候选联系人及匹配依据。
+const DUPLICATE_CANDIDATES = {
+  c2:[
+    {id:'dup-tom-1',name:'Jason',companyName:'ABC Trading',phone:'+1 555-0123',wa:'+1 555-8188',email:'jason@abctrading.com',socials:[{platform:'LinkedIn',url:'linkedin.com/in/jason-abc'}],tags:['样品跟进'],source:'Facebook 私信',activities:[{id:'a-jason-1',type:'chat',time:'2026-09-14 10:20',content:'询问样品交期'}],notes:'已确认从加州仓库发货，关注样品交期。',updatedAt:'2026-09-15 10:20',linkFrom:'Tom',linkReason:'手机相同'},
+    {id:'dup-tom-2',name:'Jason Brown',companyName:'LumiTrade USA Inc.',phone:'+1 312 555 0198',wa:'+1 555-8188',email:'jason@lumitrade.com',socials:[{platform:'LinkedIn',url:'linkedin.com/in/jason-brown'}],tags:['高潜','北美'],source:'海关数据导入',activities:[{id:'a-jason-2',type:'follow',time:'2026-09-16 15:45',content:'发送智能筒灯报价'}],notes:'负责北美采购。近期询问智能筒灯现货、样品测试与年度框架订单。',updatedAt:'2026-09-16 15:45',linkFrom:'Jason',linkReason:'WhatsApp 相同'},
+    {id:'dup-tom-3',name:'Ja',companyName:'LumiTrade USA Inc.',phone:'+1 312 555 0199',wa:'+1 312 555 0199',email:'jason@lumitrade.com',socials:[{platform:'Facebook',url:'facebook.com/jason.lumi'}],tags:['询盘'],source:'独立站表单',activities:[{id:'a-jason-3',type:'chat',time:'2026-09-16 18:15',content:'索取产品目录'}],notes:'来自官网表单，已留下 WhatsApp。',updatedAt:'2026-09-16 18:15',linkFrom:'Jason Brown',linkReason:'邮箱相同'}
+  ]
+};
+const ignoredDuplicateIds = new Set();
+if (!c.owner) c.owner = ['王强','张三','李四','王五'][String(c.id || '').split('').reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % 4];
+const DETAIL_OWNERS = ['王强','张三','李四','王五','陈敏','刘辉','李娜','赵雨'];
 const isEnt = c.kind === 'enterprise';
 const CONTACT_QUOTA = 2;
 const MASK = '***';
@@ -461,6 +541,7 @@ function renderSocial(s){
   return bits.length?`<div class="social-cell">${bits.join('')}</div>`:'—';
 }
 function icoMail(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>'}
+function icoDuplicate(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/><path d="M11 13h5M13.5 10.5v5"/></svg>'}
 function icoWa(){return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.74.46 3.45 1.32 4.95L2 22l5.3-1.39A9.86 9.86 0 0012.04 22c5.46 0 9.9-4.44 9.9-9.9S17.5 2 12.04 2zm5.75 14.12c-.24.67-1.4 1.24-1.94 1.32-.5.07-1.14.1-1.84-.12-.42-.13-.97-.32-1.67-.62-2.94-1.27-4.86-4.23-5.01-4.43-.15-.2-1.23-1.64-1.23-3.13 0-1.49.78-2.22 1.06-2.52.27-.3.6-.37.8-.37h.57c.18 0 .42-.07.66.5.24.58.82 2 .89 2.15.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.39-.45.52-.15.15-.3.3-.13.58.17.27.76 1.25 1.63 2.03 1.12 1 2.07 1.32 2.36 1.47.3.15.46.12.64-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.02.96.3.15.5.22.57.34.08.12.08.7-.16 1.37z"/></svg>'}
 function activityTitle(a){
   if(a.type==='follow') return `${a.user||'同事'} 跟进`;
@@ -482,28 +563,29 @@ function sysMeta(){
 }
 function renderLeft(){
   document.title=c.name+' · 企业详情';
-  const type=typeLabel(c.type);
   const meta=sysMeta();
   document.getElementById('detail-left').innerHTML=`
     <a class="left-back" href="crm-v2.html?view=enterprise">← 客户管理</a>
+    <div class="left-profile-wrap" id="tour-customer-profile">
     <div class="left-id">
       <div class="left-av">${escHtml((c.name||'?').slice(0,1))}</div>
       <div class="left-id-main">
         <div class="left-name">${escHtml(c.name)}</div>
-        ${type?`<div class="left-type">${type}</div>`:''}
       </div>
-      <span class="tag tag-status" id="tour-stage">${c.status||'—'}</span>
+      <div class="left-owner-top"><select aria-label="负责人" onchange="changeDetailOwner(this.value)">${DETAIL_OWNERS.map(owner=>`<option value="${owner}" ${owner===c.owner?'selected':''}>${owner}</option>`).join('')}</select></div>
     </div>
+    <div class="left-stage"><span>阶段</span><select id="tour-stage" aria-label="阶段" onchange="changeDetailStage(this.value)">${['待联系','需求确认','报价','谈判','成交','失单'].map(status=>`<option value="${status}" ${status===(c.status||'待联系')?'selected':''}>${status}</option>`).join('')}</select></div>
     <div class="left-fields">
       ${coFieldHTML('website','官网')}
       ${coFieldHTML('country','国家')}
-      ${coFieldHTML('email','邮箱')}
-      ${coFieldHTML('phone','电话')}
+      ${companyMultiFieldHTML('email','邮箱')}
+      ${companyMultiFieldHTML('phone','电话')}
       ${coFieldHTML('industry','行业')}
       ${coFieldHTML('founded','成立时间')}
       ${coFieldHTML('address','地址',{multi:true})}
       ${coFieldHTML('description','公司描述',{multi:true,prose:true})}
       ${coFieldHTML('notes','备注',{multi:true,prose:true})}
+    </div>
     </div>
     <div class="sys-box">
       <div class="sys-title">系统信息</div>
@@ -512,8 +594,10 @@ function renderLeft(){
       <div class="sys-row"><span>询盘来源</span>${escHtml(meta.source)}</div>
       <div class="sys-row"><span>创建记录</span>${escHtml(meta.created)}</div>
     </div>
-    <button class="weak-link" type="button" onclick="startCrmTourFromDetail()">新手引导</button>`;
+    `;
 }
+function changeDetailOwner(owner){c.owner=owner;toast(`负责人已修改为${owner}`)}
+function changeDetailStage(status){c.status=status;toast(`阶段已修改为${status}`)}
 
 function sparseNote(){
   if(!c.sparse) return '';
@@ -578,7 +662,9 @@ function removeFollowFile(i){
 function contactsInner(){
   if(!c.contacts?.length) return `<p class="empty-inline">暂无联系人</p>`;
   const locked=quotaLockedCurrent();
-  return `<div class="pcard-grid">${c.contacts.map((x,i)=>{
+  const scrollClass=c.contacts.length>2?' contact-scroll':'';
+  return `<div class="pcard-grid${scrollClass}">${c.contacts.map((x,i)=>{
+      const duplicates=duplicateCandidatesFor(x);
       const emails=normalizeEmails(x);
       const social=x.social||{};
       const phone=(x.phone||'').trim();
@@ -594,7 +680,7 @@ function contactsInner(){
         <div class="pcard-h">
           <div class="pcard-av">${initialsOf(x.name)}</div>
           <div class="pcard-h-main">
-            <div class="pcard-name"><span class="pcard-name-text" title="${name}">${name}</span>${x.primary?' <span class="badge-primary">主联系人</span>':''}</div>
+            <div class="pcard-name"><span class="pcard-name-text" title="${name}">${name}</span>${duplicates.length?duplicatePopoverHTML(x,i,duplicates):''}</div>
             <div class="pcard-role" title="${escHtml(x.role||'')}">${x.role||'—'}</div>
           </div>
           <div class="pcard-actions">
@@ -610,6 +696,53 @@ function contactsInner(){
         </div>
       </div>`;
     }).join('')}</div>`;
+}
+function addContact(){
+  if(quotaLockedCurrent()){quotaLimitToast();return}
+  const mask=document.getElementById('add-contact-mask');
+  const input=document.getElementById('new-contact-name');
+  if(!mask||!input)return;
+  ['new-contact-name','new-contact-role','new-contact-email','new-contact-wa','new-contact-phone','new-contact-social-url','new-contact-notes'].forEach(id=>{const field=document.getElementById(id);if(field)field.value=''});
+  const platform=document.getElementById('new-contact-social-platform');
+  if(platform)platform.value='';
+  mask.classList.add('show');
+  setTimeout(()=>input.focus(),80);
+}
+function closeAddContact(){
+  document.getElementById('add-contact-mask')?.classList.remove('show');
+}
+function confirmAddContact(event){
+  event?.preventDefault();
+  if(quotaLockedCurrent()){closeAddContact();quotaLimitToast();return}
+  const input=document.getElementById('new-contact-name');
+  const name=(input?.value||'').trim();
+  if(!name){input?.focus();return}
+  const role=(document.getElementById('new-contact-role')?.value||'').trim();
+  const email=(document.getElementById('new-contact-email')?.value||'').trim();
+  const wa=(document.getElementById('new-contact-wa')?.value||'').trim();
+  const phone=(document.getElementById('new-contact-phone')?.value||'').trim();
+  const socialPlatform=(document.getElementById('new-contact-social-platform')?.value||'').trim();
+  const socialUrl=(document.getElementById('new-contact-social-url')?.value||'').trim();
+  const notes=(document.getElementById('new-contact-notes')?.value||'').trim();
+  if(!Array.isArray(c.contacts))c.contacts=[];
+  const person={id:`contact-${c.id}-${Date.now()}`,name,role:role||'—',email,emails:email?[{address:email,type:'corporate',status:'verified'}]:[],phone,phones:phone?[phone]:[],wa,was:wa?[wa]:[],socials:socialPlatform&&socialUrl?[{platform:socialPlatform,url:socialUrl}]:[],primary:c.contacts.length===0,companyName:c.name,notes};
+  c.contacts.push(person);
+  const index=c.contacts.length-1;
+  closeAddContact();
+  renderRight();
+  openContactDrawer(index);
+}
+
+function duplicateCandidatesFor(person){
+  return person?(DUPLICATE_CANDIDATES[person.id]||[]).filter(item=>!ignoredDuplicateIds.has(item.id)):[];
+}
+function duplicatePopoverHTML(person,index,duplicates){
+  const rows=duplicates.map(item=>{
+    const rawReason=item.linkReason||'联系方式相同';
+    const reason=/whatsapp/i.test(rawReason)&&/相同/.test(rawReason)?'WA相同':rawReason;
+    return `<div class="duplicate-item"><button class="duplicate-name-link" type="button" onclick="event.stopPropagation();openDuplicateContactDrawer('${escHtml(person.id)}','${escHtml(item.id)}')">${escHtml(item.name)}</button><div class="duplicate-reason">（${escHtml(reason)}）</div></div>`;
+  }).join('');
+  return `<div class="duplicate-wrap"><button class="duplicate-tag" type="button" title="发现 ${duplicates.length} 个重复联系人" aria-label="发现 ${duplicates.length} 个重复联系人" onclick="event.stopPropagation()">存在重复</button><div class="duplicate-popover" role="tooltip"><div class="duplicate-popover-head">发现${duplicates.length}个重复联系人</div>${rows}<div class="duplicate-actions"><button class="duplicate-action" type="button" onclick="event.stopPropagation();ignoreDuplicate('${escHtml(person.id)}')">忽略</button><button class="duplicate-action merge" type="button" onclick="event.stopPropagation();openMergeModal(${index})">合并</button></div></div></div>`;
 }
 
 function coFieldInner(key,label,val){
@@ -630,6 +763,33 @@ function coFieldHTML(key,label,opts){
   const prose=opts?.prose?' prose':'';
   return `<div class="co-field${prose}" data-key="${key}" data-label="${label}" data-multi="${multi}" onclick="beginCoEdit(this)">
     ${coFieldInner(key,label,val)}</div>`;
+}
+function ensureCompanyMulti(key){
+  const listKey=key==='email'?'emails':'phones';
+  if(!Array.isArray(c[listKey])) c[listKey]=c[key]?[c[key]]:[''];
+  if(!c[listKey].length) c[listKey]=[''];
+  return c[listKey];
+}
+function companyMultiFieldHTML(key,label){
+  const values=ensureCompanyMulti(key);
+  const type=key==='email'?'email':'tel';
+  const rows=values.map((value,index)=>`<div class="company-multi-row"><input type="${type}" value="${escHtml(value)}" placeholder="请输入${label}" onblur="commitCompanyMulti('${key}',${index},this.value)">${values.length>1?`<button type="button" aria-label="删除${label}" onclick="removeCompanyMulti('${key}',${index})">×</button>`:''}</div>`).join('');
+  return `<div class="co-field company-multi"><dt>${label}<button class="company-add" type="button" title="添加${label}" aria-label="添加${label}" ${values.length>=5?'disabled':''} onclick="addCompanyMulti('${key}')">+</button></dt><div class="company-multi-rows">${rows}</div></div>`;
+}
+function commitCompanyMulti(key,index,value){
+  const values=ensureCompanyMulti(key); values[index]=String(value||'').trim();
+  c[key]=values.find(Boolean)||'';
+  toast('已保存');
+}
+function addCompanyMulti(key){
+  const values=ensureCompanyMulti(key);
+  if(values.length>=5){toast('最多可添加 5 个'+(key==='email'?'邮箱':'电话'));return}
+  values.push(''); renderLeft();
+  document.querySelectorAll(`.company-multi input[type="${key==='email'?'email':'tel'}"]`)[values.length-1]?.focus();
+}
+function removeCompanyMulti(key,index){
+  const values=ensureCompanyMulti(key); values.splice(index,1);
+  c[key]=values.find(Boolean)||''; renderLeft(); toast('已删除');
 }
 function beginCoEdit(el){
   if(el.dataset.editing==='1') return;
@@ -699,12 +859,11 @@ function uniqueTradeCount(records,key){
 
 function renderRight(){
   const el=document.getElementById('detail-right');
-  const n=(c.contacts||[]).length;
   el.innerHTML=`
     ${sparseNote()}
     ${aiStrategySection()}
-    <div class="mod" id="mod-contacts">
-      <div class="mod-head"><h3>联系人</h3><span>${n} 位</span></div>
+    <div class="mod contacts-mod" id="mod-contacts">
+      <div class="mod-head"><h3>联系人</h3><div class="contacts-head-actions"><button class="add-contact-btn" type="button" onclick="addContact()">添加联系人</button></div></div>
       <div class="mod-body">${contactsInner()}</div>
     </div>
     ${followSection()}
@@ -833,7 +992,7 @@ function maskedFieldHTML(label){
 }
 function contactDrawerHTML(p){
   ensurePerson(p);
-  const co=c.name||p.companyName||'';
+  const co=p.companyName||c.name||'';
   const locked=quotaLockedPerson(p);
   const fields=locked
     ? `${maskedFieldHTML('WhatsApp')}${maskedFieldHTML('邮箱')}${maskedFieldHTML('手机')}${maskedFieldHTML('社媒')}${pfFieldHTML('role','职位',p.role)}${maskedFieldHTML('备注')}`
@@ -950,6 +1109,216 @@ function commitPfEdit(inp){
   el.innerHTML=`<dt>${el.dataset.label}</dt><dd class="${empty?'ph':''}">${empty?'—':escHtml(next)}</dd>`;
   if(next!==prev) toast('已保存');
 }
+let activeMerge=null;
+function ignoreDuplicate(personId){
+  // “忽略”表示本次判重结果无需处理，卡片不再显示判重入口。
+  (DUPLICATE_CANDIDATES[personId]||[]).forEach(item=>ignoredDuplicateIds.add(item.id));
+  renderRight();
+  toast('已忽略该相似联系人');
+}
+function contactValues(person,key){
+  if(key==='email') return normalizeEmails(person).map(x=>typeof x==='string'?x:x.address).filter(Boolean);
+  if(key==='phone') return (person.phones?.length?person.phones:[person.phone]).filter(Boolean);
+  return (person.was?.length?person.was:[person.wa]).filter(Boolean);
+}
+function uniqueContactValues(values,key){
+  const seen=new Set();
+  return values.filter(value=>{
+    const raw=String(value||'').trim();
+    const normalized=key==='email'?raw.toLowerCase():raw.replace(/\D/g,'');
+    if(!raw||seen.has(normalized)) return false;
+    seen.add(normalized); return true;
+  });
+}
+function mostRecentLongest(primary,candidate,key){
+  const items=[primary,candidate].sort((a,b)=>{
+    const time=String(b.updatedAt||'').localeCompare(String(a.updatedAt||''));
+    return time || String(b[key]||'').length-String(a[key]||'').length;
+  });
+  return String(items[0][key]||'').trim() || String(items[1][key]||'').trim();
+}
+function mergeContactLines(person){
+  const lines=[];
+  const vals=[['手机',contactValues(person,'phone')],['邮箱',contactValues(person,'email')],['WhatsApp',contactValues(person,'wa')]];
+  vals.forEach(([label,items])=>{if(items.length) lines.push(`<div class="merge-field"><b>${label}</b>${escHtml(items.join('、'))}</div>`)});
+  if(person.notes) lines.push(`<div class="merge-field"><b>备注</b>${escHtml(person.notes)}</div>`);
+  return lines.join('')||'<div class="merge-field">暂无可合并信息</div>';
+}
+function mergeCandidates(){
+  const primary=c.contacts?.[activeMerge?.contactIndex];
+  return (DUPLICATE_CANDIDATES[primary?.id]||[]).filter(item=>activeMerge?.candidateIds.includes(item.id));
+}
+function latestLongestValue(records,key){
+  return [...records].sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||''))||String(b[key]||'').length-String(a[key]||'').length).map(item=>String(item[key]||'').trim()).find(Boolean)||'';
+}
+function socialEntries(person){
+  if(Array.isArray(person.socials)) return person.socials.filter(item=>item?.platform||item?.url);
+  return person.linkedin?[{platform:'LinkedIn',url:person.linkedin}]:[];
+}
+function uniqueSocialEntries(person){
+  const seen=new Set();
+  return socialEntries(person).filter(item=>{
+    const key=String(item.platform||item.url||'').trim().toLowerCase();
+    if(!key||seen.has(key)) return false;
+    seen.add(key); return true;
+  });
+}
+function uniqueObjects(values,keyOf){
+  const seen=new Set();
+  return values.filter(value=>{const key=keyOf(value);if(!key||seen.has(key))return false;seen.add(key);return true});
+}
+function mergeCompanyHTML(primary,candidates){
+  const companies=[...new Set([c.name||primary.companyName,...candidates.map(item=>item.companyName)].filter(Boolean))];
+  if(companies.length===1) return `<div class="merge-company"><h3>所属公司</h3><p>所选联系人属于同一家公司，合并后自动保留。</p><div class="tag tag-country">${escHtml(companies[0])}</div></div>`;
+  if(!companies.includes(activeMerge.company)) activeMerge.company=companies[0];
+  return `<div class="merge-company"><h3>所属公司</h3><p>所选联系人所属公司不同，请选择合并后归属。</p><div class="merge-company-choice">${companies.map(company=>`<label><input type="radio" name="merged-company" value="${escHtml(company)}" ${activeMerge.company===company?'checked':''} onchange="setMergeCompany(this.value)">${escHtml(company)}</label>`).join('')}</div></div>`;
+}
+function mergeEvidenceHTML(primary,candidates){
+  return `<div class="cluster-evidence"><h3>链式重复证据 · ${candidates.length+1} 位联系人</h3><p>${candidates.map(item=>`<span class="cluster-link">${escHtml(item.linkFrom||primary.name)} → ${escHtml(item.name)}：${escHtml(item.linkReason||'联系方式关联')}</span>`).join('')}。任意联系方式相连即纳入同一集合，本次将一次处理。</p></div>`;
+}
+function mergePreservationHTML(primary,candidates){
+  const records=[primary,...candidates];
+  const tags=[...new Set(records.flatMap(item=>item.tags||[]))];
+  const activities=records.flatMap(item=>item.activities||[]).length;
+  const sources=[...new Set(records.map(item=>item.source).filter(Boolean))];
+  return `<div class="merge-preservation"><h3>合并后保留</h3><div class="merge-preservation-grid"><div class="merge-preservation-item"><b>互动与跟进</b>迁移 ${activities} 条，保留原发生时间、渠道和操作者。</div><div class="merge-preservation-item"><b>标签与来源</b>${tags.length?`标签并集：${escHtml(tags.join('、'))}`:'保留全部标签'}；${sources.length?`来源轨迹：${escHtml(sources.join('、'))}`:'保留来源轨迹'}。</div><div class="merge-preservation-item"><b>社媒账号</b>按平台和账号地址去重，全部保留。</div><div class="merge-preservation-item"><b>企业与海关数据</b>企业资料、交易和海关数据不自动合并或迁移。</div></div></div>`;
+}
+function mergeConflictHTML(primary,candidates){
+  const records=[primary,...candidates];
+  const rows=['name','notes'].map(key=>{
+    const values=uniqueObjects(records.map(item=>({id:item.id,label:item.name,value:String(item[key]||'').trim()})).filter(item=>item.value),item=>item.value);
+    if(values.length<2) return '';
+    const selected=activeMerge.fieldSources[key]||'auto';
+    return `<div class="merge-conflict-row"><div class="merge-conflict-label">${key==='name'?'姓名':'备注'}</div><div class="merge-conflict-options"><label><input type="radio" name="merge-${key}" value="auto" ${selected==='auto'?'checked':''} onchange="setMergeFieldSource('${key}','auto')"><span>推荐：最新优先</span></label>${values.map(item=>`<label title="${escHtml(item.value)}"><input type="radio" name="merge-${key}" value="${escHtml(item.id)}" ${selected===item.id?'checked':''} onchange="setMergeFieldSource('${key}','${escHtml(item.id)}')"><span>${escHtml(item.label)}：${escHtml(item.value)}</span></label>`).join('')}</div></div>`;
+  }).join('');
+  return rows?`<div class="merge-conflicts"><h3>字段冲突</h3><p>系统已给出推荐值；可按字段覆盖选择，不影响联系方式与历史记录的完整保留。</p>${rows}</div>`:'';
+}
+function mergeContactRowHTML(person,isRecommended){
+  const phone=contactValues(person,'phone')[0]||'';
+  const email=contactValues(person,'email')[0]||'';
+  const wa=contactValues(person,'wa')[0]||'';
+  const company=person.companyName||c.name||'';
+  const selected=activeMerge.masterId===person.id;
+  return `<label class="merge-contact-row ${selected?'selected':''}">
+    <input class="merge-contact-radio" type="radio" name="merge-master" value="${escHtml(person.id)}" ${selected?'checked':''} onchange="setMergeMaster('${escHtml(person.id)}')">
+    <span class="merge-contact-avatar">${escHtml(initialsOf(person.name))}</span>
+    <span class="merge-contact-info">
+      <span class="merge-contact-head"><span class="merge-contact-name"><span class="merge-contact-name-text">${escHtml(person.name||'—')}</span>${isRecommended?'<span class="merge-recommended">推荐</span>':''}</span><span class="merge-contact-company">${escHtml(company||'—')}</span></span>
+      <span class="merge-contact-meta">${phone?`<span class="merge-meta-phone">${escHtml(phone)}</span>`:''}${email?`<span class="merge-meta-email">${escHtml(email)}</span>`:''}${wa?`<span class="merge-meta-wa">${escHtml(wa)}</span>`:''}</span>
+    </span>
+  </label>`;
+}
+function mergeAutoContentHTML(){
+  return `<div class="merge-auto"><div class="merge-auto-title"><span class="merge-auto-info">i</span><span>将自动合并的内容（不需要手动选择）</span></div><div class="merge-auto-items"><span class="merge-auto-item"><span class="merge-auto-icon">◈</span><span class="merge-auto-item-name">联系方式</span><strong class="merge-auto-item-action">合并去重</strong></span><span class="merge-auto-item"><span class="merge-auto-icon">◇</span><span class="merge-auto-item-name">社媒</span><strong class="merge-auto-item-action">合并去重</strong></span><span class="merge-auto-item"><span class="merge-auto-icon">▤</span><span class="merge-auto-item-name">跟进记录</span><strong class="merge-auto-item-action">合并</strong></span><span class="merge-auto-item"><span class="merge-auto-icon">▣</span><span class="merge-auto-item-name">私信互动</span><strong class="merge-auto-item-action">合并</strong></span><span class="merge-auto-item"><span class="merge-auto-icon">⌑</span><span class="merge-auto-item-name">备注</span><strong class="merge-auto-item-action">合并</strong></span></div></div>`;
+}
+function renderMergeModal(){
+  const primary=c.contacts?.[activeMerge?.contactIndex];
+  const candidates=mergeCandidates();
+  if(!primary||!candidates.length) return closeMergeModal();
+  const choices=(DUPLICATE_CANDIDATES[primary.id]||[]).filter(item=>!ignoredDuplicateIds.has(item.id));
+  const rows=[mergeContactRowHTML(primary,true),...choices.map(candidate=>mergeContactRowHTML(candidate,false))].join('');
+  const autoContent=mergeAutoContentHTML();
+  document.getElementById('merge-modal').innerHTML=`<div class="merge-head"><div><h2 id="merge-title">合并联系人</h2></div><button class="cdrawer-close" type="button" aria-label="关闭" onclick="closeMergeModal()">×</button></div><div class="merge-body"><p class="merge-intro">请选择要保留的联系人，其他联系人将自动合并到该联系人。</p><div class="merge-contact-list">${rows}</div>${autoContent}</div><div class="merge-foot"><button class="btn btn-primary" type="button" onclick="confirmMerge()">确定合并</button></div>`;
+}
+function openMergeModal(contactIndex){
+  const primary=c.contacts?.[contactIndex];
+  const candidates=duplicateCandidatesFor(primary);
+  if(!primary||!candidates.length) return;
+  activeMerge={contactIndex,candidateIds:candidates.map(item=>item.id),masterId:primary.id,company:c.name||primary.companyName||'',fieldSources:{name:'auto',notes:'auto'}};
+  renderMergeModal();
+  document.getElementById('merge-mask').classList.add('show');
+  document.getElementById('merge-modal').classList.add('show');
+}
+function toggleMergeCandidate(candidateId,checked){
+  if(!activeMerge) return;
+  const next=checked?[...new Set([...activeMerge.candidateIds,candidateId])]:activeMerge.candidateIds.filter(id=>id!==candidateId);
+  if(!next.length){toast('请至少选择一位相似联系人');return}
+  activeMerge.candidateIds=next;
+  if(!next.includes(activeMerge.masterId) && activeMerge.masterId!==c.contacts?.[activeMerge.contactIndex]?.id) activeMerge.masterId=c.contacts?.[activeMerge.contactIndex]?.id;
+  renderMergeModal();
+}
+function setMergeCompany(company){if(activeMerge) activeMerge.company=company;}
+function setMergeMaster(id){if(activeMerge) activeMerge.masterId=id;renderMergeModal();}
+function setMergeFieldSource(key,id){if(activeMerge){activeMerge.fieldSources[key]=id;renderMergeModal();}}
+function closeMergeModal(){
+  document.getElementById('merge-mask')?.classList.remove('show');
+  document.getElementById('merge-modal')?.classList.remove('show');
+  activeMerge=null;
+}
+let mergedSuccessPerson=null;
+function mergeSuccessSocialLabel(platform){
+  const key=String(platform||'').trim().toLowerCase();
+  return ({linkedin:'in',facebook:'f',twitter:'𝕏',instagram:'ig',youtube:'▶',tiktok:'♪'})[key]||'•';
+}
+function showMergeSuccess(person,count){
+  mergedSuccessPerson=person;
+  const phone=contactValues(person,'phone')[0]||'';
+  const email=contactValues(person,'email')[0]||'';
+  const wa=contactValues(person,'wa')[0]||'';
+  const socials=uniqueSocialEntries(person);
+  const visibleSocials=socials.slice(0,2);
+  const extraSocialCount=Math.max(0,socials.length-visibleSocials.length);
+  document.getElementById('merge-success-copy').textContent=`已将 ${count} 个联系人合并为 1 个联系人。`;
+  document.getElementById('merge-success-contact').innerHTML=`<div class="merge-success-person"><div class="merge-success-avatar">${escHtml(initialsOf(person.name))}</div><div class="merge-success-main"><div class="merge-success-name-row"><div class="merge-success-name">${escHtml(person.name||'—')}</div></div><div class="merge-success-company">${escHtml(person.companyName||c.name||'—')}</div></div></div><div class="merge-success-details">${phone?`<div class="merge-success-detail"><span class="merge-success-detail-icon">⌕</span><span class="merge-success-detail-value">${escHtml(phone)}</span></div>`:''}${email?`<div class="merge-success-detail"><span class="merge-success-detail-icon">✉</span><span class="merge-success-detail-value">${escHtml(email)}</span></div>`:''}${wa?`<div class="merge-success-detail"><span class="merge-success-detail-icon">◉</span><span class="merge-success-detail-value">${escHtml(wa)}</span></div>`:''}</div>${visibleSocials.length||extraSocialCount?`<div class="merge-success-socials">${visibleSocials.map(item=>`<span class="merge-success-social" title="${escHtml(item.platform||'社媒')}">${escHtml(mergeSuccessSocialLabel(item.platform))}</span>`).join('')}${extraSocialCount?`<span class="merge-success-social merge-success-social-more">+${extraSocialCount}</span>`:''}</div>`:''}`;
+  document.getElementById('merge-success-overlay')?.classList.add('show');
+}
+function closeMergeSuccess(){
+  document.getElementById('merge-success-overlay')?.classList.remove('show');
+  mergedSuccessPerson=null;
+}
+function viewMergedContactDetails(){
+  const person=mergedSuccessPerson;
+  closeMergeSuccess();
+  if(!person) return;
+  drawerPerson=ensurePerson(person);
+  const el=document.getElementById('cdrawer');
+  if(!el) return;
+  el.innerHTML=contactDrawerHTML(person);
+  el.classList.add('show');
+  document.getElementById('cdrawer-mask')?.classList.add('show');
+}
+function openDuplicateContactDrawer(primaryId,candidateId){
+  const candidate=(DUPLICATE_CANDIDATES[primaryId]||[]).find(item=>item.id===candidateId);
+  if(!candidate) return;
+  // 复用联系人档案抽屉，查看重复候选人的完整联系方式与备注。
+  drawerPerson=ensurePerson(candidate);
+  const el=document.getElementById('cdrawer');
+  if(!el) return;
+  el.innerHTML=contactDrawerHTML(candidate);
+  el.classList.add('show');
+  document.getElementById('cdrawer-mask')?.classList.add('show');
+}
+function confirmMerge(){
+  if(!activeMerge) return;
+  const primary=c.contacts?.[activeMerge.contactIndex];
+  const candidates=mergeCandidates();
+  if(!primary||!candidates.length) return closeMergeModal();
+  const records=[primary,...candidates];
+  const master=records.find(item=>item.id===activeMerge.masterId)||primary;
+  const mergeOrder=[master,...records.filter(item=>item.id!==master.id)];
+  ensurePerson(primary);
+  mergeOrder.forEach(ensurePerson);
+  primary.phones=uniqueContactValues(mergeOrder.flatMap(item=>contactValues(item,'phone')),'phone');
+  primary.was=uniqueContactValues(mergeOrder.flatMap(item=>contactValues(item,'wa')),'wa');
+  primary.emails=uniqueContactValues(mergeOrder.flatMap(item=>contactValues(item,'email')),'email').map(address=>({address,type:'corporate',status:'verified'}));
+  primary.phone=primary.phones[0]||''; primary.wa=primary.was[0]||''; primary.email=primary.emails[0]?.address||'';
+  primary.name=master.name||latestLongestValue(records,'name');
+  primary.role=master.role||primary.role;
+  primary.notes=master.notes||master.preference||latestLongestValue(records,'notes');
+  primary.socials=uniqueObjects(mergeOrder.flatMap(socialEntries),item=>`${String(item.platform||'').toLowerCase()}|${String(item.url||'').toLowerCase()}`);
+  primary.tags=[...new Set(mergeOrder.flatMap(item=>item.tags||[]))];
+  primary.sources=[...new Set(records.map(item=>item.source).filter(Boolean))];
+  primary.source=master.source||primary.source||primary.sources[0]||'';
+  primary.activities=uniqueObjects(mergeOrder.flatMap(item=>item.activities||[]),item=>item.id||`${item.type}|${item.time}|${item.content}`);
+  primary.updatedAt=records.map(item=>item.updatedAt||'').sort().at(-1)||primary.updatedAt;
+  primary.companyName=master.companyName||activeMerge.company||c.name;
+  primary.mergeAudit={mergedAt:'刚刚',masterRecordId:master.id,memberIds:records.map(item=>item.id),company:primary.companyName};
+  candidates.forEach(candidate=>ignoredDuplicateIds.add(candidate.id));
+  const mergedCount=records.length;
+  closeMergeModal();
+  renderRight();
+  showMergeSuccess(primary,mergedCount);
+}
 function openContactDrawer(i){
   if(quotaLockedCurrent()){ quotaLimitToast(); return; }
   const p=c.contacts?.[i]; if(!p) return;
@@ -993,19 +1362,28 @@ if(isEnt){
   renderRight();
   if(qs.get('follow')==='1') setTimeout(()=>document.getElementById('follow-slot')?.scrollIntoView({behavior:'smooth',block:'center'}),40);
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeContactDrawer()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.getElementById('crm-tour-complete')?.classList.contains('show')){closeCrmTourComplete();return}if(document.getElementById('merge-success-overlay')?.classList.contains('show')){closeMergeSuccess();return}if(document.getElementById('add-contact-mask')?.classList.contains('show')){closeAddContact();return}closeContactDrawer()}});
 function startCrmTourFromDetail(){
   location.href='crm-v2.html?tour=1';
+}
+function showCrmTourComplete(){
+  const overlay=document.getElementById('crm-tour-complete');
+  if(!overlay)return;
+  overlay.classList.add('show');
+  setTimeout(()=>overlay.querySelector('.btn')?.focus(),120);
+}
+function closeCrmTourComplete(){
+  document.getElementById('crm-tour-complete')?.classList.remove('show');
 }
 function startDetailTour(force){
   if(!window.TradeOnboarding) return;
   const steps=[
-    {kicker:'客户管理', sel:'#tour-stage', title:'客户阶段', body:'从待联系到成交，客户全生命周期跟进不遗漏。', radius:'999px'},
+    {kicker:'客户管理', sel:'#tour-customer-profile', title:'客户档案', body:'客户信息一览无余，及时维护沉淀客户资料。', placement:'right'},
     {kicker:'客户管理', sel:'#tour-ai-strategy', title:'AI策略', body:'AI精准识别客户痛点，并推荐定制化行动策略。'},
-    {kicker:'客户管理', sel:'#mod-contacts', title:'联系人', body:'汇集公司全部联系人，查看 WhatsApp、邮箱和电话，一键触达'},
+    {kicker:'客户管理', sel:'#mod-contacts', title:'联系人信息', body:'汇集公司全部联系人，查看 WhatsApp、邮箱和电话，一键触达。'},
     {kicker:'客户管理', sel:'#follow-slot', title:'写跟进', body:'每次沟通记一笔，助力成交转化。', doneLabel:'完成'}
   ].filter(function(s){return !s.sel||s.before||document.querySelector(s.sel);});
-  TradeOnboarding.start(steps,{storageKey:'crm',force:!!force,offset:1,total:5});
+  TradeOnboarding.start(steps,{storageKey:'crm',force:!!force,offset:1,total:5,backHref:'crm-v2.html?tour=1',onComplete:showCrmTourComplete});
 }
 if(isEnt){
   setTimeout(function(){ if(qs.get('tour')==='1') startDetailTour(true); },500);

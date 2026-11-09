@@ -20,7 +20,7 @@
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden}
 body.assistant-open .workspace{margin-right:var(--assistant-w)}
 .app{display:flex;height:100vh}
-.workspace{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--bg)}
+.workspace{position:relative;flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--bg)}
 .ws-tabs{display:flex;align-items:flex-end;gap:2px;padding:8px 12px 0;background:#ecece8;flex-shrink:0;overflow-x:auto;border-bottom:1px solid #e0e0dc}
 .ws-tab{display:inline-flex;align-items:center;gap:8px;max-width:200px;padding:8px 12px;border:none;border-radius:8px 8px 0 0;background:transparent;color:#64748b;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;white-space:nowrap}
 .ws-tab:hover{background:rgba(255,255,255,.55);color:var(--text)}
@@ -63,22 +63,22 @@ body.assistant-open .workspace{margin-right:var(--assistant-w)}
 .app-rail-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#c9a227,#a16207)}
 
 .main-wrap{flex:1;display:flex;flex-direction:column;min-width:0;min-height:100%;height:auto}
-.topbar{background:var(--bg);padding:16px 24px 0;flex-shrink:0}
-.hero-banner{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:14px}
-.hero-row{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
-.hero-copy{flex:1;min-width:0}
-.hero-title-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-.hero-title{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--text);margin:0}
+.topbar{position:relative;background:radial-gradient(ellipse 55% 145px at 50% 0,rgba(191,219,254,.65),rgba(255,255,255,0) 100%);padding:38px 24px 0;flex-shrink:0}
+.hero-banner{padding:0 24px 20px;margin-bottom:14px}
+.hero-row{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap}
+.hero-copy{min-width:0;text-align:center}
+.hero-title-row{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.hero-title{font-size:24px;font-weight:720;letter-spacing:-.03em;color:var(--text);margin:0}
 .hero-profile-wrap{min-width:0}
-.hero-profile{font-size:13px;color:var(--muted);line-height:1.65;margin-top:8px}
-.hero-profile strong{color:var(--text);font-weight:650}
+.hero-profile{display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);line-height:1.65;margin-top:13px}.hero-profile-item{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.68);border:1px solid rgba(226,232,240,.85);white-space:nowrap}.hero-profile-item b{font-size:11px;color:#525f75;font-weight:600}.hero-profile-item strong{color:var(--agent);font-weight:700}
 .hero-profile-empty{color:#a16207;background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.55;margin-top:8px}
 .hero-profile-empty a{color:var(--agent);font-weight:600;text-decoration:none}
 .hero-profile-empty a:hover{text-decoration:underline}
-.hero-value{margin:0;font-size:12px;color:var(--muted);line-height:1.65;max-width:720px}
-.hero-tags{display:inline-flex;flex-wrap:wrap;gap:6px;align-items:center}
+.hero-value{margin:0;font-size:13px;color:var(--muted);line-height:1.65;max-width:720px}
+.hero-tags{display:none}
 .hero-tag{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:650;color:var(--agent);background:var(--agent-bg);border:1px solid rgba(124,58,237,.14);white-space:nowrap}
-.profile-cta{flex-shrink:0;align-self:center}
+.subscription-menu{position:absolute;top:6px;right:14px;z-index:30}.subscription-summary{display:flex;align-items:center;height:32px;padding:3px 5px 3px 10px;border:1px solid var(--border);border-radius:8px;background:#fff;box-shadow:0 1px 4px rgba(15,23,42,.03);font-size:11px;color:var(--muted)}.subscription-summary strong{margin-left:9px;color:var(--text);font-size:12px}.subscription-summary .subscription-quota-text{margin-left:12px;color:#64748b}.subscription-summary .subscription-upgrade{margin-left:10px;padding:5px 12px;border-radius:7px;font-size:11px;line-height:1.2}.subscription-summary.advanced{padding-right:10px}
+@media(max-width:700px){.topbar{padding-top:52px}.subscription-menu{top:6px;right:10px}.hero-banner{padding-left:8px;padding-right:8px}.hero-title{font-size:20px}.subscription-summary .subscription-quota-text{display:none}.subscription-summary strong{margin-left:6px}}
 .feed-toolbar-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .btn-ai-toolbar{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:10px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;background:linear-gradient(135deg,var(--agent),var(--agent-dark));color:#fff;box-shadow:0 3px 12px rgba(124,58,237,.28);transition:.15s;white-space:nowrap;flex-shrink:0}
 .btn-ai-toolbar:hover{box-shadow:0 5px 18px rgba(124,58,237,.38);transform:translateY(-1px)}
@@ -114,6 +114,8 @@ body.assistant-open .workspace{margin-right:var(--assistant-w)}
 .profile-empty-title{font-size:14px;font-weight:700;color:#92400e;margin-bottom:4px}
 .profile-empty-desc{font-size:12px;color:#a16207;line-height:1.55;margin-bottom:12px}
 .profile-empty-actions{display:flex;gap:8px;flex-wrap:wrap}
+.profile-guidance,.recommendation-confirm{grid-column:1/-1;max-width:620px;width:100%;margin:92px auto 0;text-align:center}.profile-guidance-title,.recommendation-confirm-title{font-size:18px;font-weight:720;letter-spacing:-.025em;margin-bottom:12px}.profile-guidance-desc,.recommendation-confirm-desc{max-width:520px;margin:0 auto;font-size:14px;color:var(--muted);line-height:1.65}.profile-guidance-foot,.recommendation-confirm-foot{margin-top:28px}.profile-guidance-foot{display:flex;flex-direction:column;align-items:center;gap:7px}.profile-guidance-foot small{display:none}.profile-guidance .btn,.recommendation-confirm .btn{min-width:136px;justify-content:center;padding:11px 22px;font-size:13px}.recommendation-basis{display:none}.recommendation-confirm::before{content:'✓';display:flex;align-items:center;justify-content:center;width:54px;height:54px;margin:0 auto 18px;border-radius:18px;background:#eeedff;color:#5b49f5;font-size:29px;font-weight:800;box-shadow:0 8px 20px rgba(91,73,245,.12)}.recommendation-confirm-foot{display:flex;justify-content:center;gap:10px;align-items:center}.recommendation-confirm-foot .weak-link{font-size:12px}.profile-fields,.profile-guidance-note,.profile-guidance-badge,.profile-wait-copy{display:none}
+@media(max-width:650px){.profile-guidance,.recommendation-confirm{margin-top:34px;padding:0 16px}.recommendation-basis{grid-template-columns:1fr;text-align:center}.recommendation-basis-item.empty{justify-content:flex-start;padding-left:20px}}
 .demo-toggle{font-size:11px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:inherit;padding:0}
 .demo-toggle:hover{color:var(--agent);text-decoration:underline}
 .metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:0}
@@ -122,7 +124,7 @@ body.assistant-open .workspace{margin-right:var(--assistant-w)}
 .metric-card.clickable{cursor:pointer;transition:.15s}
 .metric-card.clickable:hover{border-color:rgba(124,58,237,.25);background:var(--agent-bg)}
 .metric-card dt{font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500}
-.metric-card dd{font-size:32px;font-weight:700;color:var(--agent);letter-spacing:-.02em;line-height:1}
+.metric-card dd{font-size:28px;font-weight:700;color:var(--agent);letter-spacing:-.02em;line-height:1}.metric-card dd::after{content:' 位客户';font-size:12px;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:8px}.metric-card.is-empty dd{font-size:0}.metric-card.is-empty dd::after{content:'—';font-size:18px;color:#a78bfa;margin-left:0}
 
 #page-feed.ws-page{overflow-y:auto;overflow-x:hidden}
 .content{overflow:visible;padding:0 24px 24px}
@@ -197,13 +199,13 @@ body.assistant-open .workspace{margin-right:var(--assistant-w)}
 .empty-state a{color:var(--agent);font-weight:600;text-decoration:none}
 .empty-state a:hover{text-decoration:underline}
 
-.mine-state{grid-column:1/-1;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px 24px 36px;text-align:center}
+.mine-state{grid-column:1/-1;padding:72px 24px 36px;text-align:center}
 .mine-visual{width:88px;height:88px;margin:0 auto 18px;position:relative}
 .mine-ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(124,58,237,.18);border-top-color:var(--agent);animation:mine-spin 1.1s linear infinite}
 .mine-ring.d2{inset:10px;animation-duration:1.6s;animation-direction:reverse;border-top-color:#a78bfa}
 .mine-core{position:absolute;inset:26px;border-radius:50%;background:linear-gradient(135deg,var(--agent),#a78bfa);box-shadow:0 0 20px rgba(124,58,237,.35);animation:mine-pulse 1.4s ease-in-out infinite}
-.mine-state h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px}
-.mine-state p{font-size:13px;color:var(--muted);line-height:1.65;max-width:420px;margin:0 auto 16px}
+.mine-state h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px}
+.mine-state p{display:none}
 .mine-dots{display:inline-flex;gap:6px;margin-bottom:18px}
 .mine-dots i{width:7px;height:7px;border-radius:50%;background:var(--agent);opacity:.25;animation:mine-dot 1.2s ease-in-out infinite}
 .mine-dots i:nth-child(2){animation-delay:.2s}
@@ -526,6 +528,15 @@ body.assistant-open .asst-backdrop{opacity:1;pointer-events:auto}
 #convert-modal .modal{max-width:620px}
 #buy-modal .modal{max-width:440px}
 #ignore-modal .modal{max-width:440px}
+#recommendation-confirm-modal .modal{max-width:520px}
+.recommendation-confirm-copy{font-size:14px;color:var(--text);line-height:1.8;margin:0}
+#tour-complete-modal .modal{max-width:460px;text-align:center}
+#tour-complete-modal .modal-head{justify-content:center;border-bottom:0;padding-bottom:4px}
+#tour-complete-modal .modal-head h3{font-size:18px}
+#tour-complete-modal .modal-head h3::before{content:'✦';font-size:20px}
+#tour-complete-modal .modal-body{padding-top:4px}
+#tour-complete-modal .modal-sub{font-size:13px;line-height:1.75;margin-bottom:0}
+#tour-complete-modal .modal-foot{justify-content:center;border-top:0;padding-top:8px}
 .convert-section-head{display:flex;justify-content:space-between;align-items:center;margin-top:14px;margin-bottom:8px}
 .convert-section-title{font-size:12px;font-weight:600;color:var(--text)}
 .convert-contacts-wrap{overflow-x:auto;margin-top:4px}
@@ -540,6 +551,8 @@ body.assistant-open .asst-backdrop{opacity:1;pointer-events:auto}
 .link-btn:hover{text-decoration:underline}
 .modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
 .modal-foot .btn{min-width:96px;justify-content:center}
+.profile-drawer-overlay{position:fixed;inset:0;z-index:170;background:rgba(15,23,42,.28);opacity:0;pointer-events:none;transition:opacity .22s ease}.profile-drawer-overlay.show{opacity:1;pointer-events:auto}.profile-drawer{position:absolute;top:0;right:0;width:min(530px,100vw);height:100%;display:flex;flex-direction:column;background:var(--card);box-shadow:-18px 0 48px rgba(15,23,42,.18);transform:translateX(100%);transition:transform .26s cubic-bezier(.2,.8,.2,1)}.profile-drawer-overlay.show .profile-drawer{transform:translateX(0)}.profile-drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0}.profile-drawer-head h3{font-size:16px;font-weight:700}.profile-drawer-body{flex:1;overflow-y:auto;padding:18px 20px}.profile-drawer-form{display:flex;flex-direction:column;gap:14px}.profile-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.profile-field{display:flex;flex-direction:column;gap:6px;min-width:0;font-size:12px;color:var(--text)}.profile-field.full{grid-column:1/-1}.profile-field label{font-size:12px;font-weight:600}.profile-field input,.profile-field select,.profile-field textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:var(--card);color:var(--text);font:inherit;font-size:12px}.profile-field textarea{min-height:56px;resize:vertical;line-height:1.5}.profile-field input:focus,.profile-field select:focus,.profile-field textarea:focus{outline:none;border-color:var(--agent);box-shadow:0 0 0 2px rgba(124,58,237,.12)}.profile-field input:disabled{background:var(--bg);color:var(--muted)}.profile-logo-input{display:flex;align-items:center;justify-content:center;width:46px;height:36px;border:1px dashed #94a3b8;border-radius:7px;color:#94a3b8;cursor:pointer;font-size:20px}.profile-logo-input input{display:none}.profile-upload{align-self:flex-start;border:1px solid var(--border);border-radius:7px;background:var(--bg);padding:7px 10px;color:var(--text);font:inherit;font-size:11px;cursor:pointer}.profile-upload input{display:none}.profile-option-row{display:flex;flex-wrap:wrap;gap:7px}.profile-option{display:inline-flex;align-items:center;gap:5px;padding:7px 9px;border:1px solid var(--border);border-radius:7px;color:var(--muted);font-size:11px;cursor:pointer}.profile-option input{width:13px;height:13px;accent-color:var(--agent)}.profile-drawer-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:9px;flex-shrink:0}.profile-drawer-foot .btn{min-width:94px;justify-content:center}
+@media(max-width:600px){.profile-drawer{width:100vw}.profile-form-grid{grid-template-columns:1fr}.profile-field.full{grid-column:auto}}
 .buy-packs{display:flex;flex-direction:column;gap:8px}
 .buy-pack{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;cursor:pointer;background:var(--card);text-align:left;width:100%;font-family:inherit}
 .buy-pack:hover{border-color:rgba(124,58,237,.35)}
@@ -571,7 +584,7 @@ body.assistant-open .asst-backdrop{opacity:1;pointer-events:auto}
     <nav class="app-rail-nav">
       <a class="app-rail-item active" href="proactive-agent-v1.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-        增长引擎
+        潜客挖掘
       </a>
       <a class="app-rail-item" href="#" onclick="toast('AI 社媒即将上线');return false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
@@ -581,13 +594,17 @@ body.assistant-open .asst-backdrop{opacity:1;pointer-events:auto}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 10h.01M12 10h4"/></svg>
         AI 广告
       </a>
-      <a class="app-rail-item" href="#" onclick="toast('AI 互动即将上线');return false">
+      <a class="app-rail-item" href="ai-interaction.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         AI 互动
       </a>
       <a class="app-rail-item" href="crm-v2.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         AI CRM
+      </a>
+      <a class="app-rail-item" href="customer-allocation.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/><circle cx="17" cy="16" r="3" fill="currentColor" stroke="none"/></svg>
+        客户分配
       </a>
       <a class="app-rail-item" href="#" onclick="toast('AI 创意即将上线');return false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 00-4 12c.6.6 1 1.5 1 2.5V18h6v-1.5c0-1 .4-1.9 1-2.5A7 7 0 0012 2z"/></svg>
@@ -608,6 +625,7 @@ body.assistant-open .asst-backdrop{opacity:1;pointer-events:auto}
 
   <div class="workspace">
     <nav class="ws-tabs" id="ws-tabs"></nav>
+    <div class="subscription-menu" id="subscription-menu"></div>
     <div class="ws-pages">
       <div class="ws-page show" id="page-feed">
   <div class="main-wrap">
@@ -616,22 +634,21 @@ body.assistant-open .asst-backdrop{opacity:1;pointer-events:auto}
         <div class="hero-row">
           <div class="hero-copy">
             <div class="hero-title-row">
-              <div class="hero-title">每天自动发现你的潜在买家</div>
+              <div class="hero-title">每天 8:00，AI 为您筛选今天最值得跟进的客户</div>
               <div class="hero-tags" id="hero-tags">
                 <span class="hero-tag">100亿+贸易数据</span>
                 <span class="hero-tag">218个国家/地区</span>
               </div>
             </div>
-            <p class="hero-value" id="hero-value">海量海关与企业联系人数据持续更新，AI 按企业画像精准匹配买家，发现潜客更快捷、更高效。</p>
+            <p class="hero-value" id="hero-value">AI 基于企业画像，从 100亿+ 贸易记录与 218 个国家/地区企业联系人中筛选采购机会。</p>
             <div id="hero-profile" class="hero-profile-wrap"></div>
           </div>
-          <button class="btn btn-primary profile-cta" id="profile-cta" onclick="toast('跳转至「企业画像」模块')">完善企业画像</button>
         </div>
       </div>
       <div class="metric-row">
-        <div class="metric-card"><dt>今日推荐客户</dt><dd id="stat-today">32</dd></div>
-        <div class="metric-card clickable" id="metric-total" onclick="openHistoryTab()" title="查看历史推荐"><dt>历史推荐</dt><dd id="stat-total">89</dd></div>
-        <div class="metric-card clickable" id="metric-converted" onclick="goToCRM()" title="前往 AI CRM"><dt>已存入CRM</dt><dd id="stat-converted">0</dd></div>
+        <div class="metric-card"><dt>今日新增推荐</dt><dd id="stat-today">32</dd></div>
+        <div class="metric-card clickable" id="metric-total" onclick="openHistoryTab()" title="查看历史推荐"><dt>历史累计推荐</dt><dd id="stat-total">89</dd></div>
+        <div class="metric-card clickable" id="metric-converted" onclick="goToCRM()" title="前往 AI CRM"><dt>已存入 AI CRM</dt><dd id="stat-converted">0</dd></div>
       </div>
     </header>
 
@@ -647,7 +664,6 @@ body.assistant-open .asst-backdrop{opacity:1;pointer-events:auto}
           <span id="feed-batch-actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <label class="batch-select"><input type="checkbox" id="check-all" onclick="toggleSelectAll(event)">全选</label>
             <span id="batch-count">未选择</span>
-            <button class="btn btn-ghost" id="btn-batch-ignore" disabled onclick="batchIgnore()">批量忽略</button>
             <button class="btn btn-primary" id="btn-batch-convert" disabled onclick="batchConvert()">批量存入CRM</button>
           </span>
         </div>
@@ -755,6 +771,17 @@ body.assistant-open .asst-backdrop{opacity:1;pointer-events:auto}
   <div class="mine-notice-body"><strong id="mine-notice-title">挖掘完成</strong><span id="mine-notice-body">已为你匹配到新的潜在买家。</span></div>
 </div>
 
+<div class="modal-overlay" id="tour-complete-modal" onclick="if(event.target===this)closeTourComplete()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tour-complete-title">
+    <div class="modal-head">
+      <h3 id="tour-complete-title">恭喜！你已完成潜客挖掘新手引导，记得每天查看新的推荐哦！</h3>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-primary" type="button" onclick="closeTourComplete()">开始使用</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="convert-modal" onclick="if(event.target===this)closeConvertModal()">
   <div class="modal" role="dialog" aria-labelledby="convert-modal-title">
     <div class="modal-head">
@@ -827,6 +854,102 @@ body.assistant-open .asst-backdrop{opacity:1;pointer-events:auto}
       <button class="btn btn-primary" type="button" onclick="confirmIgnore()">确认忽略</button>
     </div>
   </div>
+</div>
+
+<div class="modal-overlay" id="recommendation-confirm-modal" onclick="if(event.target===this)closeRecommendationConfirm()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="recommendation-confirm-modal-title">
+    <div class="modal-head">
+      <h3 id="recommendation-confirm-modal-title">确认立即推荐</h3>
+      <button class="modal-close" type="button" onclick="closeRecommendationConfirm()" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="recommendation-confirm-copy">AI将根据企业画像（主营产品、目标市场、行业）为您挖掘潜在买家，信息越完善推荐越精准，确认基于当前信息继续推荐吗。</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" type="button" onclick="closeRecommendationConfirm()">取消</button>
+      <button class="btn btn-primary" type="button" onclick="confirmRecommendation()">确认推荐</button>
+    </div>
+  </div>
+</div>
+
+<div class="profile-drawer-overlay" id="profile-drawer" onclick="if(event.target===this)closeProfileDrawer()" aria-hidden="true">
+  <aside class="profile-drawer" role="dialog" aria-modal="true" aria-labelledby="profile-drawer-title">
+    <header class="profile-drawer-head">
+      <h3 id="profile-drawer-title">企业画像</h3>
+      <button class="modal-close" type="button" onclick="closeProfileDrawer()" aria-label="关闭企业画像">✕</button>
+    </header>
+    <div class="profile-drawer-body">
+      <form class="profile-drawer-form" onsubmit="saveProfile(event)">
+        <div class="profile-form-grid">
+          <div class="profile-field">
+            <label for="profile-company-name">公司/品牌名称</label>
+            <input id="profile-company-name" value="腾道数据" disabled>
+          </div>
+          <div class="profile-field">
+            <label>Logo</label>
+            <label class="profile-logo-input" title="上传 Logo">+
+              <input type="file" accept="image/*">
+            </label>
+          </div>
+          <div class="profile-field full">
+            <label for="profile-website">官方网站</label>
+            <input id="profile-website" value="https://www.tradelink.com" type="url">
+          </div>
+          <div class="profile-field">
+            <label for="profile-industry">行业</label>
+            <select id="profile-industry">
+              <option value="">请选择行业</option>
+              <option>照明制造</option>
+              <option>电子电器</option>
+              <option>家居用品</option>
+              <option>机械设备</option>
+            </select>
+          </div>
+          <div class="profile-field">
+            <label for="profile-market">目标市场</label>
+            <input id="profile-market" value="" placeholder="输入目标市场">
+          </div>
+          <div class="profile-field full">
+            <label for="profile-products">主营产品</label>
+          <input id="profile-products" value="" placeholder="输入主营产品">
+          </div>
+          <div class="profile-field full">
+            <label>企业资料</label>
+            <label class="profile-upload">上传文件<input type="file" multiple></label>
+          </div>
+          <div class="profile-field full">
+            <label>营销战略</label>
+            <div class="profile-option-row">
+              <label class="profile-option"><input type="radio" name="strategy" checked> 稳健，出海首要目标</label>
+              <label class="profile-option"><input type="radio" name="strategy"> 拓展，寻找新增长</label>
+              <label class="profile-option"><input type="radio" name="strategy"> 高效，有成熟销售路径</label>
+            </div>
+          </div>
+          <div class="profile-field full">
+            <label>业务类型</label>
+            <div class="profile-option-row">
+              <label class="profile-option"><input type="checkbox" checked> B2B</label>
+              <label class="profile-option"><input type="checkbox"> B2C</label>
+              <label class="profile-option"><input type="checkbox"> SaaS</label>
+              <label class="profile-option"><input type="checkbox"> 本地服务</label>
+            </div>
+          </div>
+          <div class="profile-field full">
+            <label for="profile-products-detail">产品/服务介绍</label>
+            <textarea id="profile-products-detail" placeholder="输入产品或服务介绍"></textarea>
+          </div>
+          <div class="profile-field full">
+            <label for="profile-target-customers">目标客群</label>
+            <textarea id="profile-target-customers" placeholder="输入目标客户类型、采购规模或应用场景"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <footer class="profile-drawer-foot">
+      <button class="btn btn-ghost" type="button" onclick="closeProfileDrawer()">取消</button>
+      <button class="btn btn-primary" type="button" onclick="saveProfile()">保存</button>
+    </footer>
+  </aside>
 </div>
 
 <script src="onboarding.js"></script>
@@ -1107,12 +1230,16 @@ const INTENTS = [
 ];
 
 const PROFILE = {
-  products: 'LED 照明灯具、智能照明',
-  markets: '美国、德国、英国'
+  products: '',
+  markets: '',
+  industry: ''
 };
 
 const state = {
-  hasProfile: true,
+  hasProfile: false,
+  recommendationStarted: false,
+  // 由账号订阅权益返回；原型中以成长版演示，不提供用户选择入口。
+  subscriptionPlan: 'basic',
   converted: 0,
   ignored: new Set(['h1','h2','h3']),
   ignoreReasons: new Map([
@@ -1138,6 +1265,92 @@ const state = {
   mineProgress: 0,
   previewWait: false
 };
+
+const SUBSCRIPTION_PLANS = {
+  basic: {
+    name: '基础版',
+    quota: 10,
+    claim: '推荐 10 家企业',
+    upgradeable: true
+  },
+  growth: {
+    name: '成长版',
+    quota: 20,
+    claim: '每日解锁 20 家企业',
+    upgradeable: true
+  },
+  paid: {
+    name: '高级版',
+    quota: 50,
+    claim: '每日解锁 50 家企业',
+    upgradeable: false
+  }
+};
+
+function renderSubscriptionMenu() {
+  const menu = document.getElementById('subscription-menu');
+  if (!menu) return;
+  const plan = SUBSCRIPTION_PLANS[state.subscriptionPlan] || SUBSCRIPTION_PLANS.basic;
+  menu.innerHTML = `<div class="subscription-summary${plan.upgradeable ? '' : ' advanced'}">
+    <span>当前套餐</span><strong>${plan.name}</strong><span class="subscription-quota-text">${plan.claim}</span>
+    ${plan.upgradeable ? '<button class="btn btn-primary subscription-upgrade" type="button" onclick="upgradeSubscription()">升级</button>' : ''}
+  </div>`;
+}
+
+function upgradeSubscription() {
+  toast('跳转至套餐升级');
+}
+
+function startProfileSetup() {
+  openProfileDrawer();
+}
+
+function profileIsComplete() {
+  return [PROFILE.products, PROFILE.markets, PROFILE.industry]
+    .every(value => String(value || '').trim().length > 0);
+}
+
+function openProfileDrawer() {
+  const drawer = document.getElementById('profile-drawer');
+  if (!drawer) return;
+  const products = document.getElementById('profile-products');
+  const markets = document.getElementById('profile-market');
+  const industry = document.getElementById('profile-industry');
+  if (products) products.value = PROFILE.products || '';
+  if (markets) markets.value = PROFILE.markets || '';
+  if (industry) industry.value = PROFILE.industry || '';
+  drawer.classList.add('show');
+  drawer.setAttribute('aria-hidden', 'false');
+  setTimeout(() => document.getElementById('profile-products')?.focus(), 260);
+}
+
+function closeProfileDrawer() {
+  const drawer = document.getElementById('profile-drawer');
+  if (!drawer) return;
+  drawer.classList.remove('show');
+  drawer.setAttribute('aria-hidden', 'true');
+}
+
+function saveProfile(event) {
+  event?.preventDefault();
+  const products = document.getElementById('profile-products')?.value.trim();
+  const markets = document.getElementById('profile-market')?.value.trim();
+  const industry = document.getElementById('profile-industry')?.value;
+  if (!products || !markets || !industry) {
+    toast('请填写主营产品、目标市场和行业');
+    return;
+  }
+  PROFILE.products = products;
+  PROFILE.markets = markets;
+  PROFILE.industry = industry;
+  state.hasProfile = true;
+  state.recommendationStarted = false;
+  state.previewWait = false;
+  state.mining = null;
+  closeProfileDrawer();
+  render();
+  toast('企业画像已保存，请确认后开始推荐');
+}
 
 function getLead(id) {
   return RECS.find(r => r.id === id) || HIST_LEADS.find(r => r.id === id) || (state.minedRecs || []).find(r => r.id === id) || EXTRA_DETAILS[id];
@@ -2113,44 +2326,85 @@ function ignoredCard(r) {
 
 function renderProfile() {
   const area = document.getElementById('hero-profile');
-  const cta = document.getElementById('profile-cta');
-  if (state.hasProfile) {
+  renderSubscriptionMenu();
+  if (profileIsComplete()) {
     area.innerHTML = `<div class="hero-profile">
-      主营产品：<strong>${PROFILE.products}</strong> · 目标市场：<strong>${PROFILE.markets}</strong>
+      <span class="hero-profile-item"><b>主营产品</b><strong>${PROFILE.products}</strong></span>
+      <span class="hero-profile-item"><b>目标市场</b><strong>${PROFILE.markets}</strong></span>
+      <span class="hero-profile-item"><b>行业</b><strong>${PROFILE.industry}</strong></span>
     </div>`;
-    if (cta) cta.style.display = '';
   } else {
-    area.innerHTML = `<div class="hero-profile-empty">
-      尚未配置企业画像。完善主营产品、目标市场等信息后，Agent 将于次日 08:00 自动生成推荐。
-      <a href="#" onclick="toast('跳转至「企业画像」');return false"> 去完善企业画像 →</a>
-    </div>`;
-    if (cta) cta.style.display = 'none';
+    area.innerHTML = '';
   }
-  document.getElementById('demo-toggle') && (document.getElementById('demo-toggle').textContent = state.hasProfile ? '预览：切换无画像状态' : '预览：切换有画像状态');
+  document.getElementById('demo-toggle') && (document.getElementById('demo-toggle').textContent = profileIsComplete() ? '预览：切换无画像状态' : '预览：切换有画像状态');
+}
+
+function recommendationBasisHTML(profileReady) {
+  if (!profileReady) {
+    return `<div class="recommendation-basis empty">${['主营产品', '目标国家', '行业'].map(label =>
+      `<div class="recommendation-basis-item empty"><i class="recommendation-basis-icon" aria-hidden="true"></i><b>${label}</b></div>`
+    ).join('')}</div>`;
+  }
+  const basis = [['主营产品', PROFILE.products], ['目标市场', PROFILE.markets], ['行业', PROFILE.industry]];
+  return `<div class="recommendation-basis">${basis.map(([label, value]) =>
+    `<div class="recommendation-basis-item"><b>${label}</b><span title="${cfEsc(value)}">${cfEsc(value)}</span></div>`
+  ).join('')}</div>`;
+}
+
+function renderUnreadyStats() {
+  ['stat-today', 'stat-total', 'stat-converted'].forEach(id => {
+    const el = document.getElementById(id);
+    el.textContent = '';
+    el.closest('.metric-card').classList.add('is-empty');
+  });
+  const badge = document.getElementById('badge-pending');
+  if (badge) badge.textContent = '0';
+  document.getElementById('metric-converted').style.opacity = '.5';
+}
+
+function renderProfileReadyStats() {
+  document.getElementById('stat-today').textContent = '32';
+  document.getElementById('stat-total').textContent = '89';
+  document.getElementById('stat-converted').textContent = String(state.converted);
+  document.querySelectorAll('.metric-card').forEach(card => card.classList.remove('is-empty'));
+  document.getElementById('metric-converted').style.opacity = state.converted ? '1' : '.55';
 }
 
 function render() {
   renderProfile();
   const toolbar = document.getElementById('feed-toolbar');
   const batchActions = document.getElementById('feed-batch-actions');
+  const feedFooter = document.getElementById('feed-footer');
+  const ignoredPanel = document.getElementById('ignored-panel');
+  const dailyFeed = document.getElementById('daily-feed');
 
-  if (!state.hasProfile) {
+  if (!profileIsComplete()) {
     toolbar.querySelector('h2').innerHTML = '今日推荐 <span class="feed-meta" id="daily-meta">等待画像配置</span>';
     batchActions.style.display = 'none';
-    document.getElementById('feed-footer').style.display = 'none';
-    document.getElementById('ignored-panel').classList.remove('show');
-    document.getElementById('daily-feed').innerHTML = `<div class="empty-state">
-      <div class="empty-state-icon">📋</div>
-      <h3>暂无推荐</h3>
-      <p>完善企业画像后，Agent 将根据您的主营产品、目标市场等信息，每日自动推送匹配的潜客推荐。</p>
-      <button class="btn btn-warn" onclick="toast('跳转至「企业画像」')">去完善企业画像</button>
-    </div>`;
-    document.getElementById('stat-today').textContent = '—';
-    document.getElementById('stat-total').textContent = '—';
-    const badge = document.getElementById('badge-pending');
-    if (badge) badge.textContent = '0';
-    document.getElementById('stat-converted').textContent = '0';
-    document.getElementById('metric-converted').style.opacity = '.5';
+    feedFooter.style.display = 'none';
+    ignoredPanel.classList.remove('show');
+    dailyFeed.innerHTML = `<section class="profile-guidance" aria-labelledby="profile-guidance-title">
+      <h3 class="profile-guidance-title" id="profile-guidance-title">AI 潜客推荐，从了解您的企业开始</h3>
+      <p class="profile-guidance-desc">完善企业画像后，AI 会根据主营产品、目标市场、行业为您筛选潜在客户</p>
+      <div class="profile-guidance-foot"><button class="btn btn-primary" onclick="startProfileSetup()">完善企业画像</button></div>
+    </section>`;
+    renderUnreadyStats();
+    if (state.activeTab === 'history') renderDiscoveredHistory();
+    return;
+  }
+
+  if (!state.recommendationStarted) {
+    toolbar.querySelector('h2').innerHTML = '今日推荐 <span class="feed-meta" id="daily-meta">待确认开始推荐</span>';
+    batchActions.style.display = 'none';
+    feedFooter.style.display = 'none';
+    ignoredPanel.classList.remove('show');
+    renderProfileReadyStats();
+    dailyFeed.innerHTML = `<section class="recommendation-confirm" aria-labelledby="recommendation-confirm-title">
+      <h3 class="recommendation-confirm-title" id="recommendation-confirm-title">AI 会依据主营产品、目标市场、行业为您筛选潜在客户</h3>
+      <div class="recommendation-confirm-foot">
+        <button class="btn btn-primary" type="button" onclick="openRecommendationConfirm()">立即推荐</button>
+      </div>
+    </section>`;
     if (state.activeTab === 'history') renderDiscoveredHistory();
     return;
   }
@@ -2158,33 +2412,38 @@ function render() {
   toolbar.querySelector('h2').innerHTML = '今日推荐 <span class="feed-meta" id="daily-meta">08:00 更新</span>';
   const pendingList = feedPool().filter(r => !state.ignored.has(r.id) && !state.convertedIds.has(r.id));
   const ignoredList = feedPool().filter(r => state.ignored.has(r.id));
-  const showDailyWait = state.previewWait || (!pendingList.length && state.mining !== 'buy');
-  syncBatchToolbar(showDailyWait || state.mining === 'buy' ? [] : pendingList);
-  document.getElementById('feed-footer').style.display = 'flex';
+  const isMining = state.mining === 'buy' || state.mining === 'initial';
+  const showDailyWait = state.previewWait || (!pendingList.length && !isMining);
+  syncBatchToolbar(showDailyWait || isMining ? [] : pendingList);
+  feedFooter.style.display = 'flex';
 
-  if (state.mining === 'buy') {
-    toolbar.querySelector('h2').innerHTML = '今日推荐 <span class="feed-meta" id="daily-meta">正在挖掘</span>';
-    document.getElementById('daily-feed').innerHTML = mineStateHTML('buy');
+  if (state.mining === 'buy' || state.mining === 'initial') {
+    toolbar.querySelector('h2').innerHTML = `今日推荐 <span class="feed-meta" id="daily-meta">${state.mining === 'initial' ? '正在生成推荐' : '正在挖掘'}</span>`;
+    dailyFeed.innerHTML = mineStateHTML(state.mining);
     requestAnimationFrame(syncMineProgressUI);
   } else if (showDailyWait) {
     toolbar.querySelector('h2').innerHTML = '今日推荐 <span class="feed-meta" id="daily-meta">明日 08:00 推送</span>';
-    document.getElementById('daily-feed').innerHTML = mineStateHTML('daily');
+    dailyFeed.innerHTML = mineStateHTML('daily');
   } else {
-    document.getElementById('daily-feed').innerHTML = pendingList.map(r => card(r, '每日推荐')).join('');
+    dailyFeed.innerHTML = pendingList.map(r => card(r, '每日推荐')).join('');
   }
 
-  document.getElementById('stat-today').textContent = pendingList.length + 28;
-  document.getElementById('stat-total').textContent = 89 + state.converted;
-  const badge = document.getElementById('badge-pending');
-  if (badge) badge.textContent = pendingList.length;
-  document.getElementById('stat-converted').textContent = state.converted;
-  document.getElementById('metric-converted').style.opacity = state.converted > 0 ? '1' : '.55';
+  if (state.mining === 'initial') {
+    renderProfileReadyStats();
+  } else {
+    document.getElementById('stat-today').textContent = pendingList.length + 28;
+    document.getElementById('stat-total').textContent = 89 + state.converted;
+    const badge = document.getElementById('badge-pending');
+    if (badge) badge.textContent = pendingList.length;
+    document.getElementById('stat-converted').textContent = state.converted;
+    document.getElementById('metric-converted').style.opacity = state.converted > 0 ? '1' : '.55';
+  }
   const linkIgnored = document.getElementById('link-ignored');
   linkIgnored.textContent = state.showIgnored ? '收起已忽略' : `查看今日已忽略 (${ignoredList.length})`;
   linkIgnored.classList.toggle('disabled', ignoredList.length === 0);
 
   document.getElementById('ignored-feed').innerHTML = ignoredList.map(r => ignoredCard(r)).join('') || '<div class="empty-state" style="grid-column:1/-1;padding:24px">暂无已忽略记录</div>';
-  document.getElementById('ignored-panel').classList.toggle('show', state.showIgnored && ignoredList.length > 0);
+  ignoredPanel.classList.toggle('show', state.showIgnored && ignoredList.length > 0);
   const waitBtn = document.getElementById('wait-toggle');
   if (waitBtn) waitBtn.textContent = state.previewWait ? '预览：恢复今日推荐' : '预览：08:00 前等待推送';
   if (state.activeTab === 'history') renderDiscoveredHistory();
@@ -2219,7 +2478,19 @@ function goToCRM() {
 }
 
 function toggleProfile() {
-  state.hasProfile = !state.hasProfile;
+  if (!profileIsComplete()) {
+    PROFILE.products = 'LED 照明灯具、智能照明';
+    PROFILE.markets = '美国、德国、英国';
+    PROFILE.industry = '照明制造';
+    state.hasProfile = true;
+    state.recommendationStarted = false;
+  } else {
+    PROFILE.products = '';
+    PROFILE.markets = '';
+    PROFILE.industry = '';
+    state.hasProfile = false;
+    state.recommendationStarted = false;
+  }
   render();
 }
 
@@ -2612,9 +2883,7 @@ function syncBatchToolbar(pendingList) {
   }
   const count = document.getElementById('batch-count');
   if (count) count.textContent = n ? `已选 ${n} 条` : '未选择';
-  const bi = document.getElementById('btn-batch-ignore');
   const bc = document.getElementById('btn-batch-convert');
-  if (bi) bi.disabled = n === 0;
   if (bc) bc.disabled = n === 0;
 }
 
@@ -2688,16 +2957,57 @@ function batchConvert() {
   commitConvert(ids, '每日推荐');
 }
 
-function batchIgnore() {
-  const ids = checkedPendingIds();
-  if (!ids.length) { toast('请先勾选要忽略的推荐'); return; }
-  openIgnoreModal(ids);
-}
-
 let buyPackQty = 20;
 let buyPackPrice = 200;
 let mineTimer = null;
 const MINE_STEPS = ['扫描目标市场海关记录', '按主营产品匹配进口商', '校验企业与联系人', '生成推荐理由与评分'];
+
+function openRecommendationConfirm() {
+  if (!profileIsComplete() || state.recommendationStarted) return;
+  const modal = document.getElementById('recommendation-confirm-modal');
+  if (!modal) return;
+  modal.classList.add('show');
+  setTimeout(() => modal.querySelector('.btn-primary')?.focus(), 120);
+}
+
+function closeRecommendationConfirm() {
+  document.getElementById('recommendation-confirm-modal')?.classList.remove('show');
+}
+
+function confirmRecommendation() {
+  if (!profileIsComplete() || state.recommendationStarted) {
+    closeRecommendationConfirm();
+    return;
+  }
+  closeRecommendationConfirm();
+  startRecommendation();
+}
+
+function startRecommendation() {
+  if (!profileIsComplete() || state.recommendationStarted) return;
+  state.recommendationStarted = true;
+  state.previewWait = false;
+  state.mining = 'initial';
+  state.mineProgress = 8;
+  render();
+  clearInterval(mineTimer);
+  mineTimer = setInterval(function () {
+    state.mineProgress = Math.min(100, state.mineProgress + 8 + Math.round(Math.random() * 8));
+    syncMineProgressUI();
+    if (state.mineProgress >= 100) {
+      clearInterval(mineTimer);
+      mineTimer = null;
+      finishInitialRecommendation();
+    }
+  }, 360);
+}
+
+function finishInitialRecommendation() {
+  state.mining = null;
+  state.mineProgress = 0;
+  render();
+  showMineNotice('推荐已生成', '已为你筛选出今日值得跟进的潜在客户。');
+}
 
 function selectBuyPack(btn) {
   document.querySelectorAll('#buy-packs .buy-pack').forEach(el => el.classList.remove('active'));
@@ -2719,13 +3029,17 @@ function closeBuyMore() {
 
 function mineStateHTML(kind) {
   const buy = kind === 'buy';
+  const initial = kind === 'initial';
+  const processing = buy || initial;
   return `<div class="mine-state">
     <div class="mine-visual"><div class="mine-ring"></div><div class="mine-ring d2"></div><div class="mine-core"></div></div>
-    <h3>潜在买家获取中</h3>
+    <h3>${initial ? 'AI 潜客推荐生成中' : '潜在买家获取中'}</h3>
     <p>${buy
       ? '系统正在海关和企业数据库中匹配潜在买家'
-      : '系统正在按企业画像持续匹配，将于明天 08:00 更新到今日推荐。'}</p>
-    ${buy
+      : initial
+        ? '系统正在根据企业画像筛选、校验并排序潜在客户。'
+        : '系统正在按企业画像持续匹配，将于明天 08:00 更新到今日推荐。'}</p>
+    ${processing
       ? `<div class="mine-bar"><i id="mine-bar-fill" style="width:${state.mineProgress || 0}%"></i></div><div class="mine-step" id="mine-step-text">${MINE_STEPS[Math.min(MINE_STEPS.length - 1, Math.floor((state.mineProgress || 0) / 25))]}</div>`
       : `<button class="btn btn-warn" type="button" onclick="openBuyMore()">获取更多推荐</button>`}
   </div>`;
@@ -2809,6 +3123,9 @@ function toast(msg) {
 
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
+  if (document.getElementById('recommendation-confirm-modal').classList.contains('show')) { closeRecommendationConfirm(); return; }
+  if (document.getElementById('tour-complete-modal').classList.contains('show')) { closeTourComplete(); return; }
+  if (document.getElementById('profile-drawer').classList.contains('show')) { closeProfileDrawer(); return; }
   if (document.getElementById('ignore-modal').classList.contains('show')) { closeIgnoreModal(); return; }
   if (document.getElementById('buy-modal').classList.contains('show')) { closeBuyMore(); return; }
   if (document.getElementById('convert-modal').classList.contains('show')) { closeConvertModal(); return; }
@@ -2828,21 +3145,36 @@ if (location.hash === '#wait') state.previewWait = true;
 renderTabs();
 renderSearchHistory();
 render();
-setTimeout(function () { if (state.hasProfile) startAgentTour(false); }, 600);
+setTimeout(function () { if (state.hasProfile && state.recommendationStarted) startAgentTour(false); }, 600);
 
 function agentTourSteps() {
+  const profileTarget = document.querySelector('#daily-feed .profile-guidance')
+    ? '#daily-feed .profile-guidance'
+    : '#hero-profile-row';
   return [
-    { kicker:'潜客挖掘', sel:'#hero-profile-row', title:'确认企业画像', body:'推荐来自主营产品和目标市场。画像越准，今日推荐越精准' },
+    { kicker:'潜客挖掘', sel:profileTarget, title:'企业画像配置', body:'推荐来自主营产品和目标市场。画像越准，今日推荐越精准。', radius:'8px' },
     { kicker:'潜客挖掘', sel:'#daily-feed .rec-card', title:'今日推荐', body:'查看推荐理由、核心指标和可触达联系人，判断企业价值', radius:'12px' },
-    { kicker:'潜客挖掘', sel:'#daily-feed .btn-convert', title:'存入CRM', body:'看准了存入CRM，沉淀客户资产，持续进行跟进管理' },
-    { kicker:'潜客挖掘', sel:'#feed-batch-actions', title:'批量处理更高效', body:'勾选企业数据后，可批量存入CRM或批量忽略，一键操作更方便。' },
-    { kicker:'潜客挖掘', sel:'#metric-converted', title:'去客户管理跟进', body:'已存入的客户可在 【AI CRM】 继续跟进。', doneLabel:'完成' }
+    { kicker:'潜客挖掘', sel:'#daily-feed .btn-convert', title:'存入AI CRM', body:'看准了存入AI CRM，沉淀客户资产，持续进行跟进管理。' },
+    { kicker:'潜客挖掘', sel:'#metric-converted', title:'CRM跟进与触达', body:'已存入的客户可点击去往 【AI CRM】 继续跟进。' },
+    { kicker:'潜客挖掘', sel:'#metric-total', title:'历史累计推荐', body:'可点击前往历史推荐数据，重新查看、分析处理。', doneLabel:'完成' }
   ];
 }
+
+function showTourComplete() {
+  const modal = document.getElementById('tour-complete-modal');
+  if (!modal) return;
+  modal.classList.add('show');
+  setTimeout(() => modal.querySelector('.btn-primary')?.focus(), 120);
+}
+
+function closeTourComplete() {
+  document.getElementById('tour-complete-modal')?.classList.remove('show');
+}
+
 function startAgentTour(force) {
   if (!window.TradeOnboarding) return;
   const steps = agentTourSteps().filter(function (s) { return !s.sel || s.before || document.querySelector(s.sel); });
-  TradeOnboarding.start(steps, { storageKey: 'agent', force: !!force });
+  TradeOnboarding.start(steps, { storageKey: 'agent', force: !!force, onComplete: showTourComplete });
 }
 </script>
 </body>
